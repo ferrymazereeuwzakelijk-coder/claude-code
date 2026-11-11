@@ -14,6 +14,14 @@ npm run dev                     # http://localhost:3000 → redirects to /nl
 
 Deploy: push to GitHub and import into **Vercel** (zero config). Set the env vars from `.env.example` in the Vercel project, then point `mazashipping.com` to it.
 
+## Design
+
+Dark "bridge" look: ink black, the logo blue (`#00A2E0`) and the orange-red of the Ferry-Jo's wheelhouse trim, wide heavy Archivo display type and JetBrains Mono instrument labels (`app/globals.css`).
+
+- **3D Ferry-Jo** (`components/three/`): a procedural three.js model built from photos of the vessel, on shader water. On the home page the camera walks around the ship while scrolling and spec callouts point at its parts (`components/ShipHero.tsx`); the tugboat page has a drag-to-rotate viewer (`components/ShipViewer.tsx`). three.js only loads in the browser, after the page; without WebGL a photo is shown. Reduced-motion users get a still scene.
+- **Footage**: `public/video/ferryjo-ponton.mp4` (owner video, re-encoded to 1280 px, no audio) grows to full screen on scroll (`components/ScrollVideo.tsx`).
+- **Logo**: `components/Logo.tsx`, the official wordmark from `maza_TEKST.pdf` as inline SVG ("MAZA" follows the text colour, "SHIPPING" is always brand blue).
+
 ## Pages
 
 | Route | Content |
@@ -67,6 +75,5 @@ Skip link, keyboard-operable menus, dropdown and lightbox (Esc / arrow keys), vi
 See `content/site.ts` (`// CONFIRM`) and the list delivered with this build:
 1. WhatsApp on +31 6 52 63 83 68 (set `whatsapp: null` to hide)
 2. KvK number 53368878 (from the public register; set `kvk: null` to hide), legal entity name, BTW number
-3. Official logo file (a typographic wordmark is used in `components/Logo.tsx` until supplied)
-4. Brokerage division wording (new content; no client names, partners or figures were invented)
-5. Privacy notice wording and retention period
+3. Brokerage division wording (new content; no client names, partners or figures were invented)
+4. Privacy notice wording and retention period

@@ -5,6 +5,7 @@ import PageHero from "@/components/PageHero";
 import Photo from "@/components/Photo";
 import SectionHeading from "@/components/SectionHeading";
 import SpecTable from "@/components/SpecTable";
+import ShipViewer from "@/components/ShipViewer";
 import Gallery from "@/components/Gallery";
 import Faq from "@/components/Faq";
 import EnquiryForm from "@/components/EnquiryForm";
@@ -53,8 +54,8 @@ export default async function TugboatPage({ params }: Props) {
     <>
       <JsonLd data={jsonLd} />
       <PageHero
-        photo="arklowAssist"
-        alt={t.photos.arklowAssist}
+        photo="ferryjoAmsterdam"
+        alt={t.photos.ferryjoAmsterdam}
         eyebrow={p.hero.eyebrow}
         title={p.hero.title}
         sub={p.hero.sub}
@@ -76,7 +77,7 @@ export default async function TugboatPage({ params }: Props) {
       />
 
       {/* Intro */}
-      <section id="content" className="bg-white py-24 sm:py-32">
+      <section id="content" className="bg-bone py-24 sm:py-32">
         <div className="container-x grid items-center gap-14 lg:grid-cols-2 lg:gap-20">
           <div>
             <SectionHeading label={p.intro.label} title={p.intro.title} />
@@ -96,6 +97,19 @@ export default async function TugboatPage({ params }: Props) {
             <div className="relative col-span-2 row-span-3 overflow-hidden rounded-2xl">
               <Photo name="escortPort" alt={t.photos.escortPort} sizes="20vw" />
             </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Interactive 3D model */}
+      <section className="bg-navy py-24 text-white sm:py-32">
+        <div className="container-x">
+          <div className="grid gap-8 lg:grid-cols-[1fr_1fr] lg:items-end">
+            <SectionHeading label={p.viewer.label} title={p.viewer.title} tone="light" />
+            <p data-reveal className="text-lg leading-relaxed text-white/70">{p.viewer.text}</p>
+          </div>
+          <div data-reveal className="mt-12">
+            <ShipViewer hint={p.viewer.hint} fallback={t.home.ship.fallback} />
           </div>
         </div>
       </section>
@@ -142,7 +156,7 @@ export default async function TugboatPage({ params }: Props) {
       </section>
 
       {/* Gallery */}
-      <section className="bg-white py-24 sm:py-32">
+      <section className="bg-bone py-24 sm:py-32">
         <div className="container-x">
           <SectionHeading label={p.gallery.label} title={p.gallery.title} />
           <div className="mt-14">
@@ -167,7 +181,7 @@ export default async function TugboatPage({ params }: Props) {
       </section>
 
       {/* FAQ */}
-      <section id="faq" className="scroll-mt-20 bg-white py-24 sm:py-32">
+      <section id="faq" className="scroll-mt-20 bg-bone py-24 sm:py-32">
         <div className="container-x grid gap-12 lg:grid-cols-[0.8fr_1.2fr] lg:gap-20">
           <SectionHeading label={p.faq.label} title={p.faq.title} />
           <Faq items={p.faq.items} />
@@ -175,7 +189,7 @@ export default async function TugboatPage({ params }: Props) {
       </section>
 
       {/* Cross-sell brokerage */}
-      <section className="bg-white pb-24 sm:pb-32">
+      <section className="bg-bone pb-24 sm:pb-32">
         <div className="container-x">
           <Link
             href={href(locale, "brokerage")}

@@ -52,9 +52,16 @@ export const photos = {
   towing: { key: "towing", src: src("45c045d69_svc_sleep.jpg") },
   launch: { key: "launch", src: src("cae5a3688_svc_tewater.jpg") },
   iceWork: { key: "iceWork", src: src("d15609f43_svc_ijs.jpg") },
+  // Self-hosted photos supplied by the owner (public/images)
+  ferryjoAmsterdam: { key: "ferryjoAmsterdam", src: "/images/ferryjo-amsterdam.jpg" },
+  deckTowClose: { key: "deckTowClose", src: "/images/deck-tow-close.jpg" },
+  deckTowSea: { key: "deckTowSea", src: "/images/deck-tow-sea.jpg" },
 } satisfies Record<string, Photo>;
 
 export type PhotoKey = keyof typeof photos;
+
+/** Owner-supplied footage: Ferry-Jo towing a loaded pontoon (public/video). */
+export const video = { src: "/video/ferryjo-ponton.mp4", poster: "/video/ferryjo-ponton.jpg" };
 
 export const ogImage =
   "https://media.base44.com/images/public/6ae120e2d6811e952d184a8f/e43dd3741_logo.png/v1/fill/w_1200,h_630/e43dd3741_logo.png";
@@ -99,6 +106,9 @@ export const ferryJo = {
     { key: "ais", value: "Furuno FA150" },
   ] satisfies SpecRow[],
   gallery: [
+    "ferryjoAmsterdam",
+    "deckTowClose",
+    "deckTowSea",
     "canalPush",
     "aerialTow",
     "arklowAssist",

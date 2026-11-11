@@ -8,13 +8,16 @@ type Props = { locale: Locale; t: Dictionary };
 
 export default function Footer({ locale, t }: Props) {
   const year = new Date().getFullYear();
-  const col = "text-[0.7rem] font-semibold tracking-[0.2em] text-white/45 uppercase";
+  const col = "hud text-teal-light";
   const link = "text-white/75 transition-colors hover:text-white";
   return (
     <footer className="bg-navy text-white">
+      <div aria-hidden className="overflow-hidden border-b border-white/10">
+        <p className="display translate-y-[18%] text-center text-[19vw] leading-none text-white/[0.04] select-none">MAZA</p>
+      </div>
       <div className="container-x grid gap-12 border-t border-white/10 py-16 sm:grid-cols-2 lg:grid-cols-[1.5fr_1fr_1fr_1.3fr] lg:py-20">
         <div>
-          <Logo />
+          <Logo className="h-14 w-auto text-white" />
           <p className="mt-6 max-w-xs leading-relaxed text-white/60">{t.footer.tagline}</p>
           <p className="mt-6 text-[0.7rem] font-semibold tracking-[0.22em] text-white/35 uppercase">{company.geo.label} · Urk</p>
         </div>

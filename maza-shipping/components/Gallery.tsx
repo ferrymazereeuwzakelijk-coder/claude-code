@@ -11,8 +11,11 @@ type Props = {
   labels: { open: string; close: string; prev: string; next: string };
 };
 
-// Bento layout pattern for 12 photos on large screens
+// Bento layout pattern on large screens (the two upright deck photos span two rows)
 const spans = [
+  "lg:col-span-2 lg:row-span-2",
+  "lg:row-span-2",
+  "lg:row-span-2",
   "lg:col-span-2 lg:row-span-2",
   "",
   "",

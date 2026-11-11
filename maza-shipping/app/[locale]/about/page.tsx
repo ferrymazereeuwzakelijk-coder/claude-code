@@ -28,7 +28,7 @@ export default async function AboutPage({ params }: Props) {
       <PageHero photo="aboutHeader" alt={t.photos.aboutHeader} eyebrow={a.hero.eyebrow} title={a.hero.title} sub={a.hero.sub} />
 
       {/* Story */}
-      <section id="content" className="bg-white py-24 sm:py-32">
+      <section id="content" className="bg-bone py-24 sm:py-32">
         <div className="container-x grid gap-14 lg:grid-cols-2 lg:gap-20">
           <div>
             <SectionHeading label={a.story.label} title={a.story.title} />

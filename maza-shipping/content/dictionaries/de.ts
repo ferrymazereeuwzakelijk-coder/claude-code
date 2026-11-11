@@ -84,6 +84,9 @@ const de: Dictionary = {
     towing: "Ferry-Jo bei einem Schleppauftrag",
     launch: "Ferry-Jo längsseits eines frisch zu Wasser gelassenen Frachtschiffs",
     iceWork: "Ferry-Jo hält eine Wasserstraße im Eis offen",
+    ferryjoAmsterdam: "Die Ferry-Jo an einem Stadtkai, schwarzer Rumpf und weißes Steuerhaus mit rot-weißen Streifen",
+    deckTowClose: "Blick vom Achterdeck der Ferry-Jo: ein Seeschiff an der Schleppleine",
+    deckTowSea: "Blick vom Achterdeck der Ferry-Jo, während ein Frachtschiff aufs offene Wasser fährt",
   },
 
   home: {
@@ -146,6 +149,23 @@ const de: Dictionary = {
       title: ["Ihr Projekt.", "Unsere maritime Lösung."],
       text: "Sie suchen einen Schlepper, einen Ponton, ein Arbeitsboot oder einen zuverlässigen maritimen Partner? Sagen Sie uns, was Sie brauchen.",
     },
+    ship: {
+      hint: "Scrollen Sie einmal um die Ferry-Jo herum",
+      hud: { local: "Ortszeit", vessel: "Schiff", status: "Einsatzbereit" },
+      callouts: [
+        { anchor: "length", label: "Länge", text: "Kompakt genug für enge Werftbecken und Kanäle." },
+        { anchor: "engine", label: "Scania-Hauptmotor", text: "Die Kraft zum Schleppen, Schieben und Eisbrechen." },
+        { anchor: "stern", label: "Pfahlzug", text: "Zugkraft am Schlepphaken achtern." },
+        { anchor: "wheelhouse", label: "Geschwindigkeit", text: "Mit Alphatron-Radar und Furuno-AIS auch bei schlechter Sicht und nachts auf Kurs." },
+      ],
+      final: { title: ["Ferry-Jo.", "Bereit für den Einsatz."], text: "Schleppen, Schieben, Stapelläufe, Eisbrechen und Schiffsbegleitung in den gesamten Niederlanden." },
+      fallback: "3D-Ansicht ist auf diesem Gerät nicht verfügbar.",
+    },
+    video: {
+      label: "Auf dem Wasser",
+      title: ["Schwere Arbeit.", "Ruhige Hand."],
+      text: "Die Ferry-Jo schleppt einen mit Gerät beladenen Ponton durch den Hafen. Das ist die Arbeit, die wir jede Woche machen.",
+    },
   },
 
   tug: {
@@ -196,6 +216,12 @@ const de: Dictionary = {
         { title: "Schiffsbegleitung", text: "Begleiten und Unterstützen von Schiffen bei Fahrt und Manövern." },
         { title: "Kombinierte Aufträge", text: "Zum Beispiel ein Stapellauf mit anschließendem Verholen zum Ausrüstungskai." },
       ],
+    },
+    viewer: {
+      label: "3D-Modell",
+      title: "Einmal um die Ferry-Jo herum",
+      text: "Ziehen Sie, um das Schiff zu drehen. Steuerhaus mit Radar und AIS, Maschinenaufbau mit dem Scania-Hauptmotor, Schlepphaken achtern und Reifenfender rundum.",
+      hint: "Zum Drehen ziehen",
     },
     gallery: { label: "Fotogalerie", title: "Die Ferry-Jo im Einsatz", open: "Foto öffnen", close: "Schließen", prev: "Vorheriges Foto", next: "Nächstes Foto" },
     availability: {

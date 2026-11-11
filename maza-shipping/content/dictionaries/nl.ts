@@ -84,6 +84,9 @@ const nl: Dictionary = {
     towing: "Ferry-Jo tijdens een sleepklus",
     launch: "Ferry-Jo langszij een pas te water gelaten vrachtschip",
     iceWork: "Ferry-Jo houdt een vaarweg open in het ijs",
+    ferryjoAmsterdam: "De Ferry-Jo afgemeerd aan een stadskade, zwarte romp en wit stuurhuis met rood-witte strepen",
+    deckTowClose: "Uitzicht vanaf het achterdek van de Ferry-Jo: een zeeschip aan de sleeplijn",
+    deckTowSea: "Uitzicht vanaf het achterdek van de Ferry-Jo terwijl een vrachtschip naar open water vaart",
   },
 
   home: {
@@ -146,6 +149,23 @@ const nl: Dictionary = {
       title: ["Uw project.", "Onze maritieme oplossing."],
       text: "Op zoek naar een sleepboot, ponton, werkboot of een betrouwbare maritieme partner? Vertel ons wat u nodig heeft.",
     },
+    ship: {
+      hint: "Scroll en loop om de Ferry-Jo heen",
+      hud: { local: "Lokale tijd", vessel: "Schip", status: "Klaar voor de klus" },
+      callouts: [
+        { anchor: "length", label: "Lengte", text: "Compact genoeg voor krappe werfbassins en kanalen." },
+        { anchor: "engine", label: "Scania hoofdmotor", text: "Kracht om te slepen, te duwen en ijs te breken." },
+        { anchor: "stern", label: "Trekkracht", text: "Bollard pull op de sleephaak achterop." },
+        { anchor: "wheelhouse", label: "Snelheid", text: "Met Alphatron-radar en Furuno-AIS ook bij slecht zicht en 's nachts op koers." },
+      ],
+      final: { title: ["Ferry-Jo.", "Klaar voor de klus."], text: "Slepen, duwen, tewaterlatingen, ijsbreken en scheepsbegeleiding in heel Nederland." },
+      fallback: "3D-weergave is niet beschikbaar op dit apparaat.",
+    },
+    video: {
+      label: "Op het water",
+      title: ["Zwaar werk.", "Rustig gevaren."],
+      text: "De Ferry-Jo sleept een ponton vol materieel door de haven. Dit is het werk dat we elke week doen.",
+    },
   },
 
   tug: {
@@ -196,6 +216,12 @@ const nl: Dictionary = {
         { title: "Scheepsbegeleiding", text: "Begeleiden en assisteren van schepen tijdens het varen en manoeuvreren." },
         { title: "Gecombineerde opdrachten", text: "Bijvoorbeeld een tewaterlating gevolgd door het verhalen naar de afbouwkade." },
       ],
+    },
+    viewer: {
+      label: "3D-model",
+      title: "Loop om de Ferry-Jo heen",
+      text: "Sleep om het schip te draaien. Stuurhuis met radar en AIS, machinekamer met de Scania-hoofdmotor, sleephaak achterop en banden rondom.",
+      hint: "Sleep om te draaien",
     },
     gallery: { label: "Fotogalerij", title: "De Ferry-Jo aan het werk", open: "Foto openen", close: "Sluiten", prev: "Vorige foto", next: "Volgende foto" },
     availability: {

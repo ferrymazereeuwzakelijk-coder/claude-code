@@ -65,12 +65,12 @@ export default function Header({ locale, nav }: Props) {
   const servicesActive = services.some((s) => isActive(s.to));
 
   const linkCls = (active: boolean) =>
-    `relative py-2 text-[0.92rem] font-semibold transition-colors hover:text-white ${active ? "text-white" : "text-white/75"} after:absolute after:inset-x-0 after:-bottom-0.5 after:h-0.5 after:origin-left after:bg-signal after:transition-transform ${active ? "after:scale-x-100" : "after:scale-x-0 hover:after:scale-x-100"}`;
+    `relative py-2 font-mono text-[0.76rem] font-medium tracking-[0.14em] uppercase transition-colors hover:text-white ${active ? "text-white" : "text-white/75"} after:absolute after:inset-x-0 after:-bottom-0.5 after:h-0.5 after:origin-left after:bg-teal after:transition-transform ${active ? "after:scale-x-100" : "after:scale-x-0 hover:after:scale-x-100"}`;
 
   return (
     <header
       className={`fixed inset-x-0 top-0 z-50 transition-all duration-500 ${
-        solid ? "bg-navy/95 shadow-[0_10px_40px_-20px_rgba(0,0,0,0.6)] backdrop-blur-md" : "bg-transparent"
+        solid ? "bg-navy/85 shadow-[0_10px_40px_-20px_rgba(0,0,0,0.6)] backdrop-blur-xl" : "bg-gradient-to-b from-navy/70 to-transparent"
       }`}
     >
       <a href="#main" className="sr-only focus:not-sr-only focus:absolute focus:top-3 focus:left-3 focus:rounded focus:bg-white focus:px-4 focus:py-2 focus:text-navy">
@@ -78,7 +78,7 @@ export default function Header({ locale, nav }: Props) {
       </a>
       <div className={`container-x flex items-center justify-between transition-all duration-500 ${solid ? "h-[72px]" : "h-[88px]"}`}>
         <Link href={href(locale, "home")} aria-label="Maza Shipping – home" className="shrink-0">
-          <Logo />
+          <Logo title="Maza Shipping" className={`w-auto text-white transition-all duration-500 ${solid ? "h-8" : "h-9 sm:h-11"}`} />
         </Link>
 
         {/* Desktop */}
@@ -139,7 +139,7 @@ export default function Header({ locale, nav }: Props) {
 
         <div className="hidden items-center gap-6 text-white lg:flex">
           <LanguageSwitcher locale={locale} label={nav.language} />
-          <Link href={href(locale, "contact", "quote")} className="btn-signal min-h-11 px-5 text-sm">
+          <Link href={href(locale, "contact", "quote")} className="btn-signal min-h-11 px-5">
             {nav.requestQuote}
           </Link>
         </div>
@@ -155,7 +155,7 @@ export default function Header({ locale, nav }: Props) {
             aria-expanded={menuOpen}
             aria-controls="mobile-menu"
             aria-label={menuOpen ? nav.closeMenu : nav.openMenu}
-            className="grid h-11 w-11 place-items-center rounded-full border border-white/25 text-white"
+            className="grid h-11 w-11 place-items-center border border-white/25 text-white"
           >
             {menuOpen ? <LuX aria-hidden className="h-5 w-5" /> : <LuMenu aria-hidden className="h-5 w-5" />}
           </button>
@@ -178,7 +178,7 @@ export default function Header({ locale, nav }: Props) {
             <Link
               key={l.to}
               href={l.to}
-              className="flex items-center justify-between border-b border-white/10 py-5 font-heading text-2xl font-bold text-white"
+              className="flex items-center justify-between border-b border-white/10 py-5 display text-3xl text-white"
             >
               <span>
                 {l.label}

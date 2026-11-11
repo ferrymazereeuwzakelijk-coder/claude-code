@@ -50,7 +50,7 @@ export default async function ContactPage({ params }: Props) {
         </div>
       </section>
 
-      <section className="bg-white py-24 sm:py-28">
+      <section className="bg-bone py-24 sm:py-28">
         <div className="container-x">
           <h2 data-reveal className="mb-8 text-3xl font-extrabold text-navy">{c.map.title}</h2>
           <div data-reveal>

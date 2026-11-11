@@ -1,15 +1,13 @@
 import Link from "next/link";
 import type { Metadata } from "next";
-import {
-  LuAnchor, LuArrowRight, LuArrowUpRight, LuHandshake, LuLayers, LuPhone, LuRoute, LuShip, LuClipboardList,
-} from "react-icons/lu";
-import PageHero from "@/components/PageHero";
+import { LuArrowRight, LuArrowUpRight, LuPhone } from "react-icons/lu";
+import ShipHero, { type Callout } from "@/components/ShipHero";
+import ScrollVideo from "@/components/ScrollVideo";
 import Photo from "@/components/Photo";
-import SectionHeading from "@/components/SectionHeading";
-import CtaBand from "@/components/CtaBand";
+import Logo from "@/components/Logo";
 import { getDictionary } from "@/content/dictionaries";
 import { href, isLocale, defaultLocale, type Locale } from "@/content/i18n";
-import { company, ferryJo, localizeSpec } from "@/content/site";
+import { company, ferryJo, localizeSpec, photos, video } from "@/content/site";
 import { pageMetadata } from "@/lib/seo";
 
 type Props = { params: Promise<{ locale: string }> };
@@ -19,30 +17,37 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   return pageMetadata(locale as Locale, "home", "home");
 }
 
-const solutionIcons = [LuShip, LuRoute, LuLayers, LuAnchor, LuHandshake, LuClipboardList];
-
 export default async function HomePage({ params }: Props) {
   const { locale: l } = await params;
   const locale = (isLocale(l) ? l : defaultLocale) as Locale;
   const t = getDictionary(locale);
   const h = t.home;
+  const u = t.common.units;
 
-  const vesselStats = [
-    { label: t.tug.specs.labels.length, value: localizeSpec(ferryJo.lengthM, t.common.units), unit: "m" },
-    { label: t.tug.specs.labels.mainEngine, value: ferryJo.powerHp, unit: t.common.units.hp },
-    { label: t.tug.specs.labels.bollardPull, value: ferryJo.bollardPullT, unit: "t" },
+  // Spec values shown in the 3D callouts, in the same order as the dictionary entries
+  const values: Pick<Callout, "value" | "unit">[] = [
+    { value: localizeSpec(ferryJo.lengthM, u), unit: "m" },
+    { value: ferryJo.powerHp, unit: u.hp },
+    { value: ferryJo.bollardPullT, unit: "t" },
+    { value: localizeSpec("20.5", u), unit: "km/h" },
   ];
+  const callouts: Callout[] = h.ship.callouts.map((c, i) => ({ ...c, ...values[i] }));
+
+  const marquee = t.tug.capabilities.items.map((c) => c.title).concat(t.nav.brokerage);
 
   return (
     <>
-      <PageHero
-        size="full"
-        photo="canalPush"
-        alt={t.photos.canalPush}
+      <ShipHero
         eyebrow={h.hero.eyebrow}
         title={h.hero.title}
         sub={h.hero.sub}
-        scrollLabel={h.hero.scroll}
+        hint={h.ship.hint}
+        hud={h.ship.hud}
+        callouts={callouts}
+        final={h.ship.final}
+        fallbackText={h.ship.fallback}
+        fallbackImage={{ src: photos.ferryjoAmsterdam.src, alt: t.photos.ferryjoAmsterdam }}
+        coords={company.geo.label}
         actions={
           <>
             <a href="#content" className="btn-signal">
@@ -53,167 +58,164 @@ export default async function HomePage({ params }: Props) {
             </Link>
           </>
         }
+        finalActions={
+          <>
+            <Link href={href(locale, "tugboat", "request")} className="btn-signal">
+              {t.common.requestFerryJo} <LuArrowRight aria-hidden className="h-4 w-4" />
+            </Link>
+            <Link href={href(locale, "tugboat")} className="btn-ghost-light">
+              {t.common.viewVessel}
+            </Link>
+          </>
+        }
       />
 
-      {/* 2 — Core services */}
-      <section id="content" className="scroll-mt-20 bg-white py-24 sm:py-32">
-        <div className="container-x">
-          <SectionHeading label={h.core.label} title={h.core.title} />
-          <div className="mt-14 grid gap-5 lg:grid-cols-2 lg:gap-6">
-            {[
-              { n: "01", ...h.core.tug, to: href(locale, "tugboat"), photo: "arklowAssist" as const, cta: t.nav.tugboat },
-              { n: "02", ...h.core.broker, to: href(locale, "brokerage"), photo: "aerialBargeTwoTugs" as const, cta: t.nav.brokerage },
-            ].map((c, i) => (
-              <Link
-                key={c.n}
-                href={c.to}
-                data-reveal
-                style={{ ["--reveal-delay" as string]: `${i * 120}ms` }}
-                className="group relative isolate flex min-h-[460px] flex-col justify-end overflow-hidden rounded-3xl bg-navy p-7 text-white sm:min-h-[560px] sm:p-10"
-              >
-                <div className="absolute inset-0 -z-10 transition-transform duration-[1.2s] ease-out-expo group-hover:scale-105">
-                  <Photo name={c.photo} alt={t.photos[c.photo]} sizes="(min-width:1024px) 50vw, 100vw" />
-                </div>
-                <div className="absolute inset-0 -z-10 bg-gradient-to-t from-navy via-navy/55 to-navy/5" />
-                <span className="absolute top-7 left-7 font-mono text-sm text-white/70 sm:top-10 sm:left-10">{c.n}</span>
-                <span className="absolute top-6 right-6 grid h-14 w-14 place-items-center rounded-full border border-white/30 backdrop-blur-sm transition-all duration-500 group-hover:rotate-45 group-hover:border-signal group-hover:bg-signal group-hover:text-navy sm:top-9 sm:right-9">
-                  <LuArrowUpRight aria-hidden className="h-6 w-6" />
+      {/* Marquee */}
+      <div aria-hidden className="relative overflow-hidden border-y border-white/10 bg-navy py-6 text-white sm:py-8">
+        <div className="flex w-max animate-marquee">
+          {[0, 1].map((k) => (
+            <div key={k} className="flex shrink-0 items-center">
+              {marquee.map((m, i) => (
+                <span key={m} className="display flex items-center text-4xl sm:text-6xl">
+                  <span className={i % 2 ? "outline-text text-white/60" : ""}>{m}</span>
+                  <span className="mx-8 inline-block h-3 w-3 rotate-45 bg-teal sm:mx-12" />
                 </span>
-                <h3 className="text-3xl font-extrabold uppercase sm:text-5xl">{c.title}</h3>
-                <p className="mt-4 max-w-md text-lg text-white/80">{c.text}</p>
-                <span className="mt-8 inline-flex items-center gap-2 font-heading text-sm font-bold tracking-wide text-signal">
+              ))}
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Divisions */}
+      <section id="content" className="scroll-mt-20 bg-navy pt-24 pb-10 text-white sm:pt-32">
+        <div className="container-x">
+          <div className="flex flex-col justify-between gap-6 lg:flex-row lg:items-end">
+            <div data-reveal>
+              <p className="eyebrow text-teal-light">{h.core.label}</p>
+              <h2 className="display mt-6 max-w-4xl text-[2.3rem] sm:text-7xl lg:text-8xl">{h.core.title}</h2>
+            </div>
+            <p data-reveal className="hud max-w-xs text-white/45">
+              {company.address.city} · NL — {company.geo.label}
+            </p>
+          </div>
+        </div>
+        <div className="mt-16 grid gap-px bg-white/10 lg:grid-cols-2">
+          {[
+            { n: "01", ...h.core.tug, to: href(locale, "tugboat"), img: photos.ferryjoAmsterdam.src, alt: t.photos.ferryjoAmsterdam },
+            { n: "02", ...h.core.broker, to: href(locale, "brokerage"), img: video.poster, alt: h.video.text },
+          ].map((c) => (
+            <Link
+              key={c.n}
+              href={c.to}
+              className="group relative isolate flex min-h-[78svh] flex-col justify-between overflow-hidden bg-navy p-6 sm:p-12"
+            >
+              <div className="absolute inset-0 -z-10 opacity-60 transition-all duration-[1.4s] ease-out-expo group-hover:scale-105 group-hover:opacity-90">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={c.img} alt={c.alt} loading="lazy" className="h-full w-full object-cover grayscale-[35%] transition duration-700 group-hover:grayscale-0" />
+              </div>
+              <div className="absolute inset-0 -z-10 bg-gradient-to-t from-navy via-navy/50 to-navy/70" />
+              <div className="flex items-start justify-between">
+                <span className="display text-[7rem] text-white/15 transition-colors duration-700 group-hover:text-teal sm:text-[10rem]">{c.n}</span>
+                <span className="grid h-16 w-16 place-items-center bg-white/10 backdrop-blur transition-all duration-500 group-hover:rotate-45 group-hover:bg-signal">
+                  <LuArrowUpRight aria-hidden className="h-7 w-7" />
+                </span>
+              </div>
+              <div>
+                <h3 className="display text-[2.1rem] sm:text-6xl xl:text-7xl">{c.title}</h3>
+                <p className="mt-5 max-w-md text-lg text-white/80">{c.text}</p>
+                <span className="hud mt-8 inline-flex items-center gap-2 text-teal-light">
                   {t.common.learnMore} <LuArrowRight aria-hidden className="h-4 w-4 transition-transform group-hover:translate-x-1" />
                 </span>
-              </Link>
-            ))}
-          </div>
+              </div>
+            </Link>
+          ))}
         </div>
       </section>
 
-      {/* 3 — About */}
-      <section className="bg-mist py-24 sm:py-32">
-        <div className="container-x grid items-center gap-14 lg:grid-cols-2 lg:gap-20">
-          <div data-reveal className="relative">
-            <div className="relative aspect-[4/5] overflow-hidden rounded-3xl sm:aspect-[5/4] lg:aspect-[4/5]">
-              <Photo name="aerialUnderway" alt={t.photos.aerialUnderway} sizes="(min-width:1024px) 45vw, 100vw" />
+      {/* Footage */}
+      <ScrollVideo src={video.src} poster={video.poster} label={h.video.label} title={h.video.title} text={h.video.text} />
+
+      {/* About */}
+      <section className="relative overflow-hidden bg-bone py-24 sm:py-36">
+        <div className="container-x grid items-center gap-16 lg:grid-cols-[1fr_1.1fr] lg:gap-24">
+          <div data-reveal className="relative mx-auto grid w-full max-w-lg grid-cols-2 gap-4">
+            <div className="relative aspect-[9/20] overflow-hidden rounded-3xl">
+              <Photo name="deckTowClose" alt={t.photos.deckTowClose} sizes="(min-width:1024px) 22vw, 45vw" />
             </div>
-            <div className="absolute -bottom-8 left-6 right-6 rounded-2xl bg-navy p-6 text-white shadow-2xl sm:right-auto sm:left-auto sm:-right-6 sm:w-80 lg:-right-10">
-              <p className="text-[0.7rem] font-semibold tracking-[0.2em] text-teal-light uppercase">{t.common.contactPerson}</p>
-              <p className="mt-2 font-heading text-xl font-bold">{company.contactPerson}</p>
-              <a href={company.phoneHref} className="mt-4 inline-flex items-center gap-2 text-white/80 hover:text-white">
-                <LuPhone aria-hidden className="h-4 w-4 text-signal" /> {company.phoneDisplay}
-              </a>
+            <div className="relative mt-16 aspect-[9/20] overflow-hidden rounded-3xl">
+              <Photo name="deckTowSea" alt={t.photos.deckTowSea} sizes="(min-width:1024px) 22vw, 45vw" />
+            </div>
+            <div className="hud absolute -bottom-6 left-1/2 w-max -translate-x-1/2 bg-navy px-4 py-3 text-white">
+              <span className="text-teal-light">POV</span> · {t.common.contactPerson.toUpperCase()}: {company.contactPerson.toUpperCase()}
             </div>
           </div>
-          <div className="pt-8 lg:pt-0">
-            <SectionHeading label={h.about.label} title={h.about.title} />
+          <div>
+            <p data-reveal className="eyebrow text-teal">{h.about.label}</p>
+            <h2 data-reveal className="display mt-6 text-[2.6rem] text-navy sm:text-6xl lg:text-7xl">{h.about.title}</h2>
             {h.about.paras.map((p) => (
               <p key={p.slice(0, 24)} data-reveal className="mt-6 text-lg leading-relaxed text-slate">
                 {p}
               </p>
             ))}
-            <div data-reveal className="mt-10">
-              <Link href={href(locale, "about")} className="btn-outline-dark">
+            <div data-reveal className="mt-10 flex flex-wrap gap-3">
+              <Link href={href(locale, "about")} className="btn-dark">
                 {h.about.cta} <LuArrowRight aria-hidden className="h-4 w-4" />
               </Link>
+              <a href={company.phoneHref} className="btn-outline-dark">
+                <LuPhone aria-hidden className="h-4 w-4" /> {company.phoneDisplay}
+              </a>
             </div>
           </div>
         </div>
       </section>
 
-      {/* 4 — Featured vessel */}
-      <section className="relative overflow-hidden bg-navy text-white">
-        <div className="grid lg:grid-cols-[1.15fr_1fr]">
-          <div className="relative min-h-[380px] sm:min-h-[520px] lg:min-h-[720px]">
-            <Photo name="iceDusk" alt={t.photos.iceDusk} sizes="(min-width:1024px) 55vw, 100vw" />
-            <div className="absolute inset-0 bg-gradient-to-t from-navy/80 to-transparent lg:bg-gradient-to-r lg:from-transparent lg:via-transparent lg:to-navy" />
-          </div>
-          <div className="flex flex-col justify-center px-5 py-16 sm:px-10 lg:py-24 lg:pr-16 lg:pl-6 xl:pr-24">
-            <p data-reveal className="eyebrow text-teal-light">{h.vessel.label}</p>
-            <h2 data-reveal className="mt-5 text-6xl font-extrabold uppercase sm:text-8xl">{h.vessel.title}</h2>
-            <p data-reveal className="mt-6 max-w-lg text-lg leading-relaxed text-white/70">{h.vessel.text}</p>
-            <dl data-reveal className="mt-10 grid grid-cols-3 gap-px overflow-hidden rounded-2xl bg-white/10">
-              {vesselStats.map((s) => (
-                <div key={s.label} className="bg-navy p-4 sm:p-6">
-                  <dt className="text-[0.66rem] font-semibold tracking-[0.14em] text-white/50 uppercase">{s.label}</dt>
-                  <dd className="mt-2 font-heading text-3xl font-extrabold sm:text-4xl">
-                    {s.value}
-                    <span className="ml-1 text-base text-teal-light">{s.unit}</span>
-                  </dd>
-                </div>
-              ))}
-            </dl>
-            <p data-reveal className="mt-5 text-sm text-white/45">
-              Scania · CCR2 · {t.common.homePort} {ferryJo.homePort} · EU {ferryJo.euNumber}
-            </p>
-            <div data-reveal className="mt-10 flex flex-wrap gap-3">
-              <Link href={href(locale, "tugboat")} className="btn-signal">
-                {t.common.viewVessel} <LuArrowRight aria-hidden className="h-4 w-4" />
-              </Link>
-              <Link href={href(locale, "tugboat", "request")} className="btn-ghost-light">
-                {t.common.requestFerryJo}
-              </Link>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* 5 — Solutions grid */}
-      <section className="bg-white py-24 sm:py-32">
+      {/* Solutions index */}
+      <section className="bg-bone pb-24 sm:pb-36">
         <div className="container-x">
-          <div className="flex flex-col justify-between gap-8 lg:flex-row lg:items-end">
-            <SectionHeading label={h.solutions.label} title={h.solutions.title} />
+          <div className="flex flex-col justify-between gap-8 border-b border-navy/15 pb-10 lg:flex-row lg:items-end">
+            <div data-reveal>
+              <p className="eyebrow text-teal">{h.solutions.label}</p>
+              <h2 className="display mt-6 max-w-4xl text-[2.6rem] sm:text-6xl lg:text-7xl">{h.solutions.title}</h2>
+            </div>
             <Link data-reveal href={href(locale, "brokerage")} className="btn-outline-dark self-start lg:self-auto">
               {t.nav.brokerage} <LuArrowRight aria-hidden className="h-4 w-4" />
             </Link>
           </div>
-          <ul className="mt-14 grid gap-px overflow-hidden rounded-3xl border border-line bg-line sm:grid-cols-2 lg:grid-cols-3">
-            {h.solutions.items.map((s, i) => {
-              const Icon = solutionIcons[i];
-              return (
-                <li
-                  key={s.title}
-                  data-reveal
-                  style={{ ["--reveal-delay" as string]: `${(i % 3) * 90}ms` }}
-                  className="group relative bg-white p-8 transition-colors duration-500 hover:bg-navy sm:p-10"
-                >
-                  <div className="flex items-start justify-between">
-                    <span className="grid h-14 w-14 place-items-center rounded-2xl bg-mist text-teal transition-colors duration-500 group-hover:bg-teal group-hover:text-white">
-                      <Icon aria-hidden className="h-6 w-6" />
-                    </span>
-                    <span className="font-mono text-xs text-slate/60 group-hover:text-white/40">{String(i + 1).padStart(2, "0")}</span>
-                  </div>
-                  <h3 className="mt-8 text-xl font-bold text-navy transition-colors duration-500 group-hover:text-white">{s.title}</h3>
-                  <p className="mt-3 leading-relaxed text-slate transition-colors duration-500 group-hover:text-white/70">{s.text}</p>
-                </li>
-              );
-            })}
+          <ul>
+            {h.solutions.items.map((s, i) => (
+              <li key={s.title} data-reveal className="group relative isolate border-b border-navy/15">
+                <span className="absolute inset-0 -z-10 origin-bottom scale-y-0 bg-navy transition-transform duration-500 ease-out-expo group-hover:scale-y-100" />
+                <div className="grid items-center gap-3 py-8 transition-colors duration-500 group-hover:text-white sm:grid-cols-[5rem_1fr_1fr_3rem] sm:gap-8 sm:px-4 sm:py-10">
+                  <span className="hud text-teal">{String(i + 1).padStart(2, "0")}</span>
+                  <h3 className="display text-[1.7rem] sm:text-5xl">{s.title}</h3>
+                  <p className="text-slate transition-colors duration-500 group-hover:text-white/70 sm:text-lg">{s.text}</p>
+                  <LuArrowUpRight aria-hidden className="hidden h-8 w-8 text-teal transition-transform duration-500 group-hover:rotate-45 sm:block" />
+                </div>
+              </li>
+            ))}
           </ul>
         </div>
       </section>
 
-      {/* 6 — Why */}
-      <section className="bg-mist py-24 sm:py-32">
-        <div className="container-x grid gap-14 lg:grid-cols-[1fr_1.25fr] lg:gap-20">
+      {/* Why */}
+      <section className="bg-navy py-24 text-white sm:py-36">
+        <div className="container-x grid gap-14 lg:grid-cols-[1fr_1.2fr] lg:gap-24">
           <div className="lg:sticky lg:top-32 lg:self-start">
-            <SectionHeading label={h.why.label} title={h.why.title} />
-            <div data-reveal className="relative mt-10 hidden aspect-[4/3] overflow-hidden rounded-3xl lg:block">
-              <Photo name="bowIce" alt={t.photos.bowIce} sizes="40vw" />
+            <p data-reveal className="eyebrow text-teal-light">{h.why.label}</p>
+            <h2 data-reveal className="display mt-6 text-[2.6rem] sm:text-6xl lg:text-7xl">{h.why.title}</h2>
+            <div data-reveal className="relative mt-10 hidden aspect-[16/10] overflow-hidden rounded-3xl lg:block">
+              <Photo name="ferryjoAmsterdam" alt={t.photos.ferryjoAmsterdam} sizes="40vw" className="object-[70%_50%]" />
             </div>
           </div>
-          <ol className="grid gap-4">
+          <ol className="grid gap-px bg-white/10">
             {h.why.items.map((w, i) => (
-              <li
-                key={w.title}
-                data-reveal
-                className="group flex gap-6 rounded-2xl border border-line bg-white p-7 transition-all duration-500 hover:-translate-y-0.5 hover:border-teal/40 hover:shadow-[0_20px_50px_-30px_rgba(7,24,39,0.45)] sm:p-8"
-              >
-                <span className="font-heading text-4xl font-extrabold text-teal/25 tabular-nums transition-colors group-hover:text-teal">
+              <li key={w.title} data-reveal className="group flex gap-6 bg-navy py-8 sm:gap-10 sm:py-10">
+                <span className="display text-5xl text-white/15 transition-colors duration-500 group-hover:text-signal sm:text-7xl">
                   {String(i + 1).padStart(2, "0")}
                 </span>
-                <div>
-                  <h3 className="text-xl font-bold text-navy">{w.title}</h3>
-                  <p className="mt-2 leading-relaxed text-slate">{w.text}</p>
+                <div className="pt-1">
+                  <h3 className="text-2xl font-extrabold">{w.title}</h3>
+                  <p className="mt-3 text-lg leading-relaxed text-white/65">{w.text}</p>
                 </div>
               </li>
             ))}
@@ -221,16 +223,29 @@ export default async function HomePage({ params }: Props) {
         </div>
       </section>
 
-      {/* 7 — CTA */}
-      <CtaBand
-        title={h.cta.title}
-        text={h.cta.text}
-        button={t.common.discussProject}
-        buttonHref={href(locale, "contact", "quote")}
-        callLabel={t.common.callMarc}
-        photo="aerialTow"
-        alt={t.photos.aerialTow}
-      />
+      {/* Call to action */}
+      <section className="relative isolate overflow-hidden bg-teal text-navy">
+        <Logo className="pointer-events-none absolute -right-[8%] -bottom-[18%] -z-10 w-[80%] text-navy opacity-[0.08]" />
+        <div className="container-x py-24 sm:py-36">
+          <p data-reveal className="eyebrow">{t.common.contactPerson}: {company.contactPerson}</p>
+          <h2 data-reveal className="display mt-8 text-[3rem] sm:text-8xl lg:text-[9rem]">
+            {h.cta.title.map((line, i) => (
+              <span key={line} className={`block ${i === h.cta.title.length - 1 ? "text-white" : ""}`}>{line}</span>
+            ))}
+          </h2>
+          <div data-reveal className="mt-12 grid gap-10 lg:grid-cols-[1fr_auto] lg:items-end">
+            <p className="max-w-xl text-lg text-navy/80 sm:text-xl">{h.cta.text}</p>
+            <div className="flex flex-wrap gap-3">
+              <Link href={href(locale, "contact", "quote")} className="btn-dark">
+                {t.common.discussProject} <LuArrowRight aria-hidden className="h-4 w-4" />
+              </Link>
+              <a href={company.phoneHref} className="btn bg-white text-navy hover:bg-navy hover:text-white">
+                <LuPhone aria-hidden className="h-4 w-4" /> {company.phoneDisplay}
+              </a>
+            </div>
+          </div>
+        </div>
+      </section>
     </>
   );
 }

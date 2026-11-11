@@ -1,7 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import type { ReactNode } from "react";
 import { notFound } from "next/navigation";
-import { Inter, Manrope } from "next/font/google";
+import { Archivo, Inter, JetBrains_Mono } from "next/font/google";
 import "../globals.css";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
@@ -11,7 +11,9 @@ import { getDictionary } from "@/content/dictionaries";
 import { isLocale, locales, href } from "@/content/i18n";
 import { SITE_URL, company, ogImage } from "@/content/site";
 
-const manrope = Manrope({ subsets: ["latin"], weight: ["500", "600", "700", "800"], variable: "--font-manrope", display: "swap" });
+// Archivo's width axis gives the wide, heavy display style of the wordmark
+const archivo = Archivo({ subsets: ["latin"], axes: ["wdth"], variable: "--font-archivo", display: "swap" });
+const mono = JetBrains_Mono({ subsets: ["latin"], weight: ["400", "500", "600"], variable: "--font-jetbrains", display: "swap" });
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter", display: "swap" });
 
 export const dynamicParams = false;
@@ -26,7 +28,7 @@ export const metadata: Metadata = {
   formatDetection: { telephone: true, email: true, address: true },
 };
 
-export const viewport: Viewport = { themeColor: "#071827", width: "device-width", initialScale: 1 };
+export const viewport: Viewport = { themeColor: "#07090b", width: "device-width", initialScale: 1 };
 
 type Props = { children: ReactNode; params: Promise<{ locale: string }> };
 
@@ -59,7 +61,7 @@ export default async function LocaleLayout({ children, params }: Props) {
   };
 
   return (
-    <html lang={locale} className={`${manrope.variable} ${inter.variable}`} suppressHydrationWarning>
+    <html lang={locale} className={`${archivo.variable} ${inter.variable} ${mono.variable}`} suppressHydrationWarning>
       <head>
         {/* Enables scroll-reveal styles only when JS runs (content stays visible without JS) */}
         <script dangerouslySetInnerHTML={{ __html: "document.documentElement.classList.add('js')" }} />

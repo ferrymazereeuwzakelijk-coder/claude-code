@@ -63,7 +63,7 @@ export default async function BrokeragePage({ params }: Props) {
       />
 
       {/* Intro */}
-      <section id="content" className="bg-white py-24 sm:py-32">
+      <section id="content" className="bg-bone py-24 sm:py-32">
         <div className="container-x grid gap-12 lg:grid-cols-[1.1fr_0.9fr] lg:gap-20">
           <SectionHeading label={b.intro.label} title={b.intro.title} />
           <div data-reveal className="lg:pt-14">

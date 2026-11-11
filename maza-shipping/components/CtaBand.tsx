@@ -20,9 +20,9 @@ export default function CtaBand({ title, text, button, buttonHref, callLabel, ph
       <div className="absolute inset-0 -z-10 opacity-35">
         <Photo name={photo} alt={alt} sizes="100vw" />
       </div>
-      <div className="absolute inset-0 -z-10 bg-gradient-to-br from-navy via-navy/90 to-marine/70" />
+      <div className="absolute inset-0 -z-10 bg-gradient-to-br from-navy via-navy/90 to-teal/30" />
       <div className="container-x grid items-end gap-10 py-24 sm:py-32 lg:grid-cols-[1.4fr_1fr]">
-        <h2 data-reveal className="text-[2.4rem] leading-[0.98] font-extrabold uppercase sm:text-6xl lg:text-7xl">
+        <h2 data-reveal className="display text-[2.6rem] sm:text-7xl lg:text-8xl">
           {title.map((l, i) => (
             <span key={l} className={`block ${i === title.length - 1 ? "text-teal-light" : ""}`}>
               {l}

@@ -84,6 +84,9 @@ const en = {
     towing: "Ferry-Jo during a towing operation",
     launch: "Ferry-Jo alongside a newly launched cargo ship",
     iceWork: "Ferry-Jo keeping a waterway open in ice",
+    ferryjoAmsterdam: "The Ferry-Jo moored along a city quay, black hull and white wheelhouse with red and white chevrons",
+    deckTowClose: "View from the Ferry-Jo's aft deck: a seagoing cargo ship on the tow line",
+    deckTowSea: "View from the Ferry-Jo's aft deck as a cargo ship heads out to open water",
   } satisfies Record<PhotoKey, string>,
 
   home: {
@@ -146,6 +149,23 @@ const en = {
       title: ["Your project.", "Our maritime solution."],
       text: "Looking for a tugboat, pontoon, workboat or reliable maritime partner? Tell us what you need.",
     },
+    ship: {
+      hint: "Scroll to walk around the Ferry-Jo",
+      hud: { local: "Local time", vessel: "Vessel", status: "Ready for work" },
+      callouts: [
+        { anchor: "length", label: "Length", text: "Compact enough for tight shipyard basins and canals." },
+        { anchor: "engine", label: "Scania main engine", text: "The power to tow, push and break ice." },
+        { anchor: "stern", label: "Bollard pull", text: "Pulling power on the towing hook aft." },
+        { anchor: "wheelhouse", label: "Speed", text: "With Alphatron radar and Furuno AIS on course in poor visibility and at night." },
+      ],
+      final: { title: ["Ferry-Jo.", "Ready for work."], text: "Towing, pushing, launches, icebreaking and vessel escort across the Netherlands." },
+      fallback: "3D view not available on this device.",
+    },
+    video: {
+      label: "On the water",
+      title: ["Heavy work.", "Calm hands."],
+      text: "The Ferry-Jo towing a pontoon loaded with equipment through the harbour. This is the work we do every week.",
+    },
   },
 
   tug: {
@@ -196,6 +216,12 @@ const en = {
         { title: "Vessel escort", text: "Escorting and assisting vessels while sailing and manoeuvring." },
         { title: "Combined assignments", text: "For example a launch followed by moving the vessel to its outfitting berth." },
       ],
+    },
+    viewer: {
+      label: "3D model",
+      title: "Walk around the Ferry-Jo",
+      text: "Drag to rotate the vessel. Wheelhouse with radar and AIS, engine casing with the Scania main engine, towing hook aft and tyre fenders all round.",
+      hint: "Drag to rotate",
     },
     gallery: { label: "Gallery", title: "The Ferry-Jo at work", open: "Open photo", close: "Close", prev: "Previous photo", next: "Next photo" },
     availability: {
