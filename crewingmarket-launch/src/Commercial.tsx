@@ -1,6 +1,8 @@
 import React from 'react';
 import {AbsoluteFill, Audio, Sequence, staticFile, useCurrentFrame} from 'remotion';
 import {Finish} from './components/Finish';
+import {StepCaptions} from './components/StepCaption';
+import {AppRoute, Intro} from './scenes/Explainers';
 import {TL} from './lib/anim';
 import {Opening} from './scenes/Opening';
 import {WhatsAppScene} from './scenes/WhatsAppScene';
@@ -23,8 +25,14 @@ export const Commercial: React.FC = () => {
       <Sequence name="1 · Probleem" from={S.opening.from} durationInFrames={len('opening')}>
         <Opening />
       </Sequence>
+      <Sequence name="1b · Zo werkt het" from={S.intro.from} durationInFrames={len('intro')}>
+        <Intro />
+      </Sequence>
       <Sequence name="2 · WhatsApp (bedrijf)" from={S.whatsapp.from} durationInFrames={len('whatsapp')}>
         <WhatsAppScene />
+      </Sequence>
+      <Sequence name="2b · Via de app" from={S.appRoute.from} durationInFrames={len('appRoute')}>
+        <AppRoute />
       </Sequence>
       <Sequence name="3 · Zzp'er reageert" from={S.freelancer.from} durationInFrames={len('freelancer')}>
         <FreelancerScene />
@@ -38,6 +46,7 @@ export const Commercial: React.FC = () => {
       <Sequence name="6 · Logo reveal" from={S.reveal.from} durationInFrames={len('reveal')}>
         <Reveal />
       </Sequence>
+      <StepCaptions frame={frame} />
       <Finish frame={frame} />
       <Audio src={staticFile('audio/soundtrack.wav')} />
     </AbsoluteFill>

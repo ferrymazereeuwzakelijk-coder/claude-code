@@ -4,7 +4,6 @@ import {Phone} from '../components/Phone';
 import {PALETTES, SeaScene} from '../components/SeaScene';
 import {Footage} from '../components/Footage';
 import {Highlight, ScrollSwap, SentBubble, Shot, Tap, TypingField} from '../components/ScreenUI';
-import {RoleLabel} from '../components/Finish';
 import {FOOTAGE} from '../footage';
 import {camera, CamKey, cameraSpeed, easeInOut, easeOut, fadeIn, ramp, TL} from '../lib/anim';
 
@@ -12,22 +11,23 @@ const W = TL.whatsapp;
 const FROM = TL.scenes.whatsapp.from;
 
 /** Company phone camera — every move eased like a motion-control rig. */
+// ty: 250 keeps the phone below the step caption at the top of the frame.
 export const COMPANY_CAM: CamKey[] = [
-  {f: 135, s: 0.36, fx: 660, fy: 1434, rx: 30, ry: -44, rz: -10, ty: 300},
-  {f: 166, s: 1.0, rx: 7, ry: -14, rz: -2, ty: 30},
-  {f: 194, s: 1.5, fy: 1320, rx: 1, ry: -3, rz: 0, ty: 0},
-  {f: 226, s: 1.5, fy: 1260},
-  {f: 246, s: 1.42, fy: 1160, ry: 2},
-  {f: 266, s: 1.42, fy: 1150},
-  {f: 286, s: 1.55, fy: 1780, ry: -2},
-  {f: 302, s: 1.26, fy: 1434, ry: 0},
-  {f: 320, s: 1.42, fy: 1150, ry: 3},
-  {f: 346, s: 1.45, fy: 1300, ry: 1},
-  {f: 364, s: 1.5, fy: 1820, ry: -3},
-  {f: 380, s: 1.2, fy: 1434, ry: 0},
-  {f: 404, s: 1.78, fx: 560, fy: 1960, ry: 2},
-  {f: 423, s: 1.86, fx: 560, fy: 1970, ry: 3},
-  {f: 435, s: 1.5, tx: -1700, rz: -10, ry: 34},
+  {f: 225, s: 0.4, fx: 660, fy: 1434, rx: 30, ry: -40, rz: -8, ty: 560},
+  {f: 252, s: 1.0, rx: 4, ry: -8, rz: -1, ty: 250},
+  {f: 270, s: 1.28, fy: 1480, rx: 0, ry: 0, rz: 0},
+  {f: 342, s: 1.28, fy: 1400},
+  {f: 362, s: 1.22, fy: 1250},
+  {f: 405, s: 1.22, fy: 1200},
+  {f: 432, s: 1.28, fy: 1760},
+  {f: 470, s: 1.04, fy: 1434},
+  {f: 496, s: 1.18, fy: 1120},
+  {f: 548, s: 1.18, fy: 1300},
+  {f: 576, s: 1.22, fy: 1780},
+  {f: 608, s: 1.0, fy: 1434},
+  {f: 640, s: 1.42, fx: 560, fy: 1960},
+  {f: 704, s: 1.48, fx: 560, fy: 1970},
+  {f: 720, s: 1.2, tx: -1700, rz: -10, ry: 34},
 ];
 
 const HEADER = 320; // bottom of the WhatsApp navigation bar (native px)
@@ -128,9 +128,8 @@ export const WhatsAppScene: React.FC = () => {
   const f = useCurrentFrame() + FROM;
   const cam = camera(f, COMPANY_CAM);
   const speed = cameraSpeed(f, COMPANY_CAM);
-  const blur = Math.min(26, Math.max(0, speed - 35) * 0.1);
+  const blur = Math.min(26, Math.max(0, speed - 140) * 0.1);
   const bgBlur = ramp(f, [FROM, FROM + 16], [0, 22]);
-  const label = fadeIn(f, 142, 8) * (1 - fadeIn(f, 170, 6));
 
   return (
     <AbsoluteFill style={{background: '#02050b', overflow: 'hidden'}}>
@@ -156,16 +155,13 @@ export const WhatsAppScene: React.FC = () => {
       <Phone cam={cam} blur={blur}>
         <CompanyScreen f={f} />
       </Phone>
-      <AbsoluteFill style={{alignItems: 'center', paddingTop: 110}}>
-        <RoleLabel text="BEDRIJF" sub="via WhatsApp" opacity={label} y={(1 - label) * -20} />
-      </AbsoluteFill>
       {/* light streak on the whip out */}
       <AbsoluteFill
         style={{
-          opacity: ramp(f, [424, 431], [0, 1]) * ramp(f, [431, 436], [1, 0]),
+          opacity: ramp(f, [W.out + 8, W.out + 13], [0, 1]) * ramp(f, [W.out + 13, W.out + 18], [1, 0]),
           background:
             'linear-gradient(90deg, rgba(0,0,0,0) 20%, rgba(120,170,255,0.55) 48%, rgba(255,255,255,0.9) 50%, rgba(120,170,255,0.55) 52%, rgba(0,0,0,0) 80%)',
-          transform: `translateX(${ramp(f, [424, 436], [500, -500])}px) scaleX(2)`,
+          transform: `translateX(${ramp(f, [W.out + 8, W.out + 18], [500, -500])}px) scaleX(2)`,
           mixBlendMode: 'screen',
         }}
       />

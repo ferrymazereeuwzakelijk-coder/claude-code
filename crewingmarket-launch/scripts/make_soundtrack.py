@@ -343,10 +343,10 @@ def groove(start_f, end_f, intensity=1.0, arp=True, hats=True, bright=1400):
 
 
 # --- 2. WHATSAPP: driving tech groove -----------------------------------------
-groove(sc["whatsapp"]["from"], sc["whatsapp"]["to"], 0.85, arp=True, hats=True, bright=1100)
+groove(sc["intro"]["from"], sc["whatsapp"]["to"], 0.8, arp=True, hats=True, bright=1100)
 
 # --- 3. FREELANCER: lift, then build ------------------------------------------
-groove(sc["freelancer"]["from"], TL["match"]["impact"] - 6, 1.0, arp=True, hats=True, bright=1900)
+groove(sc["appRoute"]["from"], TL["match"]["impact"] - 6, 0.95, arp=True, hats=True, bright=1900)
 # accelerating snare roll into the match
 roll_start, roll_end = fr(TL["sfx"]["riser"][0][0]), fr(TL["match"]["impact"] - 4)
 t = roll_start
@@ -406,6 +406,17 @@ for f in TL["sfx"]["receive"]:
     add(receive_ding(), fr(f), 0.30, verb=0.15)
 for f in TL["sfx"]["confirm"]:
     add(confirm_chime(), fr(f), 0.42, verb=0.3)
+# soft two-note tick when a new step caption appears
+def step_tick():
+    out = np.zeros(int(0.5 * SR))
+    for k, f in enumerate((1318.5, 1975.5)):
+        t = t_arr(0.4)
+        s_ = np.sin(2 * np.pi * f * t) * env_exp(len(t), 0.09)
+        i = int(k * 0.045 * SR)
+        out[i:i + len(s_)] += s_[: len(out) - i]
+    return out * 0.4
+for f in TL["sfx"].get("step", []):
+    add(step_tick(), fr(f), 0.28, verb=0.3)
 # keyboard clicks while typing
 w = TL["whatsapp"]
 msg = TL["copy"]["typedMessage"]

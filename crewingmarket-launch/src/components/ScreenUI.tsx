@@ -45,8 +45,8 @@ export const Tap: React.FC<{frame: number; at: number; x: number; y: number; dar
   dark = true,
 }) => {
   const d = frame - at;
-  if (d < -7 || d > 20) return null;
-  const approach = ramp(d, [-7, 0], [0, 1]);
+  if (d < -16 || d > 20) return null;
+  const approach = ramp(d, [-16, -2], [0, 1]);
   const release = ramp(d, [3, 14], [1, 0]);
   const press = d < 0 ? 1.25 - 0.25 * approach : d < 3 ? 0.86 : ramp(d, [3, 8], [0.86, 1]);
   const ring = ramp(d, [0, 18], [0, 1]);

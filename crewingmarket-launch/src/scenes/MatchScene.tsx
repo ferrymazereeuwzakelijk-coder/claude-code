@@ -11,10 +11,10 @@ const END = TL.scenes.match.to;
 const FONT = 'Inter, sans-serif';
 
 const side = (dir: -1 | 1): CamKey[] => [
-  {f: FROM - 12, s: 0.5, fx: 660, fy: 1434, tx: dir * 1000, ty: -60, ry: -dir * 45, rz: dir * 6, rx: 6},
-  {f: FROM + 2, s: 0.6, tx: dir * 245, ry: -dir * 16, rz: dir * 1.5, rx: 3},
-  {f: END - 12, s: 0.63, tx: dir * 238, ry: -dir * 12, rz: dir * 1.2, rx: 2},
-  {f: END, s: 0.95, tx: dir * 420, ry: -dir * 30, rz: dir * 3},
+  {f: FROM - 12, s: 0.45, fx: 660, fy: 1434, tx: dir * 1000, ty: 90, ry: -dir * 45, rz: dir * 6, rx: 6},
+  {f: FROM + 2, s: 0.53, tx: dir * 228, ry: -dir * 16, rz: dir * 1.5, rx: 3},
+  {f: END - 12, s: 0.55, tx: dir * 224, ry: -dir * 12, rz: dir * 1.2, rx: 2},
+  {f: END, s: 0.85, tx: dir * 420, ry: -dir * 30, rz: dir * 3},
 ];
 const COMPANY = side(-1);
 const FREELANCER = side(1);
@@ -34,14 +34,14 @@ export const MatchScene: React.FC = () => {
 
   // connection beam: an arc between the two phones
   const draw = ramp(f, [M.impact, M.impact + 16], [0, 1], easeOut);
-  const path = 'M 300 455 C 380 250, 700 250, 780 455';
+  const path = 'M 316 690 C 390 520, 690 520, 764 690';
   const pulseT = ((f - M.impact - 10) % 34) / 34;
   const pulse = (u: number) => {
     // cubic bezier point (from freelancer to company)
-    const p0 = [780, 455];
-    const p1 = [700, 250];
-    const p2 = [380, 250];
-    const p3 = [300, 455];
+    const p0 = [764, 690];
+    const p1 = [690, 520];
+    const p2 = [390, 520];
+    const p3 = [316, 690];
     const a = (1 - u) ** 3;
     const b = 3 * (1 - u) ** 2 * u;
     const c = 3 * (1 - u) * u * u;
@@ -65,7 +65,7 @@ export const MatchScene: React.FC = () => {
           style={{
             position: 'absolute',
             left: 540 - 400,
-            top: 330 - 400,
+            top: 600 - 400,
             width: 800,
             height: 800,
             borderRadius: 400,
@@ -107,16 +107,16 @@ export const MatchScene: React.FC = () => {
             </>
           )}
           {[
-            [300, 455],
-            [780, 455],
+            [316, 690],
+            [764, 690],
           ].map(([x, y], i) => (
             <circle key={i} cx={x} cy={y} r={9 * draw} fill="#fff" stroke="#3b74ff" strokeWidth={4} />
           ))}
         </svg>
         {/* role captions */}
         {[
-          {x: 295, t: 'BEDRIJF', s: 'ziet alle reacties'},
-          {x: 785, t: "ZZP'ER", s: 'reageert direct'},
+          {x: 316, t: 'BEDRIJF', s: 'ziet alle reacties'},
+          {x: 764, t: "ZZP'ER", s: 'reageerde met één tik'},
         ].map((c) => (
           <div
             key={c.t}
@@ -124,7 +124,7 @@ export const MatchScene: React.FC = () => {
               position: 'absolute',
               left: c.x - 200,
               width: 400,
-              top: 1345,
+              top: 1440,
               textAlign: 'center',
               fontFamily: FONT,
               opacity: labels,
@@ -136,7 +136,7 @@ export const MatchScene: React.FC = () => {
           </div>
         ))}
         {/* tagline */}
-        <div style={{position: 'absolute', left: 0, right: 0, top: 1490, textAlign: 'center', fontFamily: FONT}}>
+        <div style={{position: 'absolute', left: 0, right: 0, top: 1590, textAlign: 'center', fontFamily: FONT}}>
           {[
             {t: l1, p: t1, c: '#ffffff'},
             {t: l2, p: t2, c: '#3b74ff'},

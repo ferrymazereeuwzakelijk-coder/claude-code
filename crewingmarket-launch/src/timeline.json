@@ -1,17 +1,19 @@
 {
-  "_doc": "Single source of truth for timing. Frames @30fps. 120 BPM => 1 beat = 15 frames, 1 bar = 60 frames. Both the Remotion video (src/) and the soundtrack generator (scripts/make_soundtrack.py) read this file, so editing a frame here moves the picture AND its sound. Screen coordinates are native screenshot pixels (1320x2868).",
+  "_doc": "Single source of truth for timing. Frames @30fps. 120 BPM => 1 beat = 15 frames. Both the Remotion video (src/) and the soundtrack generator (scripts/make_soundtrack.py) read this file. Screen coordinates are native screenshot pixels (1320x2868).",
   "fps": 30,
   "width": 1080,
   "height": 1920,
-  "durationInFrames": 900,
+  "durationInFrames": 1350,
   "bpm": 120,
   "scenes": {
     "opening": { "from": 0, "to": 135 },
-    "whatsapp": { "from": 135, "to": 435 },
-    "freelancer": { "from": 435, "to": 600 },
-    "match": { "from": 600, "to": 735 },
-    "underway": { "from": 735, "to": 795 },
-    "reveal": { "from": 795, "to": 900 }
+    "intro": { "from": 135, "to": 225 },
+    "whatsapp": { "from": 225, "to": 720 },
+    "appRoute": { "from": 720, "to": 795 },
+    "freelancer": { "from": 795, "to": 1050 },
+    "match": { "from": 1050, "to": 1170 },
+    "underway": { "from": 1170, "to": 1230 },
+    "reveal": { "from": 1230, "to": 1350 }
   },
   "copy": {
     "hook": ["MORGEN", "EEN", "MATROOS", "NODIG?"],
@@ -22,62 +24,72 @@
     "launchLine": "WE GAAN LIVE",
     "url": "www.crewingmarket.com"
   },
+  "steps": [
+    { "n": 1, "from": 232, "to": 362, "route": "whatsapp", "title": "Stuur een appje", "sub": "naar CrewingMarket op WhatsApp" },
+    { "n": 2, "from": 362, "to": 437, "route": "whatsapp", "title": "Kies ‘Bemanning’", "sub": "de assistent helpt je verder" },
+    { "n": 3, "from": 437, "to": 588, "route": "whatsapp", "title": "Vul het formulier in", "sub": "functie, datum, locatie, werktijden" },
+    { "n": 4, "from": 588, "to": 714, "route": "whatsapp", "title": "Verstuur", "sub": "je opdracht staat direct online" },
+    { "n": 5, "from": 802, "to": 918, "route": "freelancer", "title": "Zzp’ers zien je opdracht", "sub": "in de CrewingMarket-app" },
+    { "n": 6, "from": 918, "to": 1046, "route": "freelancer", "title": "Ze reageren met één tik", "sub": "op ‘Ik heb interesse’" },
+    { "n": 7, "from": 1054, "to": 1166, "route": "company", "title": "Jij ziet wie er reageert", "sub": "via de link in je WhatsApp" }
+  ],
   "hookWords": [8, 17, 26, 41],
   "whatsapp": {
-    "phoneIn": 135,
-    "focusInput": 160,
-    "typeStart": 168,
-    "typeEnd": 206,
-    "send": 212,
-    "welcome": 230,
-    "tapBemanning": 252,
-    "bemanning": 256,
-    "invite": 274,
-    "tapPlaatsen": 296,
-    "sheetUp": 300,
-    "tapFunctie": 322,
-    "picker": 326,
-    "complete": 348,
-    "tapVerstuur": 372,
-    "sheetDown": 376,
-    "online": 396,
-    "out": 425
+    "phoneIn": 225,
+    "focusInput": 262,
+    "typeStart": 268,
+    "typeEnd": 322,
+    "send": 334,
+    "welcome": 352,
+    "tapBemanning": 395,
+    "bemanning": 399,
+    "invite": 425,
+    "tapPlaatsen": 462,
+    "sheetUp": 466,
+    "tapFunctie": 506,
+    "picker": 510,
+    "complete": 548,
+    "tapVerstuur": 600,
+    "sheetDown": 604,
+    "online": 626,
+    "out": 706
   },
   "freelancer": {
-    "phoneIn": 435,
-    "tapNaarOpdrachten": 478,
-    "assignments": 482,
-    "tapInteresse": 526,
-    "reacted": 530
+    "phoneIn": 795,
+    "tapNaarOpdrachten": 862,
+    "assignments": 866,
+    "tapInteresse": 958,
+    "reacted": 962
   },
   "match": {
-    "impact": 600,
-    "line1": 612,
-    "line2": 630
+    "impact": 1050,
+    "line1": 1092,
+    "line2": 1108
   },
   "reveal": {
-    "logoHit": 795,
-    "wordmark": 803,
-    "date": 836,
-    "live": 850,
-    "url": 866
+    "logoHit": 1230,
+    "wordmark": 1238,
+    "date": 1272,
+    "live": 1287,
+    "url": 1303
   },
   "taps": [
-    { "frame": 160, "x": 520, "y": 1756, "phone": "company" },
-    { "frame": 212, "x": 1211, "y": 1756, "phone": "company" },
-    { "frame": 252, "x": 595, "y": 1445, "phone": "company" },
-    { "frame": 296, "x": 562, "y": 2138, "phone": "company" },
-    { "frame": 322, "x": 659, "y": 874, "phone": "company" },
-    { "frame": 372, "x": 659, "y": 2565, "phone": "company" },
-    { "frame": 478, "x": 659, "y": 2147, "phone": "freelancer" },
-    { "frame": 526, "x": 659, "y": 1642, "phone": "freelancer" }
+    { "frame": 262, "x": 520, "y": 1756, "phone": "company" },
+    { "frame": 334, "x": 1211, "y": 1756, "phone": "company" },
+    { "frame": 395, "x": 595, "y": 1445, "phone": "company" },
+    { "frame": 462, "x": 562, "y": 2138, "phone": "company" },
+    { "frame": 506, "x": 659, "y": 874, "phone": "company" },
+    { "frame": 600, "x": 659, "y": 2565, "phone": "company" },
+    { "frame": 862, "x": 659, "y": 2147, "phone": "freelancer" },
+    { "frame": 958, "x": 659, "y": 1642, "phone": "freelancer" }
   ],
   "sfx": {
-    "whoosh": [128, 298, 374, 424, 590, 728, 788],
-    "receive": [230, 274, 396],
-    "send": [212, 256],
-    "confirm": [530],
-    "impact": [0, 600, 795, 850],
-    "riser": [[540, 600], [735, 795]]
+    "whoosh": [128, 218, 464, 602, 712, 788, 1044, 1163, 1223],
+    "receive": [352, 425, 626],
+    "send": [334, 399],
+    "confirm": [962],
+    "impact": [0, 1050, 1230, 1287],
+    "riser": [[990, 1050], [1170, 1230]],
+    "step": [232, 362, 437, 588, 802, 918, 1054]
   }
 }

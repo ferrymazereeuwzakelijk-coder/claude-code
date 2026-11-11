@@ -4,7 +4,6 @@ import {Phone} from '../components/Phone';
 import {PALETTES, SeaScene} from '../components/SeaScene';
 import {Footage} from '../components/Footage';
 import {Highlight, Shot, Tap} from '../components/ScreenUI';
-import {RoleLabel} from '../components/Finish';
 import {FOOTAGE} from '../footage';
 import {camera, CamKey, cameraSpeed, easeOut, fadeIn, ramp, TL} from '../lib/anim';
 
@@ -12,15 +11,15 @@ const F = TL.freelancer;
 const FROM = TL.scenes.freelancer.from;
 
 export const FREELANCER_CAM: CamKey[] = [
-  {f: 435, s: 0.55, fx: 660, fy: 1434, rx: -8, ry: 40, rz: 8, tx: 1700},
-  {f: 453, s: 1.0, rx: 5, ry: 12, rz: 1, tx: 0},
-  {f: 470, s: 1.42, fy: 1880, rx: 2, ry: 4},
-  {f: 486, s: 1.38, fy: 1640, ry: 0},
-  {f: 502, s: 1.5, fy: 1260},
-  {f: 522, s: 1.55, fy: 1420},
-  {f: 538, s: 1.5, fy: 1000},
-  {f: 572, s: 1.62, fy: 940, ry: -3},
-  {f: 600, s: 1.3, fy: 1250, ry: 0},
+  {f: 795, s: 0.55, fx: 660, fy: 1434, rx: -8, ry: 40, rz: 8, tx: 1700, ty: 250},
+  {f: 815, s: 1.0, rx: 3, ry: 8, rz: 1, tx: 0},
+  {f: 840, s: 1.28, fy: 1950, rx: 0, ry: 0, rz: 0},
+  {f: 872, s: 1.22, fy: 1550},
+  {f: 900, s: 1.28, fy: 1300},
+  {f: 945, s: 1.28, fy: 1450},
+  {f: 972, s: 1.28, fy: 900},
+  {f: 1040, s: 1.36, fy: 880},
+  {f: 1050, s: 1.2, fy: 1000},
 ];
 
 /** The freelancer's CrewingMarket web app — real screenshots only. */
@@ -62,8 +61,7 @@ export const FreelancerScene: React.FC = () => {
   const f = useCurrentFrame() + FROM;
   const cam = camera(f, FREELANCER_CAM);
   const speed = cameraSpeed(f, FREELANCER_CAM);
-  const blur = Math.min(26, Math.max(0, speed - 35) * 0.1);
-  const label = fadeIn(f, 448, 6) * (1 - fadeIn(f, 464, 6));
+  const blur = Math.min(26, Math.max(0, speed - 140) * 0.1);
 
   return (
     <AbsoluteFill style={{background: '#06142a', overflow: 'hidden'}}>
@@ -87,9 +85,6 @@ export const FreelancerScene: React.FC = () => {
       <Phone cam={cam} blur={blur} glare={1.5}>
         <FreelancerScreen f={f} />
       </Phone>
-      <AbsoluteFill style={{alignItems: 'center', paddingTop: 110}}>
-        <RoleLabel text="ZZP'ER" sub="op crewingmarket.com" opacity={label} y={(1 - label) * -20} />
-      </AbsoluteFill>
     </AbsoluteFill>
   );
 };

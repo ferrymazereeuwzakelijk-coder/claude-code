@@ -1,19 +1,21 @@
 # CrewingMarket — launch commercial
 
-A 30-second vertical (1080×1920, 30 fps, H.264 + AAC) launch spot made with Remotion, React and TypeScript.
+A 45-second vertical (1080×1920, 30 fps, H.264 + AAC) explainer/launch spot made with Remotion, React and TypeScript.
 
 **Rendered video:** `out/crewingmarket-launch.mp4`
 
-## Story (built only from the supplied recordings)
+## Structure: understandable at a glance
+Every step has a large caption at the top (route, step number, title, subtitle, progress 1/7). Copy and timing are in `src/timeline.json` → `steps`.
 
-| Time | Scene | What is shown |
+| Time | Scene | On screen |
 |---|---|---|
-| 0:00–0:04.5 | Probleem | Tug at night, searchlight flash, "MORGEN EEN MATROOS NODIG?" |
-| 0:04.5–0:14.5 | WhatsApp (company) | Message typed → MaritimeMarket menu → *Bemanning* → *Opdracht plaatsen* → "Bemanning aanvragen" form (Matroos, 1, 13–17 nov 2026, Delfzijl, Binnenvaart, Dagdienst) → *Verstuur* → "Je opdracht staat online!" |
-| 0:14.5–0:20 | Zzp'er | crewingmarket.com home → *Naar opdrachten* → "Matroos in Delfzijl" → *Ik heb interesse* → "Reactie verstuurd! Het bedrijf ziet je reactie bij deze opdracht." |
-| 0:20–0:24.5 | Match | Both phones connected: the company's "Alle reacties zie je hier" link plus the freelancer's confirmation. "DE JUISTE MENSEN. OP HET JUISTE MOMENT." |
-| 0:24.5–0:26.5 | Underway | Vessel underway at dusk |
-| 0:26.5–0:30 | Reveal | Logo, "13 NOVEMBER 2026", "WE GAAN LIVE", www.crewingmarket.com |
+| 0:00–0:04.5 | Hook | Real footage: tug, tanker. "MORGEN EEN MATROOS NODIG?" |
+| 0:04.5–0:07.5 | Zo werkt het | "Personeel aanvragen kan op 2 manieren": ① Via WhatsApp ② Via de app |
+| 0:07.5–0:24 | Way 1: WhatsApp | ① Stuur een appje → ② Kies 'Bemanning' → ③ Vul het formulier in → ④ Verstuur: opdracht staat online |
+| 0:24–0:26.5 | Way 2: app | "Liever via de app? Plaats je opdracht direct op crewingmarket.com" |
+| 0:26.5–0:35 | Freelancer | ⑤ Zzp'ers zien je opdracht → ⑥ Ze reageren met één tik ("Reactie verstuurd!") |
+| 0:35–0:39 | Match | ⑦ Jij ziet wie er reageert. "DE JUISTE MENSEN. OP HET JUISTE MOMENT." |
+| 0:39–0:45 | Reveal | Vessel underway, logo, 13 NOVEMBER 2026, WE GAAN LIVE |
 
 All phone content is the real screenshots (`assets/source/`). Only these things were added on top of them:
 * The typed message "Ik zoek een matroos voor morgen." This text comes from the brief. The recording itself starts with "Hoi". It is drawn as a bubble matching WhatsApp's own color and size, and you can change it in `src/timeline.json` → `copy.typedMessage`.
@@ -46,3 +48,4 @@ Opening montage, cut on the words: a hand on the tug's throttle → tug bow-on (
 1. **Your own footage**, ideally of Dutch tugs and inland shipping, filmed in 4K. Free stock is good, but footage of your own customers and vessels is more convincing. Swap it in through `src/footage.ts`.
 2. **A vector logo (SVG).**
 3. **A screenshot of the company's reactions page** (`crewRequestPage?c=…`).
+4. **Screenshots of a company posting a job in the app.** Way 2 is now a text card because these screens were missing.
