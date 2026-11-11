@@ -87,6 +87,11 @@ const en = {
     ferryjoAmsterdam: "The Ferry-Jo moored along a city quay, black hull and white wheelhouse with red and white chevrons",
     deckTowClose: "View from the Ferry-Jo's aft deck: a seagoing cargo ship on the tow line",
     deckTowSea: "View from the Ferry-Jo's aft deck as a cargo ship heads out to open water",
+    assistWeserborg: "The Ferry-Jo on the tow line of a large cargo ship in the harbour",
+    dockHunteborg: "The Ferry-Jo towing a newbuild cargo ship out of a floating dock",
+    dockHunteborgPortrait: "The Ferry-Jo with tow lines to the bow of a newbuild ship leaving the dock",
+    ferryjoIce: "The Ferry-Jo breaking ice on a frozen waterway, Dutch flag flying",
+    pontoonTow: "The Ferry-Jo towing a pontoon loaded with equipment through the harbour",
   } satisfies Record<PhotoKey, string>,
 
   home: {
@@ -160,6 +165,15 @@ const en = {
       ],
       final: { title: ["Ferry-Jo.", "Ready for work."], text: "Towing, pushing, launches, icebreaking and vessel escort across the Netherlands." },
       fallback: "3D view not available on this device.",
+    },
+    work: {
+      label: "In action",
+      title: "Recent work on the water",
+      items: [
+        { title: "Out of the dock", text: "Towing a newbuild out of the floating dock and on to the fitting-out quay." },
+        { title: "Harbour assist", text: "On the line of a seagoing cargo ship, manoeuvring through the harbour." },
+        { title: "Icebreaking", text: "Keeping the waterway open when the frost sets in." },
+      ],
     },
     video: {
       label: "On the water",

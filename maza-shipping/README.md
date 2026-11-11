@@ -18,8 +18,9 @@ Deploy: push to GitHub and import into **Vercel** (zero config). Set the env var
 
 Dark "bridge" look: ink black, the logo blue (`#00A2E0`) and the orange-red of the Ferry-Jo's wheelhouse trim, wide heavy Archivo display type and JetBrains Mono instrument labels (`app/globals.css`).
 
-- **3D Ferry-Jo** (`components/three/`): a procedural three.js model built from photos of the vessel, on shader water. On the home page the camera walks around the ship while scrolling and spec callouts point at its parts (`components/ShipHero.tsx`); the tugboat page has a drag-to-rotate viewer (`components/ShipViewer.tsx`). three.js only loads in the browser, after the page; without WebGL a photo is shown. Reduced-motion users get a still scene.
-- **Footage**: `public/video/ferryjo-ponton.mp4` (owner video, re-encoded to 1280 px, no audio) grows to full screen on scroll (`components/ScrollVideo.tsx`).
+- **3D Ferry-Jo** (`components/three/`): a procedural three.js model measured from side-on photos of the vessel (wheelhouse just forward of midships, low stern, high bow), on shader water. On the home page the camera walks around the ship while scrolling and spec callouts point at its parts (`components/ShipHero.tsx`); the tugboat page has a drag-to-rotate viewer (`components/ShipViewer.tsx`). three.js only loads in the browser, after the page; without WebGL a photo is shown. Reduced-motion users get a still scene.
+- **Footage**: `public/video/ferryjo-ponton.mp4` (owner video, re-encoded to 1280 px, no audio) grows to full screen on scroll (`components/ScrollVideo.tsx`); two upright clips (`dock-tow.mp4`, `assist-tow.mp4`) play in the "In action" strip (`components/ClipStrip.tsx`).
+- **Owner photos** are self-hosted in `public/images` and used for every page header, so the site no longer depends on the old Base44 hosting for its main visuals. The ice photo (`ferryjo-ice.jpg`) carries a photographer's watermark: confirm it may be used.
 - **Logo**: `components/Logo.tsx`, the official wordmark from `maza_TEKST.pdf` as inline SVG ("MAZA" follows the text colour, "SHIPPING" is always brand blue).
 
 ## Pages

@@ -14,7 +14,7 @@ type Props = { params: Promise<{ locale: string }> };
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { locale } = await params;
-  return pageMetadata(locale as Locale, "about", "about", photos.aboutHeader.src);
+  return pageMetadata(locale as Locale, "about", "about", photos.ferryjoIce.src);
 }
 
 export default async function AboutPage({ params }: Props) {
@@ -25,7 +25,7 @@ export default async function AboutPage({ params }: Props) {
 
   return (
     <>
-      <PageHero photo="aboutHeader" alt={t.photos.aboutHeader} eyebrow={a.hero.eyebrow} title={a.hero.title} sub={a.hero.sub} />
+      <PageHero photo="ferryjoIce" alt={t.photos.ferryjoIce} eyebrow={a.hero.eyebrow} title={a.hero.title} sub={a.hero.sub} />
 
       {/* Story */}
       <section id="content" className="bg-bone py-24 sm:py-32">
@@ -63,7 +63,7 @@ export default async function AboutPage({ params }: Props) {
       <section className="bg-navy py-24 text-white sm:py-32">
         <div className="container-x grid items-center gap-14 lg:grid-cols-[1fr_1.1fr] lg:gap-20">
           <div data-reveal className="relative aspect-[4/5] overflow-hidden rounded-3xl sm:aspect-[5/4] lg:aspect-[4/5]">
-            <Photo name="arklowAssist" alt={t.photos.arklowAssist} sizes="(min-width:1024px) 45vw, 100vw" />
+            <Photo name="dockHunteborgPortrait" alt={t.photos.dockHunteborgPortrait} sizes="(min-width:1024px) 45vw, 100vw" />
           </div>
           <div>
             <SectionHeading tone="light" label={a.marc.label} title={a.marc.title} />

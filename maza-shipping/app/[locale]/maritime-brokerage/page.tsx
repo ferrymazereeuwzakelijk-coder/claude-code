@@ -16,7 +16,7 @@ type Props = { params: Promise<{ locale: string }> };
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { locale } = await params;
-  return pageMetadata(locale as Locale, "brokerage", "brokerage", photos.aerialBargeTwoTugs.src);
+  return pageMetadata(locale as Locale, "brokerage", "brokerage", photos.pontoonTow.src);
 }
 
 export default async function BrokeragePage({ params }: Props) {
@@ -45,8 +45,8 @@ export default async function BrokeragePage({ params }: Props) {
     <>
       <JsonLd data={jsonLd} />
       <PageHero
-        photo="aerialBargeTwoTugs"
-        alt={t.photos.aerialBargeTwoTugs}
+        photo="pontoonTow"
+        alt={t.photos.pontoonTow}
         eyebrow={b.hero.eyebrow}
         title={b.hero.title}
         sub={b.hero.sub}

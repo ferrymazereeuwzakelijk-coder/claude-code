@@ -25,7 +25,7 @@ export default async function ContactPage({ params }: Props) {
 
   return (
     <>
-      <PageHero photo="escortPort" alt={t.photos.escortPort} eyebrow={c.hero.eyebrow} title={c.hero.title} sub={c.hero.sub} />
+      <PageHero photo="dockHunteborg" alt={t.photos.dockHunteborg} eyebrow={c.hero.eyebrow} title={c.hero.title} sub={c.hero.sub} />
 
       <section id="quote" className="scroll-mt-20 bg-mist py-24 sm:py-32">
         <div className="container-x grid gap-14 lg:grid-cols-[0.85fr_1.15fr] lg:gap-20">

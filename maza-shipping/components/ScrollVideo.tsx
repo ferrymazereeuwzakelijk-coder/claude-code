@@ -66,9 +66,9 @@ export default function ScrollVideo({ src, poster, label, title, text }: Props) 
         <div className="hud-frame absolute inset-4 text-white sm:inset-8" aria-hidden />
         <div className="absolute inset-x-0 bottom-0 p-6 sm:p-12">
           <p className="eyebrow text-teal-light">{label}</p>
-          <h2 className="display mt-5 text-[2.6rem] sm:text-7xl lg:text-8xl">
+          <h2 className="display mt-5 text-[2.6rem] sm:text-7xl lg:text-7xl xl:text-8xl">
             {title.map((l, i) => (
-              <span key={l} className={`block ${i === title.length - 1 ? "outline-text text-white" : ""}`}>{l}</span>
+              <span key={l} className={`block ${i === title.length - 1 ? "text-teal" : ""}`}>{l}</span>
             ))}
           </h2>
           <p className="mt-5 max-w-lg text-white/80 sm:text-lg">{text}</p>

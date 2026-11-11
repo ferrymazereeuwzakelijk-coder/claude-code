@@ -87,6 +87,11 @@ const nl: Dictionary = {
     ferryjoAmsterdam: "De Ferry-Jo afgemeerd aan een stadskade, zwarte romp en wit stuurhuis met rood-witte strepen",
     deckTowClose: "Uitzicht vanaf het achterdek van de Ferry-Jo: een zeeschip aan de sleeplijn",
     deckTowSea: "Uitzicht vanaf het achterdek van de Ferry-Jo terwijl een vrachtschip naar open water vaart",
+    assistWeserborg: "De Ferry-Jo aan de sleeplijn van een groot vrachtschip in de haven",
+    dockHunteborg: "De Ferry-Jo sleept een nieuwbouwschip uit een drijvend dok",
+    dockHunteborgPortrait: "De Ferry-Jo met sleeplijnen aan de boeg van een nieuwbouwschip dat het dok verlaat",
+    ferryjoIce: "De Ferry-Jo breekt ijs op een bevroren vaarweg, met de Nederlandse vlag",
+    pontoonTow: "De Ferry-Jo sleept een ponton vol materieel door de haven",
   },
 
   home: {
@@ -160,6 +165,15 @@ const nl: Dictionary = {
       ],
       final: { title: ["Ferry-Jo.", "Klaar voor de klus."], text: "Slepen, duwen, tewaterlatingen, ijsbreken en scheepsbegeleiding in heel Nederland." },
       fallback: "3D-weergave is niet beschikbaar op dit apparaat.",
+    },
+    work: {
+      label: "In actie",
+      title: "Recent werk op het water",
+      items: [
+        { title: "Uit het dok", text: "Een nieuwbouwschip uit het drijvend dok slepen en naar de afbouwkade brengen." },
+        { title: "Havenassistentie", text: "Aan de lijn van een zeeschip, manoeuvreren door de haven." },
+        { title: "IJsbreken", text: "De vaarweg openhouden als de vorst invalt." },
+      ],
     },
     video: {
       label: "Op het water",

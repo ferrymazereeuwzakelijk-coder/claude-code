@@ -20,7 +20,7 @@ type Props = { params: Promise<{ locale: string }> };
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { locale } = await params;
-  return pageMetadata(locale as Locale, "tugboat", "tugboat", photos.arklowAssist.src);
+  return pageMetadata(locale as Locale, "tugboat", "tugboat", photos.assistWeserborg.src);
 }
 
 const capIcons = [LuRoute, LuShip, LuSnowflake, LuNavigation, LuLayers];
@@ -41,7 +41,7 @@ export default async function TugboatPage({ params }: Props) {
       areaServed: { "@type": "Country", name: "Netherlands" },
       description: t.meta.tugboat.description,
       url: `${SITE_URL}${href(locale, "tugboat")}`,
-      image: photos.arklowAssist.src,
+      image: photos.assistWeserborg.src,
     },
     {
       "@context": "https://schema.org",
@@ -54,8 +54,8 @@ export default async function TugboatPage({ params }: Props) {
     <>
       <JsonLd data={jsonLd} />
       <PageHero
-        photo="ferryjoAmsterdam"
-        alt={t.photos.ferryjoAmsterdam}
+        photo="assistWeserborg"
+        alt={t.photos.assistWeserborg}
         eyebrow={p.hero.eyebrow}
         title={p.hero.title}
         sub={p.hero.sub}
@@ -89,13 +89,13 @@ export default async function TugboatPage({ params }: Props) {
           </div>
           <div data-reveal className="grid grid-cols-5 grid-rows-[repeat(6,52px)] gap-3 sm:grid-rows-[repeat(6,72px)]">
             <div className="relative col-span-3 row-span-6 overflow-hidden rounded-2xl">
-              <Photo name="launch" alt={t.photos.launch} sizes="(min-width:1024px) 28vw, 60vw" />
+              <Photo name="dockHunteborgPortrait" alt={t.photos.dockHunteborgPortrait} sizes="(min-width:1024px) 28vw, 60vw" />
             </div>
             <div className="relative col-span-2 row-span-3 overflow-hidden rounded-2xl">
-              <Photo name="bowIce" alt={t.photos.bowIce} sizes="20vw" />
+              <Photo name="ferryjoIce" alt={t.photos.ferryjoIce} sizes="20vw" />
             </div>
             <div className="relative col-span-2 row-span-3 overflow-hidden rounded-2xl">
-              <Photo name="escortPort" alt={t.photos.escortPort} sizes="20vw" />
+              <Photo name="deckTowClose" alt={t.photos.deckTowClose} sizes="20vw" />
             </div>
           </div>
         </div>
@@ -120,7 +120,7 @@ export default async function TugboatPage({ params }: Props) {
           <div className="lg:sticky lg:top-32 lg:self-start">
             <SectionHeading label={p.specs.label} title={p.specs.title} />
             <div data-reveal className="relative mt-10 aspect-[4/3] overflow-hidden rounded-3xl">
-              <Photo name="snowyQuay" alt={t.photos.snowyQuay} sizes="(min-width:1024px) 40vw, 100vw" />
+              <Photo name="dockHunteborg" alt={t.photos.dockHunteborg} sizes="(min-width:1024px) 40vw, 100vw" />
               <span className="absolute bottom-4 left-4 rounded-full bg-navy/80 px-4 py-2 font-heading text-sm font-bold text-white backdrop-blur">
                 {ferryJo.name} · EU {ferryJo.euNumber}
               </span>
@@ -197,7 +197,7 @@ export default async function TugboatPage({ params }: Props) {
             className="group relative isolate flex flex-col gap-6 overflow-hidden rounded-3xl bg-marine p-8 text-white sm:flex-row sm:items-center sm:justify-between sm:p-12"
           >
             <div className="absolute inset-0 -z-10 opacity-30 transition-opacity duration-700 group-hover:opacity-45">
-              <Photo name="aerialBargeTwoTugs" alt="" sizes="100vw" />
+              <Photo name="pontoonTow" alt="" sizes="100vw" />
             </div>
             <div className="absolute inset-0 -z-10 bg-gradient-to-r from-marine via-marine/90 to-marine/40" />
             <div>

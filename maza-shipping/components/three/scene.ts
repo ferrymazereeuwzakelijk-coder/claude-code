@@ -17,7 +17,7 @@ type Options = {
 // sx / sy shift the vessel on screen (fraction of the viewport) to leave room for copy
 type Key = { p: number; az: number; el: number; r: number; tx: number; ty: number; sx: number; sy: number };
 const PATH: Key[] = [
-  { p: 0.0, az: 0.7, el: 0.13, r: 29, tx: 0.5, ty: 1.3, sx: 0.15, sy: 0.16 },
+  { p: 0.0, az: 0.7, el: 0.13, r: 30, tx: 0.5, ty: 1.3, sx: 0.2, sy: 0.17 },
   { p: 0.3, az: 1.52, el: 0.07, r: 22, tx: 0, ty: 1.2, sx: 0, sy: 0 },
   { p: 0.58, az: 2.35, el: 0.28, r: 18, tx: -1.2, ty: 1.6, sx: 0, sy: 0 },
   { p: 0.82, az: 3.05, el: 0.18, r: 19, tx: -2.0, ty: 1.4, sx: 0, sy: 0 },

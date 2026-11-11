@@ -7,7 +7,8 @@ import Photo from "@/components/Photo";
 import Logo from "@/components/Logo";
 import { getDictionary } from "@/content/dictionaries";
 import { href, isLocale, defaultLocale, type Locale } from "@/content/i18n";
-import { company, ferryJo, localizeSpec, photos, video } from "@/content/site";
+import { clips, company, ferryJo, localizeSpec, photos, video } from "@/content/site";
+import ClipStrip from "@/components/ClipStrip";
 import { pageMetadata } from "@/lib/seo";
 
 type Props = { params: Promise<{ locale: string }> };
@@ -46,7 +47,7 @@ export default async function HomePage({ params }: Props) {
         callouts={callouts}
         final={h.ship.final}
         fallbackText={h.ship.fallback}
-        fallbackImage={{ src: photos.ferryjoAmsterdam.src, alt: t.photos.ferryjoAmsterdam }}
+        fallbackImage={{ src: photos.assistWeserborg.src, alt: t.photos.assistWeserborg }}
         coords={company.geo.label}
         actions={
           <>
@@ -92,7 +93,7 @@ export default async function HomePage({ params }: Props) {
           <div className="flex flex-col justify-between gap-6 lg:flex-row lg:items-end">
             <div data-reveal>
               <p className="eyebrow text-teal-light">{h.core.label}</p>
-              <h2 className="display mt-6 max-w-4xl text-[2.3rem] sm:text-7xl lg:text-8xl">{h.core.title}</h2>
+              <h2 className="display mt-6 max-w-4xl text-[2.3rem] sm:text-7xl lg:text-7xl xl:text-8xl">{h.core.title}</h2>
             </div>
             <p data-reveal className="hud max-w-xs text-white/45">
               {company.address.city} · NL — {company.geo.label}
@@ -101,8 +102,8 @@ export default async function HomePage({ params }: Props) {
         </div>
         <div className="mt-16 grid gap-px bg-white/10 lg:grid-cols-2">
           {[
-            { n: "01", ...h.core.tug, to: href(locale, "tugboat"), img: photos.ferryjoAmsterdam.src, alt: t.photos.ferryjoAmsterdam },
-            { n: "02", ...h.core.broker, to: href(locale, "brokerage"), img: video.poster, alt: h.video.text },
+            { n: "01", ...h.core.tug, to: href(locale, "tugboat"), img: photos.assistWeserborg.src, alt: t.photos.assistWeserborg },
+            { n: "02", ...h.core.broker, to: href(locale, "brokerage"), img: photos.pontoonTow.src, alt: t.photos.pontoonTow },
           ].map((c) => (
             <Link
               key={c.n}
@@ -121,7 +122,7 @@ export default async function HomePage({ params }: Props) {
                 </span>
               </div>
               <div>
-                <h3 className="display text-[2.1rem] sm:text-6xl xl:text-7xl">{c.title}</h3>
+                <h3 className="display text-[2.1rem] sm:text-5xl xl:text-6xl">{c.title}</h3>
                 <p className="mt-5 max-w-md text-lg text-white/80">{c.text}</p>
                 <span className="hud mt-8 inline-flex items-center gap-2 text-teal-light">
                   {t.common.learnMore} <LuArrowRight aria-hidden className="h-4 w-4 transition-transform group-hover:translate-x-1" />
@@ -131,6 +132,17 @@ export default async function HomePage({ params }: Props) {
           ))}
         </div>
       </section>
+
+      {/* Recent work: upright clips + ice photo */}
+      <ClipStrip
+        label={h.work.label}
+        title={h.work.title}
+        items={[
+          { kind: "video", ...clips.dock, ...h.work.items[0], alt: t.photos.dockHunteborgPortrait },
+          { kind: "video", ...clips.assist, ...h.work.items[1], alt: t.photos.assistWeserborg },
+          { kind: "image", src: photos.ferryjoIce.src, ...h.work.items[2], alt: t.photos.ferryjoIce },
+        ]}
+      />
 
       {/* Footage */}
       <ScrollVideo src={video.src} poster={video.poster} label={h.video.label} title={h.video.title} text={h.video.text} />
@@ -151,7 +163,7 @@ export default async function HomePage({ params }: Props) {
           </div>
           <div>
             <p data-reveal className="eyebrow text-teal">{h.about.label}</p>
-            <h2 data-reveal className="display mt-6 text-[2.6rem] text-navy sm:text-6xl lg:text-7xl">{h.about.title}</h2>
+            <h2 data-reveal className="display mt-6 text-[2.6rem] text-navy sm:text-6xl lg:text-6xl xl:text-7xl">{h.about.title}</h2>
             {h.about.paras.map((p) => (
               <p key={p.slice(0, 24)} data-reveal className="mt-6 text-lg leading-relaxed text-slate">
                 {p}
@@ -175,7 +187,7 @@ export default async function HomePage({ params }: Props) {
           <div className="flex flex-col justify-between gap-8 border-b border-navy/15 pb-10 lg:flex-row lg:items-end">
             <div data-reveal>
               <p className="eyebrow text-teal">{h.solutions.label}</p>
-              <h2 className="display mt-6 max-w-4xl text-[2.6rem] sm:text-6xl lg:text-7xl">{h.solutions.title}</h2>
+              <h2 className="display mt-6 max-w-4xl text-[2.6rem] sm:text-6xl lg:text-6xl xl:text-7xl">{h.solutions.title}</h2>
             </div>
             <Link data-reveal href={href(locale, "brokerage")} className="btn-outline-dark self-start lg:self-auto">
               {t.nav.brokerage} <LuArrowRight aria-hidden className="h-4 w-4" />
@@ -185,11 +197,11 @@ export default async function HomePage({ params }: Props) {
             {h.solutions.items.map((s, i) => (
               <li key={s.title} data-reveal className="group relative isolate border-b border-navy/15">
                 <span className="absolute inset-0 -z-10 origin-bottom scale-y-0 bg-navy transition-transform duration-500 ease-out-expo group-hover:scale-y-100" />
-                <div className="grid items-center gap-3 py-8 transition-colors duration-500 group-hover:text-white sm:grid-cols-[5rem_1fr_1fr_3rem] sm:gap-8 sm:px-4 sm:py-10">
+                <div className="grid items-center gap-3 py-8 transition-colors duration-500 group-hover:text-white lg:grid-cols-[4rem_1.1fr_1fr_3rem] lg:gap-8 lg:px-4 lg:py-10">
                   <span className="hud text-teal">{String(i + 1).padStart(2, "0")}</span>
-                  <h3 className="display text-[1.7rem] sm:text-5xl">{s.title}</h3>
+                  <h3 className="display text-[1.7rem] sm:text-4xl xl:text-5xl">{s.title}</h3>
                   <p className="text-slate transition-colors duration-500 group-hover:text-white/70 sm:text-lg">{s.text}</p>
-                  <LuArrowUpRight aria-hidden className="hidden h-8 w-8 text-teal transition-transform duration-500 group-hover:rotate-45 sm:block" />
+                  <LuArrowUpRight aria-hidden className="hidden h-8 w-8 text-teal transition-transform duration-500 group-hover:rotate-45 lg:block" />
                 </div>
               </li>
             ))}
@@ -202,9 +214,9 @@ export default async function HomePage({ params }: Props) {
         <div className="container-x grid gap-14 lg:grid-cols-[1fr_1.2fr] lg:gap-24">
           <div className="lg:sticky lg:top-32 lg:self-start">
             <p data-reveal className="eyebrow text-teal-light">{h.why.label}</p>
-            <h2 data-reveal className="display mt-6 text-[2.6rem] sm:text-6xl lg:text-7xl">{h.why.title}</h2>
+            <h2 data-reveal className="display mt-6 text-[2.6rem] sm:text-6xl lg:text-5xl 2xl:text-7xl">{h.why.title}</h2>
             <div data-reveal className="relative mt-10 hidden aspect-[16/10] overflow-hidden rounded-3xl lg:block">
-              <Photo name="ferryjoAmsterdam" alt={t.photos.ferryjoAmsterdam} sizes="40vw" className="object-[70%_50%]" />
+              <Photo name="ferryjoIce" alt={t.photos.ferryjoIce} sizes="40vw" />
             </div>
           </div>
           <ol className="grid gap-px bg-white/10">
@@ -228,7 +240,7 @@ export default async function HomePage({ params }: Props) {
         <Logo className="pointer-events-none absolute -right-[8%] -bottom-[18%] -z-10 w-[80%] text-navy opacity-[0.08]" />
         <div className="container-x py-24 sm:py-36">
           <p data-reveal className="eyebrow">{t.common.contactPerson}: {company.contactPerson}</p>
-          <h2 data-reveal className="display mt-8 text-[3rem] sm:text-8xl lg:text-[9rem]">
+          <h2 data-reveal className="display mt-8 text-[3rem] sm:text-8xl lg:text-[6rem] 2xl:text-[8rem]">
             {h.cta.title.map((line, i) => (
               <span key={line} className={`block ${i === h.cta.title.length - 1 ? "text-white" : ""}`}>{line}</span>
             ))}

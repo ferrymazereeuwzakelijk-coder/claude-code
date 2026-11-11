@@ -95,7 +95,8 @@ export default function ShipHero(props: Props) {
         const right = pt.x < w * 0.55;
         const mobile = w < 640;
         let bx = mobile ? (w - bw) / 2 : right ? pt.x + 70 : pt.x - bw - 70;
-        let by = mobile ? h - bh - 96 : pt.y - bh - 70;
+        const below = pt.y > h * 0.5;
+        let by = mobile ? h - bh - 96 : below ? pt.y + 70 : pt.y - bh - 70;
         bx = Math.min(Math.max(16, bx), w - bw - 16);
         by = Math.min(Math.max(90, by), h - bh - 90);
         el.style.transform = `translate3d(${bx}px, ${by}px, 0) translateY(${(1 - a) * 14}px)`;
@@ -104,7 +105,7 @@ export default function ShipHero(props: Props) {
         line.setAttribute("x1", String(pt.x));
         line.setAttribute("y1", String(pt.y));
         line.setAttribute("x2", String(mobile ? bx + bw / 2 : right ? bx : bx + bw));
-        line.setAttribute("y2", String(mobile ? by : by + bh));
+        line.setAttribute("y2", String(mobile || below ? by : by + bh));
       });
       const intro = introRef.current;
       if (intro) {
@@ -242,7 +243,7 @@ export default function ShipHero(props: Props) {
         <div ref={introRef} className="absolute inset-0 flex items-end bg-gradient-to-t from-navy/80 via-transparent to-transparent">
           <div className="container-x pb-8 sm:pb-[max(4.5rem,12svh)]">
             <p className="eyebrow animate-hero-in text-teal-light" style={{ animationDelay: "150ms" }}>{eyebrow}</p>
-            <h1 className="display mt-4 max-w-[14ch] text-[2.15rem] sm:mt-6 sm:text-6xl lg:text-[5.2rem] xl:text-[6rem]">
+            <h1 className="display mt-4 max-w-[14ch] text-[2.15rem] sm:mt-6 sm:text-6xl lg:text-[4.4rem] xl:text-[6rem]">
               {title.map((line, i) => (
                 <span key={line} className="block animate-hero-in" style={{ animationDelay: `${300 + i * 140}ms` }}>
                   {i === title.length - 1 ? <span className="outline-text text-white/80">{line}</span> : line}
@@ -269,7 +270,7 @@ export default function ShipHero(props: Props) {
         {mode === "3d" && (
           <div ref={finalRef} className="absolute inset-0 flex items-end bg-gradient-to-r from-navy/85 via-navy/40 to-transparent pb-[12svh] md:items-center md:pb-0" style={{ opacity: 0, visibility: "hidden" }}>
             <div className="container-x">
-              <p className="display max-w-[12ch] text-[2.6rem] sm:text-6xl lg:text-[5.4rem]">
+              <p className="display max-w-[12ch] text-[2.6rem] sm:text-6xl lg:text-[4.6rem] xl:text-[5.4rem]">
                 {final.title.map((l, i) => (
                   <span key={l} className={`block ${i === final.title.length - 1 ? "text-teal" : ""}`}>{l}</span>
                 ))}

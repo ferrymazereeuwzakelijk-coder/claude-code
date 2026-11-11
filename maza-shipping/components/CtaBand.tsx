@@ -22,7 +22,7 @@ export default function CtaBand({ title, text, button, buttonHref, callLabel, ph
       </div>
       <div className="absolute inset-0 -z-10 bg-gradient-to-br from-navy via-navy/90 to-teal/30" />
       <div className="container-x grid items-end gap-10 py-24 sm:py-32 lg:grid-cols-[1.4fr_1fr]">
-        <h2 data-reveal className="display text-[2.6rem] sm:text-7xl lg:text-8xl">
+        <h2 data-reveal className="display text-[2.6rem] sm:text-7xl lg:text-6xl">
           {title.map((l, i) => (
             <span key={l} className={`block ${i === title.length - 1 ? "text-teal-light" : ""}`}>
               {l}

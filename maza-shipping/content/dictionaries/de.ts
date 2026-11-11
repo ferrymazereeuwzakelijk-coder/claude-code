@@ -87,6 +87,11 @@ const de: Dictionary = {
     ferryjoAmsterdam: "Die Ferry-Jo an einem Stadtkai, schwarzer Rumpf und weißes Steuerhaus mit rot-weißen Streifen",
     deckTowClose: "Blick vom Achterdeck der Ferry-Jo: ein Seeschiff an der Schleppleine",
     deckTowSea: "Blick vom Achterdeck der Ferry-Jo, während ein Frachtschiff aufs offene Wasser fährt",
+    assistWeserborg: "Die Ferry-Jo an der Schleppleine eines großen Frachtschiffs im Hafen",
+    dockHunteborg: "Die Ferry-Jo schleppt einen Neubau aus einem Schwimmdock",
+    dockHunteborgPortrait: "Die Ferry-Jo mit Schleppleinen am Bug eines Neubaus, der das Dock verlässt",
+    ferryjoIce: "Die Ferry-Jo bricht Eis auf einer zugefrorenen Wasserstraße, mit niederländischer Flagge",
+    pontoonTow: "Die Ferry-Jo schleppt einen mit Gerät beladenen Ponton durch den Hafen",
   },
 
   home: {
@@ -160,6 +165,15 @@ const de: Dictionary = {
       ],
       final: { title: ["Ferry-Jo.", "Bereit für den Einsatz."], text: "Schleppen, Schieben, Stapelläufe, Eisbrechen und Schiffsbegleitung in den gesamten Niederlanden." },
       fallback: "3D-Ansicht ist auf diesem Gerät nicht verfügbar.",
+    },
+    work: {
+      label: "Im Einsatz",
+      title: "Aktuelle Arbeit auf dem Wasser",
+      items: [
+        { title: "Aus dem Dock", text: "Einen Neubau aus dem Schwimmdock schleppen und zum Ausrüstungskai bringen." },
+        { title: "Hafenassistenz", text: "An der Leine eines Seeschiffs, Manövrieren durch den Hafen." },
+        { title: "Eisbrechen", text: "Die Wasserstraße offenhalten, wenn der Frost kommt." },
+      ],
     },
     video: {
       label: "Auf dem Wasser",

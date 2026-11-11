@@ -47,7 +47,7 @@
        instead of overflowing on phones; short words always move to the next line. */
     overflow-wrap: break-word;
     hyphens: auto;
-    hyphenate-limit-chars: 12 5 5;
+    hyphenate-limit-chars: 10 4 4;
     text-wrap: balance;
   }
   :focus-visible {
@@ -84,7 +84,11 @@ body::after {
   @apply font-heading font-black uppercase;
   font-stretch: 100%;
   @media (width >= 40rem) {
-    font-stretch: 125%;
+    font-stretch: 115%;
+  }
+  /* Two-column layouts are tight on tablets/small laptops: narrower letters */
+  @media (width >= 64rem) and (width < 80rem) {
+    font-stretch: 100%;
   }
   letter-spacing: -0.02em;
   line-height: 0.88;

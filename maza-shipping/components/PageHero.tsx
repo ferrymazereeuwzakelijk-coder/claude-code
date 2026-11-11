@@ -35,10 +35,10 @@ export default function PageHero({ photo, alt, eyebrow, title, sub, actions, siz
         <p className="eyebrow animate-hero-in text-teal-light" style={{ animationDelay: "150ms" }}>
           {eyebrow}
         </p>
-        <h1 className="display mt-6 max-w-5xl text-[2.4rem] sm:text-6xl lg:text-[5.2rem] xl:text-[6rem]">
+        <h1 className="display mt-6 max-w-5xl text-[2.4rem] sm:text-6xl lg:text-[4.4rem] xl:text-[6rem]">
           {title.map((line, i) => (
             <span key={line} className="block animate-hero-in" style={{ animationDelay: `${300 + i * 140}ms` }}>
-              {i === title.length - 1 ? <span className="outline-text text-white/85">{line}</span> : line}
+              {i === title.length - 1 ? <span className="text-teal">{line}</span> : line}
             </span>
           ))}
         </h1>
@@ -62,7 +62,7 @@ export default function PageHero({ photo, alt, eyebrow, title, sub, actions, siz
             {stats.map((s) => (
               <div key={s.label} className="px-4 first:pl-0">
                 <dt className="hud text-white/55">{s.label}</dt>
-                <dd className="display mt-2 text-3xl sm:text-5xl">
+                <dd className="display mt-2 text-2xl sm:text-5xl">
                   {s.value}
                   {s.unit && <span className="ml-1 text-base font-bold text-teal-light sm:text-lg">{s.unit}</span>}
                 </dd>
