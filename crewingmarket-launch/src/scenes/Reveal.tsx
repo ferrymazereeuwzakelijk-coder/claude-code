@@ -1,6 +1,7 @@
 import React from 'react';
 import {AbsoluteFill, Img, staticFile, useCurrentFrame} from 'remotion';
-import {Footage, PALETTES, SeaScene} from '../components/SeaScene';
+import {PALETTES, SeaScene} from '../components/SeaScene';
+import {Footage} from '../components/Footage';
 import {FOOTAGE} from '../footage';
 import {easeInOut, easeOut, ramp, shake, TL} from '../lib/anim';
 
@@ -17,10 +18,10 @@ export const Underway: React.FC = () => {
   return (
     <AbsoluteFill style={{background: '#02060d'}}>
       <AbsoluteFill style={{opacity: fadeInA * (1 - fadeOut)}}>
-        <Footage
-          src={FOOTAGE.underway}
-          fallback={
-            <SeaScene
+        {FOOTAGE.underway ? (
+          <Footage clip={FOOTAGE.underway} t={f - from} length={to - from} push={0.12} grade="gold" />
+        ) : (
+          <SeaScene
               frame={f}
               palette={PALETTES.dusk}
               horizon={0.54}
@@ -28,8 +29,7 @@ export const Underway: React.FC = () => {
               vessel={{x: 470 - from * 1.3, y: 1300, scale: 2.0, speed: 1.3}}
               glowX={560}
             />
-          }
-        />
+        )}
         <AbsoluteFill
           style={{background: 'linear-gradient(180deg, rgba(0,0,0,0.35) 0%, rgba(0,0,0,0) 30%, rgba(0,0,0,0) 70%, rgba(0,0,0,0.45) 100%)'}}
         />

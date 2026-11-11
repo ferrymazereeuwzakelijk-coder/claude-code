@@ -1,7 +1,8 @@
 import React from 'react';
-import {AbsoluteFill, useCurrentFrame} from 'remotion';
-import {Footage, PALETTES, SeaScene} from '../components/SeaScene';
-import {FOOTAGE} from '../footage';
+import {AbsoluteFill, Sequence, useCurrentFrame} from 'remotion';
+import {Footage} from '../components/Footage';
+import {PALETTES, SeaScene} from '../components/SeaScene';
+import {OPENING_SHOTS} from '../footage';
 import {easeIn, easeOut, ramp, shake, TL} from '../lib/anim';
 
 const BLUE = '#3b74ff';
@@ -16,26 +17,38 @@ export const Opening: React.FC = () => {
   const sh = shake(f, [0, ...at], 10);
   const zoom = 1 + ramp(f, [0, end], [0, 0.14], (t) => t) + ramp(f, [0, 10], [0.12, 0]);
   const flash = ramp(f, [0, 12], [1, 0], easeOut);
+  const cutPop = OPENING_SHOTS.slice(1).reduce((a, sh) => Math.max(a, ramp(f, [sh.from, sh.from + 4], [0.35, 0])), 0);
 
   return (
     <AbsoluteFill style={{background: '#000', overflow: 'hidden'}}>
       <AbsoluteFill style={{transform: `translate(${sh.x}px, ${sh.y}px) scale(1.04)`}}>
-        <Footage
-          src={FOOTAGE.opening}
-          fallback={
-            <SeaScene
-              frame={f + 40}
-              palette={PALETTES.night}
-              horizon={0.62}
-              zoom={zoom}
-              vessel={{x: 470, y: 1190 + 150, scale: 1.55, speed: 0.55}}
-              rain={1}
-              searchlight={0.9}
-              glowX={720}
-            />
-          }
-        />
+        {OPENING_SHOTS.length === 0 ? (
+          <SeaScene
+            frame={f + 40}
+            palette={PALETTES.night}
+            horizon={0.62}
+            zoom={zoom}
+            vessel={{x: 470, y: 1190 + 150, scale: 1.55, speed: 0.55}}
+            rain={1}
+            searchlight={0.9}
+            glowX={720}
+          />
+        ) : (
+          OPENING_SHOTS.map((shot) => (
+            <Sequence key={shot.from} from={shot.from} durationInFrames={shot.to - shot.from} layout="none">
+              <Footage clip={shot.clip} t={f - shot.from} length={shot.to - shot.from} push={shot.push} grade="night" />
+            </Sequence>
+          ))
+        )}
       </AbsoluteFill>
+
+      {/* top/bottom shade for legibility */}
+      <AbsoluteFill
+        style={{
+          background:
+            'linear-gradient(180deg, rgba(0,0,0,0.55) 0%, rgba(0,0,0,0) 45%, rgba(0,0,0,0) 75%, rgba(0,0,0,0.5) 100%)',
+        }}
+      />
 
       {/* hook typography */}
       <AbsoluteFill style={{padding: '0 84px', justifyContent: 'flex-start', paddingTop: 300}}>
@@ -78,13 +91,7 @@ export const Opening: React.FC = () => {
           mixBlendMode: 'screen',
         }}
       />
-      {/* top/bottom shade for legibility */}
-      <AbsoluteFill
-        style={{
-          background:
-            'linear-gradient(180deg, rgba(0,0,0,0.55) 0%, rgba(0,0,0,0) 45%, rgba(0,0,0,0) 75%, rgba(0,0,0,0.5) 100%)',
-        }}
-      />
+      <AbsoluteFill style={{background: '#fff', opacity: f > 0 ? cutPop : 0, mixBlendMode: 'overlay'}} />
     </AbsoluteFill>
   );
 };

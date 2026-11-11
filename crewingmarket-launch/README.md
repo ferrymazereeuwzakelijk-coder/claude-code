@@ -37,10 +37,12 @@ npm run render   # -> out/crewingmarket-launch.mp4
 ## Audio
 `scripts/make_soundtrack.py` synthesizes every sound: drone, ocean, ship's horn, taiko hits, the D-minor score at 120 BPM, UI taps and keystrokes, whooshes, risers, and the D-major logo resolution. It uses no samples and no third-party music, so it is original and free to use. The mix is mastered to about −15 LUFS.
 
-## Missing assets: replace these for the final cut
-1. **Real maritime footage.** None was supplied, and AI-generated footage was not allowed. Until real footage is added, `SeaScene` draws a stylized tug and harbor on canvas. To use real clips, put licensed files in `public/footage/` and set their paths in `src/footage.ts` (`opening`, `underway`, and optionally the backgrounds). Recommended clips:
-   * 0–5 s: a tug or workboat working at night or in rough weather, 4K
-   * 2 s: a wide shot of a vessel underway at golden hour
-2. **Vector logo (SVG).** The logo mark is currently upscaled from the ~45 px header logo in the screenshot.
-3. **A screenshot of the company's reactions page** (`crewRequestPage?c=…`) with a freelancer's reaction on it. The match scene would then show the company actually seeing the candidate. Right now it shows the link from the WhatsApp message.
-4. Optionally, the original screen recordings instead of stills, to show real scrolling.
+## Footage
+The opening, the vessel shot and the backgrounds behind the phones use **real footage** from Wikimedia Commons. It is free to use under CC BY / CC BY-SA / public domain; see `CREDITS.md` for the attribution that must go in the caption. `scripts/prepare_footage.py` cuts the segments, and `src/footage.ts` sets each shot's in-point, speed and 9:16 crop. The drawn `SeaScene` is now only a fallback for when a slot is `null`.
+
+Opening montage, cut on the words: a hand on the tug's throttle → tug bow-on (Vanino) → inland tanker under storm clouds (Rhine, Emmerich) → tug towing a barge → tug manoeuvring.
+
+## Still worth improving
+1. **Your own footage**, ideally of Dutch tugs and inland shipping, filmed in 4K. Free stock is good, but footage of your own customers and vessels is more convincing. Swap it in through `src/footage.ts`.
+2. **A vector logo (SVG).**
+3. **A screenshot of the company's reactions page** (`crewRequestPage?c=…`).

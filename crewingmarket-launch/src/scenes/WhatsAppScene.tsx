@@ -1,7 +1,8 @@
 import React from 'react';
 import {AbsoluteFill, useCurrentFrame} from 'remotion';
 import {Phone} from '../components/Phone';
-import {Footage, PALETTES, SeaScene} from '../components/SeaScene';
+import {PALETTES, SeaScene} from '../components/SeaScene';
+import {Footage} from '../components/Footage';
 import {Highlight, ScrollSwap, SentBubble, Shot, Tap, TypingField} from '../components/ScreenUI';
 import {RoleLabel} from '../components/Finish';
 import {FOOTAGE} from '../footage';
@@ -133,11 +134,11 @@ export const WhatsAppScene: React.FC = () => {
 
   return (
     <AbsoluteFill style={{background: '#02050b', overflow: 'hidden'}}>
-      <AbsoluteFill style={{filter: `blur(${bgBlur}px) brightness(${1 - bgBlur / 50})`, transform: 'scale(1.12)'}}>
-        <Footage
-          src={FOOTAGE.companyBackground}
-          fallback={
-            <SeaScene
+      <AbsoluteFill style={{filter: `blur(${bgBlur}px) brightness(${1.25 - bgBlur / 60})`, transform: 'scale(1.12)'}}>
+        {FOOTAGE.companyBackground ? (
+          <Footage clip={FOOTAGE.companyBackground} t={f - FROM} length={300} push={0.05} grade="night" />
+        ) : (
+          <SeaScene
               frame={f + 40}
               palette={PALETTES.night}
               horizon={0.62}
@@ -147,8 +148,7 @@ export const WhatsAppScene: React.FC = () => {
               searchlight={0.5}
               glowX={720}
             />
-          }
-        />
+        )}
       </AbsoluteFill>
       <AbsoluteFill
         style={{background: 'radial-gradient(circle at 50% 50%, rgba(33,192,99,0.16) 0%, rgba(0,0,0,0) 55%)'}}

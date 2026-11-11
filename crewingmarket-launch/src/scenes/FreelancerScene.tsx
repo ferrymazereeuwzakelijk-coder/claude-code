@@ -1,7 +1,8 @@
 import React from 'react';
 import {AbsoluteFill, useCurrentFrame} from 'remotion';
 import {Phone} from '../components/Phone';
-import {Footage, PALETTES, SeaScene} from '../components/SeaScene';
+import {PALETTES, SeaScene} from '../components/SeaScene';
+import {Footage} from '../components/Footage';
 import {Highlight, Shot, Tap} from '../components/ScreenUI';
 import {RoleLabel} from '../components/Finish';
 import {FOOTAGE} from '../footage';
@@ -67,10 +68,10 @@ export const FreelancerScene: React.FC = () => {
   return (
     <AbsoluteFill style={{background: '#06142a', overflow: 'hidden'}}>
       <AbsoluteFill style={{filter: 'blur(20px) brightness(0.72)', transform: 'scale(1.12)'}}>
-        <Footage
-          src={FOOTAGE.freelancerBackground}
-          fallback={
-            <SeaScene
+        {FOOTAGE.freelancerBackground ? (
+          <Footage clip={FOOTAGE.freelancerBackground} t={f - FROM} length={165} push={0.05} grade="neutral" />
+        ) : (
+          <SeaScene
               frame={f}
               palette={PALETTES.blue}
               horizon={0.56}
@@ -78,8 +79,7 @@ export const FreelancerScene: React.FC = () => {
               vessel={{x: 300, y: 1230, scale: 1.2, speed: 0.4}}
               glowX={420}
             />
-          }
-        />
+        )}
       </AbsoluteFill>
       <AbsoluteFill
         style={{background: 'radial-gradient(circle at 50% 50%, rgba(59,116,255,0.22) 0%, rgba(0,0,0,0) 58%)'}}

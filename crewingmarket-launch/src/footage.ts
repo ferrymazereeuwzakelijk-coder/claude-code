@@ -1,22 +1,40 @@
+import type {Clip} from './components/Footage';
+
 /**
- * Real footage slots. No maritime video was supplied, so every slot is `null`
- * and the stylised canvas scene (SeaScene) is used instead.
+ * Real footage (Wikimedia Commons, see CREDITS.md). Clips are prepared by
+ * scripts/prepare_footage.py into public/footage/.
  *
- * To use real, licensed footage: put the clip in public/footage/ and set the
- * path here, e.g. opening: 'footage/tug-night.mp4'. Clips are cropped to 9:16
- * (object-fit: cover) and muted — the soundtrack carries all audio.
+ * Every shot is editable here: in-point (seconds inside the prepared clip),
+ * speed, and where the 16:9 clip is cropped to 9:16 (focusX 0 = left, 1 = right).
+ * Set a slot to null to fall back to the drawn SeaScene.
  */
+
+const credit = 'see CREDITS.md';
+
+export type Shot = {clip: Clip; from: number; to: number; push?: number};
+
+/** 0:00–0:04.5 opening montage, cut on the hook words (frames 8, 17, 26, 41). */
+export const OPENING_SHOTS: Shot[] = [
+  // a hand pushes the tug's throttle — "MORGEN"
+  {from: 0, to: 17, push: 0.1, clip: {src: 'footage/helm-throttle.mp4', start: 0.45, rate: 0.85, focusX: 0.38, zoom: 1.12, credit}},
+  // tug bow-on in an icy harbour — "EEN"
+  {from: 17, to: 26, push: 0.05, clip: {src: 'footage/tug-vanino.mp4', start: 8.0, focusX: 0.5, zoom: 1.05, credit}},
+  // inland tanker from above under a storm sky — "MATROOS", "NODIG?"
+  {from: 26, to: 62, push: 0.08, clip: {src: 'footage/tanker-storm.mp4', start: 2.6, rate: 0.9, focusX: 0.66, credit}},
+  // tug towing a barge
+  {from: 62, to: 100, push: 0.07, clip: {src: 'footage/tug-towing.mp4', start: 0.3, focusX: 0.5, credit}},
+  // tug manoeuvring — camera pushes in, then the phone arrives
+  {from: 100, to: 135, push: 0.16, clip: {src: 'footage/tug-vanino.mp4', start: 2.2, focusX: 0.46, zoom: 1.04, credit}},
+];
+
 export const FOOTAGE: {
-  /** 0:00–0:04.5 — working vessel / tug, dramatic, ideally night or bad weather. */
-  opening: string | null;
-  /** 0:24.5–0:26.5 — wide shot of a vessel underway, golden hour. */
-  underway: string | null;
-  /** Optional backgrounds behind the phones (blurred automatically). */
-  companyBackground: string | null;
-  freelancerBackground: string | null;
+  /** 0:24.5–0:26.5 — vessel underway. */
+  underway: Clip | null;
+  /** Blurred backgrounds behind the phones. */
+  companyBackground: Clip | null;
+  freelancerBackground: Clip | null;
 } = {
-  opening: null,
-  underway: null,
-  companyBackground: null,
-  freelancerBackground: null,
+  underway: {src: 'footage/tanker-storm.mp4', start: 8.6, rate: 0.85, focusX: 0.56, credit},
+  companyBackground: {src: 'footage/rotterdam-night.mp4', start: 4.0, focusX: 0.55, credit},
+  freelancerBackground: {src: 'footage/rhine-barges.mp4', start: 1.0, focusX: 0.5, credit},
 };
