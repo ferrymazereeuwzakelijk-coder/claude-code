@@ -1,0 +1,83 @@
+{
+  "_doc": "Single source of truth for timing. Frames @30fps. 120 BPM => 1 beat = 15 frames, 1 bar = 60 frames. Both the Remotion video (src/) and the soundtrack generator (scripts/make_soundtrack.py) read this file, so editing a frame here moves the picture AND its sound. Screen coordinates are native screenshot pixels (1320x2868).",
+  "fps": 30,
+  "width": 1080,
+  "height": 1920,
+  "durationInFrames": 900,
+  "bpm": 120,
+  "scenes": {
+    "opening": { "from": 0, "to": 135 },
+    "whatsapp": { "from": 135, "to": 435 },
+    "freelancer": { "from": 435, "to": 600 },
+    "match": { "from": 600, "to": 735 },
+    "underway": { "from": 735, "to": 795 },
+    "reveal": { "from": 795, "to": 900 }
+  },
+  "copy": {
+    "hook": ["MORGEN", "EEN", "MATROOS", "NODIG?"],
+    "typedMessage": "Ik zoek een matroos voor morgen.",
+    "messageTime": "16:29",
+    "tagline": ["DE JUISTE MENSEN.", "OP HET JUISTE MOMENT."],
+    "launchDate": "13 NOVEMBER 2026",
+    "launchLine": "WE GAAN LIVE",
+    "url": "www.crewingmarket.com"
+  },
+  "hookWords": [8, 17, 26, 41],
+  "whatsapp": {
+    "phoneIn": 135,
+    "focusInput": 160,
+    "typeStart": 168,
+    "typeEnd": 206,
+    "send": 212,
+    "welcome": 230,
+    "tapBemanning": 252,
+    "bemanning": 256,
+    "invite": 274,
+    "tapPlaatsen": 296,
+    "sheetUp": 300,
+    "tapFunctie": 322,
+    "picker": 326,
+    "complete": 348,
+    "tapVerstuur": 372,
+    "sheetDown": 376,
+    "online": 396,
+    "out": 425
+  },
+  "freelancer": {
+    "phoneIn": 435,
+    "tapNaarOpdrachten": 478,
+    "assignments": 482,
+    "tapInteresse": 526,
+    "reacted": 530
+  },
+  "match": {
+    "impact": 600,
+    "line1": 612,
+    "line2": 630
+  },
+  "reveal": {
+    "logoHit": 795,
+    "wordmark": 803,
+    "date": 836,
+    "live": 850,
+    "url": 866
+  },
+  "taps": [
+    { "frame": 160, "x": 520, "y": 1756, "phone": "company" },
+    { "frame": 212, "x": 1211, "y": 1756, "phone": "company" },
+    { "frame": 252, "x": 595, "y": 1445, "phone": "company" },
+    { "frame": 296, "x": 562, "y": 2138, "phone": "company" },
+    { "frame": 322, "x": 659, "y": 874, "phone": "company" },
+    { "frame": 372, "x": 659, "y": 2565, "phone": "company" },
+    { "frame": 478, "x": 659, "y": 2147, "phone": "freelancer" },
+    { "frame": 526, "x": 659, "y": 1642, "phone": "freelancer" }
+  ],
+  "sfx": {
+    "whoosh": [128, 298, 374, 424, 590, 728, 788],
+    "receive": [230, 274, 396],
+    "send": [212, 256],
+    "confirm": [530],
+    "impact": [0, 600, 795, 850],
+    "riser": [[540, 600], [735, 795]]
+  }
+}
