@@ -30,8 +30,11 @@ const spans = [
   "lg:col-span-2",
 ];
 
-export default function Gallery({ items, alts, labels }: Props) {
+export default function Gallery({ items: allItems, alts, labels }: Props) {
   const [index, setIndex] = useState<number | null>(null);
+  // Photos that fail to load (e.g. once the old hosting is gone) drop out of the grid
+  const [failed, setFailed] = useState<ReadonlySet<PhotoKey>>(new Set());
+  const items = allItems.filter((k) => !failed.has(k));
   const closeRef = useRef<HTMLButtonElement>(null);
   const lastTrigger = useRef<HTMLButtonElement | null>(null);
 
@@ -79,6 +82,7 @@ export default function Gallery({ items, alts, labels }: Props) {
                 alt={alts[key]}
                 fill
                 sizes="(min-width:1024px) 33vw, 50vw"
+                onError={() => setFailed((prev) => new Set(prev).add(key))}
                 className="object-cover transition-transform duration-700 ease-out-expo group-hover:scale-[1.06]"
               />
               <span className="absolute inset-0 bg-gradient-to-t from-navy/70 via-transparent to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100" />

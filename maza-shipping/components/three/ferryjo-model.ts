@@ -1,386 +1,12 @@
 import * as THREE from "three";
 
 /**
- * Procedural model of the Ferry-Jo (17.40 m × 4.60 m tug), measured from side-on
- * photos of the vessel: a very low, rounded stern and long aft deck, a strong
- * sheer up to a high bow, the white wheelhouse just forward of midships with a
- * red roof band, radar forward and mast aft on the roof, a low white casing aft
- * of the wheelhouse, two life rings, tyre fenders and a rope swag along the bow.
- *
- * Units are metres. +X points to the bow, +Y up, +Z to port. Waterline is y = 0.
+ * The Ferry-Jo, from the owner's 3D model (claude.ai artifact "Ferry-Jo 3D").
+ * Procedural model, units in metres. +X = bow, +Y = up, +Z = starboard,
+ * waterline at y = 0. Ported to TypeScript with three additions for the site:
+ * named anchor points for the spec callouts, a per-frame update (radar, flags)
+ * and the export shape the scene expects.
  */
-
-export const HULL = { length: 17.4, beam: 4.6 } as const;
-const L = HULL.length;
-const HB = HULL.beam / 2;
-const xAt = (t: number) => -L / 2 + L * t; // t: 0 = stern, 1 = bow
-
-const COLORS = {
-  hull: 0x0e1013,
-  bottom: 0x6e1c16,
-  deck: 0x3a3d40,
-  white: 0xf3f3ef,
-  red: 0xd9261c,
-  glass: 0x0a141c,
-  rubber: 0x121212,
-  steel: 0xd9dde0,
-  rope: 0xcbb68a,
-  ring: 0xff5a2c,
-};
-
-/** Plan view: rounded tug stern, parallel body, full rounded bow. */
-function halfBeam(t: number) {
-  if (t < 0.12) {
-    const u = 1 - t / 0.12;
-    return HB * (0.12 + 0.88 * Math.sqrt(Math.max(0, 1 - u * u)));
-  }
-  if (t > 0.62) {
-    const u = (t - 0.62) / 0.38;
-    return HB * Math.max(0.05, 1 - Math.pow(u, 2.1));
-  }
-  return HB;
-}
-/** Top edge of the hull (sheer line): ~0.35 m aft, ~3 m at the stem. */
-function sheerY(t: number) {
-  return 0.35 + 2.65 * Math.pow(Math.max(0, t), 1.8);
-}
-/** Bulwark height above the walking deck. */
-function bulwark(t: number) {
-  return 0.12 + 0.68 * t * t;
-}
-function deckY(t: number) {
-  return sheerY(t) - bulwark(t);
-}
-function keelY(t: number) {
-  const fore = Math.max(0, (t - 0.8) / 0.2);
-  const aft = Math.max(0, (0.12 - t) / 0.12);
-  return -1.9 + 1.5 * fore * fore + 0.9 * aft * aft;
-}
-
-/** Lofted hull shell: black topsides, red antifouling below the waterline. */
-function buildHull() {
-  const S = 80;
-  const R = 26;
-  const pos: number[] = [];
-  const col: number[] = [];
-  const idx: number[] = [];
-  const black = new THREE.Color(COLORS.hull);
-  const red = new THREE.Color(COLORS.bottom);
-  const n = 3.2; // superellipse exponent → hard bilge, near-vertical sides
-
-  for (let i = 0; i <= S; i++) {
-    const t = i / S;
-    const hb = Math.max(halfBeam(t), 0.03);
-    const top = sheerY(t);
-    const bot = keelY(t);
-    const depth = top - bot;
-    // Slight forward rake of the stem above the waterline
-    const rake = t > 0.9 ? ((t - 0.9) / 0.1) * 0.5 : 0;
-    for (let j = 0; j <= R; j++) {
-      const th = (j / R) * Math.PI;
-      const c = Math.cos(th);
-      const s = Math.sin(th);
-      const z = hb * Math.sign(c) * Math.pow(Math.abs(c), 2 / n);
-      const y = top - depth * Math.pow(Math.abs(s), 2 / n);
-      const x = xAt(t) + rake * Math.max(0, y / top);
-      pos.push(x, y, z);
-      const k = y < -0.35 ? red : black; // black boot-top a little below the waterline
-      col.push(k.r, k.g, k.b);
-    }
-  }
-  for (let i = 0; i < S; i++) {
-    for (let j = 0; j < R; j++) {
-      const a = i * (R + 1) + j;
-      const b = a + R + 1;
-      idx.push(a, b, a + 1, b, b + 1, a + 1);
-    }
-  }
-  // Transom cap at the stern
-  const c0 = pos.length / 3;
-  pos.push(xAt(0), (sheerY(0) + keelY(0)) / 2, 0);
-  col.push(black.r, black.g, black.b);
-  for (let j = 0; j < R; j++) idx.push(c0, j + 1, j);
-
-  const g = new THREE.BufferGeometry();
-  g.setAttribute("position", new THREE.Float32BufferAttribute(pos, 3));
-  g.setAttribute("color", new THREE.Float32BufferAttribute(col, 3));
-  g.setIndex(idx);
-  g.computeVertexNormals();
-  return new THREE.Mesh(
-    g,
-    new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 0.38, metalness: 0.2, side: THREE.DoubleSide }),
-  );
-}
-
-/** Walking deck (sits below the sheer, inside the bulwark). */
-function buildDeck() {
-  const S = 60;
-  const pos: number[] = [];
-  const idx: number[] = [];
-  for (let i = 0; i <= S; i++) {
-    const t = (i / S) * 0.975;
-    const hb = halfBeam(t) * 0.94;
-    const y = deckY(t);
-    pos.push(xAt(t), y, hb, xAt(t), y, -hb);
-  }
-  for (let i = 0; i < S; i++) {
-    const a = i * 2;
-    idx.push(a, a + 1, a + 2, a + 1, a + 3, a + 2);
-  }
-  const g = new THREE.BufferGeometry();
-  g.setAttribute("position", new THREE.Float32BufferAttribute(pos, 3));
-  g.setIndex(idx);
-  g.computeVertexNormals();
-  return new THREE.Mesh(g, new THREE.MeshStandardMaterial({ color: COLORS.deck, roughness: 0.92, side: THREE.DoubleSide }));
-}
-
-/** Rubbing strake along the sheer line, and the stern fender. */
-function buildStrakes() {
-  const group = new THREE.Group();
-  const mat = new THREE.MeshStandardMaterial({ color: 0x1b1d20, roughness: 0.6 });
-  // One continuous strake around the stern and along both sides
-  const pts: THREE.Vector3[] = [];
-  for (let i = 0; i <= 60; i++) {
-    const t = 0.97 - (i / 60) * 0.97;
-    pts.push(new THREE.Vector3(xAt(t), sheerY(t), halfBeam(t) + 0.03));
-  }
-  for (let i = 1; i <= 60; i++) {
-    const t = (i / 60) * 0.97;
-    pts.push(new THREE.Vector3(xAt(t), sheerY(t), -(halfBeam(t) + 0.03)));
-  }
-  group.add(new THREE.Mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(pts), 240, 0.08, 8, false), mat));
-  // Heavy rubber fender around the stern just above the waterline
-  const fp: THREE.Vector3[] = [];
-  for (let i = 0; i <= 30; i++) {
-    const a = -Math.PI / 2 + (i / 30) * Math.PI;
-    const t = 0.13 * (1 - Math.cos(a));
-    fp.push(new THREE.Vector3(xAt(t) - 0.12, 0.12, Math.sin(a) * (halfBeam(t) + 0.12)));
-  }
-  group.add(
-    new THREE.Mesh(
-      new THREE.TubeGeometry(new THREE.CatmullRomCurve3(fp), 60, 0.16, 8, false),
-      new THREE.MeshStandardMaterial({ color: COLORS.rubber, roughness: 0.95 }),
-    ),
-  );
-  return group;
-}
-
-function mat(color: number, opts: Partial<THREE.MeshStandardMaterialParameters> = {}) {
-  return new THREE.MeshStandardMaterial({ color, roughness: 0.5, ...opts });
-}
-function box(w: number, h: number, d: number, color: number, opts: Partial<THREE.MeshStandardMaterialParameters> = {}) {
-  return new THREE.Mesh(new THREE.BoxGeometry(w, h, d), mat(color, opts));
-}
-function cyl(rt: number, rb: number, h: number, color: number, opts: Partial<THREE.MeshStandardMaterialParameters> = {}, seg = 16) {
-  return new THREE.Mesh(new THREE.CylinderGeometry(rt, rb, h, seg), mat(color, opts));
-}
-
-function canvasTexture(w: number, h: number, draw: (ctx: CanvasRenderingContext2D, w: number, h: number) => void) {
-  const c = document.createElement("canvas");
-  c.width = w;
-  c.height = h;
-  const ctx = c.getContext("2d")!;
-  draw(ctx, w, h);
-  const tex = new THREE.CanvasTexture(c);
-  tex.colorSpace = THREE.SRGBColorSpace;
-  tex.anisotropy = 4;
-  return tex;
-}
-function decal(w: number, h: number, draw: (ctx: CanvasRenderingContext2D, w: number, h: number) => void, px = 160) {
-  return new THREE.Mesh(
-    new THREE.PlaneGeometry(w, h),
-    new THREE.MeshStandardMaterial({ map: canvasTexture(Math.round(w * px), Math.round(h * px), draw), transparent: true, roughness: 0.5 }),
-  );
-}
-
-function tyre(scale = 1) {
-  const m = new THREE.Mesh(new THREE.TorusGeometry(0.3 * scale, 0.12 * scale, 10, 20), mat(COLORS.rubber, { roughness: 0.95 }));
-  return m;
-}
-
-/** White wheelhouse with window band, red roof band, radar forward, mast aft. */
-function wheelhouse() {
-  const g = new THREE.Group();
-  const len = 3.6;
-  const wid = 2.9;
-  const h = 2.35;
-  const white = { roughness: 0.35 };
-
-  const cabin = box(len, h, wid, COLORS.white, white);
-  cabin.position.y = h / 2;
-  g.add(cabin);
-  // Plinth down to the sloping deck (the sheer rises under the wheelhouse)
-  const plinth = box(len, 0.8, wid, COLORS.white, white);
-  plinth.position.y = -0.4;
-  g.add(plinth);
-
-  // Windows: dark glass panes set into the upper part of each face
-  const glass = mat(COLORS.glass, { roughness: 0.06, metalness: 0.7, envMapIntensity: 1.8 });
-  const winH = 0.72;
-  const winY = h - 0.62;
-  const addPane = (w: number, x: number, z: number, ry: number) => {
-    const pane = new THREE.Mesh(new THREE.PlaneGeometry(w, winH), glass);
-    pane.position.set(x, winY, z);
-    pane.rotation.y = ry;
-    g.add(pane);
-  };
-  for (const side of [1, -1]) {
-    const n = 4;
-    const pw = (len - 0.5) / n - 0.14;
-    for (let k = 0; k < n; k++) addPane(pw, -len / 2 + 0.25 + pw / 2 + 0.07 + k * ((len - 0.5) / n), side * (wid / 2 + 0.006), side > 0 ? 0 : Math.PI);
-  }
-  for (const end of [1, -1]) {
-    const n = 4;
-    const pw = (wid - 0.4) / n - 0.12;
-    for (let k = 0; k < n; k++) addPane(pw, end * (len / 2 + 0.006), -wid / 2 + 0.2 + pw / 2 + 0.06 + k * ((wid - 0.4) / n), end > 0 ? Math.PI / 2 : -Math.PI / 2);
-  }
-
-  // Roof with red band
-  const roof = box(len + 0.3, 0.1, wid + 0.3, COLORS.white, white);
-  roof.position.y = h + 0.2;
-  g.add(roof);
-  const band = box(len + 0.32, 0.22, wid + 0.32, COLORS.red, { roughness: 0.45 });
-  band.position.y = h + 0.05;
-  g.add(band);
-
-  // Side markings: EU number, MAZA logo, door, two life rings
-  for (const side of [1, -1]) {
-    const marks = decal(1.6, 0.7, (ctx, W, H) => {
-      ctx.fillStyle = "#111";
-      ctx.font = `600 ${H * 0.2}px Arial, sans-serif`;
-      ctx.textAlign = "left";
-      ctx.fillText("02203689", W * 0.05, H * 0.24);
-      ctx.font = `900 ${H * 0.34}px Arial Black, Arial, sans-serif`;
-      ctx.fillText("MAZA", W * 0.05, H * 0.66);
-      ctx.fillStyle = "#00A2E0";
-      ctx.font = `700 ${H * 0.13}px Arial, sans-serif`;
-      ctx.fillText("S H I P P I N G", W * 0.05, H * 0.84);
-    });
-    marks.position.set(-0.2, 1.05, side * (wid / 2 + 0.008));
-    if (side < 0) marks.rotation.y = Math.PI;
-    g.add(marks);
-
-    const door = box(0.7, 1.75, 0.03, 0xe6e7e3, { roughness: 0.3 });
-    door.position.set(-len / 2 + 0.55, 0.95, side * (wid / 2 + 0.02));
-    g.add(door);
-    const doorWin = box(0.42, 0.45, 0.035, COLORS.glass, { roughness: 0.1, metalness: 0.6 });
-    doorWin.position.set(-len / 2 + 0.55, 1.45, side * (wid / 2 + 0.025));
-    g.add(doorWin);
-
-    for (const dx of [0.75, 1.3]) {
-      const ring = new THREE.Mesh(new THREE.TorusGeometry(0.26, 0.07, 10, 24), mat(COLORS.ring, { roughness: 0.6 }));
-      ring.position.set(dx, 1.05, side * (wid / 2 + 0.08));
-      g.add(ring);
-      for (let q = 0; q < 4; q++) {
-        const tape = box(0.05, 0.16, 0.16, 0xffffff);
-        const a = (q * Math.PI) / 2 + Math.PI / 4;
-        tape.position.set(dx + Math.cos(a) * 0.26, 1.05 + Math.sin(a) * 0.26, side * (wid / 2 + 0.08));
-        tape.rotation.z = a;
-        g.add(tape);
-      }
-    }
-  }
-
-  // Radar on the forward half of the roof
-  const radar = new THREE.Group();
-  radar.add(box(0.24, 0.14, 1.9, COLORS.white, { roughness: 0.3 }));
-  const ped = cyl(0.13, 0.15, 0.3, COLORS.white);
-  ped.position.y = -0.2;
-  radar.add(ped);
-  radar.position.set(0.85, h + 0.6, 0);
-  radar.name = "radar";
-  g.add(radar);
-
-  // Mast on the aft part of the roof with yard and lights
-  const mast = cyl(0.05, 0.07, 3.0, COLORS.steel, { metalness: 0.7, roughness: 0.3 });
-  mast.position.set(-1.1, h + 1.7, 0);
-  g.add(mast);
-  const yard = box(0.06, 0.06, 1.2, COLORS.steel, { metalness: 0.7 });
-  yard.position.set(-1.1, h + 2.4, 0);
-  g.add(yard);
-  for (const yy of [1.2, 1.9, 2.8]) {
-    const lamp = cyl(0.07, 0.07, 0.14, 0x9a8a50, { metalness: 0.6 });
-    lamp.position.set(-1.05, h + yy, 0);
-    g.add(lamp);
-  }
-  // Search lights on the front corners, orange beacon
-  for (const z of [1.15, -1.15]) {
-    const sl = cyl(0.14, 0.14, 0.24, COLORS.steel, { metalness: 0.85, roughness: 0.2 });
-    sl.rotation.z = Math.PI / 2;
-    sl.position.set(len / 2 - 0.1, h + 0.42, z);
-    g.add(sl);
-  }
-  const beacon = cyl(0.08, 0.08, 0.16, 0xff8a00, { emissive: 0xff6a00, emissiveIntensity: 2 });
-  beacon.position.set(-1.6, h + 0.4, 0.9);
-  beacon.name = "beacon";
-  g.add(beacon);
-  return g;
-}
-
-/** Low white casing aft of the wheelhouse with the stainless exhaust. */
-function casing() {
-  const g = new THREE.Group();
-  const c = box(1.9, 1.3, 2.4, COLORS.white, { roughness: 0.4 });
-  c.position.y = 0.35;
-  g.add(c);
-  const vent = box(0.8, 0.35, 0.05, 0x8d9397);
-  for (const z of [1.22, -1.22]) {
-    const v = vent.clone();
-    v.position.set(0.1, 0.6, z);
-    g.add(v);
-  }
-  const ex = cyl(0.12, 0.12, 2.6, COLORS.steel, { metalness: 0.95, roughness: 0.15 });
-  ex.position.set(0.7, 1.3, 0.75);
-  g.add(ex);
-  const bend = new THREE.Mesh(new THREE.TorusGeometry(0.26, 0.12, 10, 16, Math.PI / 2), mat(COLORS.steel, { metalness: 0.95, roughness: 0.15 }));
-  bend.position.set(0.44, 2.6, 0.75);
-  g.add(bend);
-  return g;
-}
-
-function bollard() {
-  const g = new THREE.Group();
-  for (const dz of [-0.2, 0.2]) {
-    const b = cyl(0.11, 0.12, 0.38, 0x16181b, { metalness: 0.4 });
-    b.position.set(0, 0.19, dz);
-    const cap = cyl(0.15, 0.15, 0.05, 0x16181b, { metalness: 0.4 });
-    cap.position.set(0, 0.4, dz);
-    g.add(b, cap);
-  }
-  return g;
-}
-
-function handWheel() {
-  const g = new THREE.Group();
-  const rim = new THREE.Mesh(new THREE.TorusGeometry(0.28, 0.025, 6, 24), mat(COLORS.white, { roughness: 0.4 }));
-  g.add(rim);
-  for (let k = 0; k < 3; k++) {
-    const s = box(0.56, 0.03, 0.03, COLORS.white);
-    s.rotation.z = (k * Math.PI) / 3;
-    g.add(s);
-  }
-  const post = cyl(0.04, 0.05, 0.5, 0x222222);
-  post.position.y = -0.4;
-  g.add(post);
-  return g;
-}
-
-function flag(colors: string[], w: number, h: number, poleLen: number) {
-  const g = new THREE.Group();
-  const pole = cyl(0.025, 0.03, poleLen, 0xa07a4a, { roughness: 0.6 });
-  pole.position.y = poleLen / 2;
-  g.add(pole);
-  const tex = canvasTexture(96, 64, (ctx) => {
-    colors.forEach((c, i) => {
-      ctx.fillStyle = c;
-      ctx.fillRect(0, (64 / colors.length) * i, 96, 64 / colors.length + 1);
-    });
-  });
-  const cloth = new THREE.Mesh(new THREE.PlaneGeometry(w, h, 12, 4), new THREE.MeshStandardMaterial({ map: tex, side: THREE.DoubleSide, roughness: 0.8 }));
-  cloth.position.set(-w / 2, poleLen - h / 2 - 0.05, 0);
-  g.add(cloth);
-  return { group: g, cloth };
-}
 
 export type FerryJo = {
   group: THREE.Group;
@@ -389,118 +15,435 @@ export type FerryJo = {
   update: (time: number) => void;
 };
 
+type MatOpts = Partial<THREE.MeshStandardMaterialParameters>;
+
 export function createFerryJo(): FerryJo {
-  const group = new THREE.Group();
-  group.add(buildHull(), buildDeck(), buildStrakes());
+  const boat = new THREE.Group();
+  boat.name = "Ferry-Jo";
 
-  const whT = 0.625;
-  const wh = wheelhouse();
-  wh.position.set(xAt(whT), deckY(whT) - 0.05, 0);
-  group.add(wh);
+  const L = 17, B = 2.3, DRAFT = 1.5, BULW = 0.6;
+  const lerp = (a: number, b: number, t: number) => a + (b - a) * t;
+  const sstep = (a: number, b: number, x: number) => {
+    const t = Math.min(1, Math.max(0, (x - a) / (b - a)));
+    return t * t * (3 - 2 * t);
+  };
 
-  const csT = 0.47;
-  const cs = casing();
-  cs.position.set(xAt(csT), deckY(csT), 0);
-  group.add(cs);
+  const std = (color: number, o: MatOpts = {}) => new THREE.MeshStandardMaterial({ color, roughness: 0.75, metalness: 0.05, ...o });
+  const M = {
+    hullInner: std(0x8f979c, { side: THREE.DoubleSide }),
+    deck: std(0x7d868c, { side: THREE.DoubleSide, roughness: 0.9 }),
+    black: std(0x17191c, { roughness: 0.6 }),
+    strake: std(0x24272b, { roughness: 0.55 }),
+    grey: std(0xa3abb0),
+    greyLight: std(0xc3c9cc),
+    white: std(0xf1f1ec, { roughness: 0.55 }),
+    red: std(0xe0431d, { roughness: 0.5 }),
+    redDeep: std(0xb3271b),
+    glass: std(0x16242c, { roughness: 0.12, metalness: 0.7 }),
+    tire: std(0x101112, { roughness: 0.95 }),
+    rope: std(0xd9b63a, { roughness: 0.95 }),
+    ropePale: std(0xcbc5b2, { roughness: 0.95 }),
+    exhaust: std(0xb5a587, { roughness: 0.6, metalness: 0.3 }),
+    steel: std(0xd9dde0, { roughness: 0.4, metalness: 0.5 }),
+    orange: std(0xf0641e, { roughness: 0.6 }),
+    blue: std(0x2f7fc4, { roughness: 0.5 }),
+    lamp: std(0xfff4c8, { emissive: 0x554a20, roughness: 0.3 }),
+  };
 
-  // Aft deck: towing bitt, hand wheels, bollards
-  const bitt = cyl(0.13, 0.17, 0.9, 0x16181b, { metalness: 0.5 });
-  bitt.position.set(xAt(0.36), deckY(0.36) + 0.45, 0);
-  group.add(bitt);
-  for (const dz of [0.45, -0.45]) {
-    const w = handWheel();
-    w.position.set(xAt(0.22), deckY(0.22) + 0.85, dz);
-    w.rotation.y = Math.PI / 2;
-    group.add(w);
+  /* ---------- hull shape functions (u: 0 = stern, 1 = bow) ---------- */
+  const xOf = (u: number) => -L / 2 + u * L;
+  const uOf = (x: number) => (x + L / 2) / L;
+  const halfBeam = (u: number) => {
+    if (u < 0.32) { const k = (0.32 - u) / 0.32; return B * Math.pow(Math.max(0, 1 - Math.pow(k, 2.4)), 0.5); }
+    if (u > 0.52) { const k = (u - 0.52) / 0.48; return B * Math.pow(Math.max(0, 1 - k * k), 0.85); }
+    return B;
+  };
+  const topY = (u: number) => 1.45 + 1.0 * Math.pow(Math.max(0, (u - 0.45) / 0.55), 2.2) + 0.2 * Math.pow(Math.max(0, (0.4 - u) / 0.4), 2);
+  const keelY = (u: number) => lerp(lerp(0.25, -DRAFT, sstep(0, 0.3, u)), -DRAFT * 0.55, sstep(0.9, 1, u));
+  const deckY = (u: number) => topY(u) - BULW;
+  const section = (s: number, u: number) => {
+    // 0..1 fullness at depth s (0 = rail, 1 = keel)
+    const n = lerp(3.6, 1.7, sstep(0.6, 1, u));
+    return Math.pow(Math.max(0, 1 - Math.pow(s, n)), 0.6);
+  };
+  const hullZ = (u: number, y: number) => {
+    const s = Math.min(1, Math.max(0, (topY(u) - y) / (topY(u) - keelY(u))));
+    return halfBeam(u) * section(s, u);
+  };
+  const deckAt = (x: number) => deckY(uOf(x));
+
+  /* ---------- hull texture with the name on the bow ---------- */
+  function hullTexture(port: boolean) {
+    const c = document.createElement("canvas");
+    c.width = 4096;
+    c.height = 1024;
+    const g = c.getContext("2d")!;
+    g.fillStyle = "#17191c";
+    g.fillRect(0, 0, c.width, c.height);
+    const uText = 0.892;
+    const cx = (port ? 1 - uText : uText) * c.width;
+    g.save();
+    g.translate(cx, 0.105 * c.height);
+    g.scale(0.84, 1);
+    g.fillStyle = "#f4f4f0";
+    g.font = 'bold 92px Georgia, "Times New Roman", serif';
+    g.textAlign = "center";
+    g.textBaseline = "middle";
+    g.fillText("FERRY-JO", 0, 0);
+    g.restore();
+    const t = new THREE.CanvasTexture(c);
+    t.colorSpace = THREE.SRGBColorSpace;
+    t.anisotropy = 8;
+    return t;
   }
-  for (const [t, dz] of [
-    [0.07, 1.1], [0.07, -1.1], [0.27, 1.75], [0.27, -1.75], [0.84, 1.0], [0.84, -1.0],
-  ] as const) {
-    const b = bollard();
-    b.position.set(xAt(t), deckY(t), dz);
-    group.add(b);
-  }
 
-  // Tyre fenders along both sides, hanging just below the sheer
-  const flare = (t: number) => Math.atan2(halfBeam(t + 0.02) - halfBeam(t - 0.02), L * 0.04);
+  /* ---------- hull shell ---------- */
+  const NU = 96, NS = 22;
+  const us = Array.from({ length: NU + 1 }, (_, i) => 0.5 - 0.5 * Math.cos((Math.PI * i) / NU));
+  function hullSide(side: number) {
+    const pos: number[] = [], uv: number[] = [], idx: number[] = [];
+    for (let i = 0; i <= NU; i++) {
+      const u = us[i], x = xOf(u), ty = topY(u), ky = keelY(u), hb = halfBeam(u);
+      for (let j = 0; j <= NS; j++) {
+        const s = j / NS;
+        pos.push(x, lerp(ty, ky, s), side * hb * section(s, u));
+        uv.push(side > 0 ? u : 1 - u, 1 - s);
+      }
+    }
+    for (let i = 0; i < NU; i++) for (let j = 0; j < NS; j++) {
+      const a = i * (NS + 1) + j, b = a + NS + 1, c = a + 1, d = b + 1;
+      if (side > 0) idx.push(a, c, b, c, d, b);
+      else idx.push(a, b, c, c, b, d);
+    }
+    const geo = new THREE.BufferGeometry();
+    geo.setAttribute("position", new THREE.Float32BufferAttribute(pos, 3));
+    geo.setAttribute("uv", new THREE.Float32BufferAttribute(uv, 2));
+    geo.setIndex(idx);
+    geo.computeVertexNormals();
+    const mat = std(0xffffff, { map: hullTexture(side < 0), roughness: 0.6, side: THREE.DoubleSide });
+    const m = new THREE.Mesh(geo, mat);
+    m.name = side > 0 ? "hull-starboard" : "hull-port";
+    return m;
+  }
+  boat.add(hullSide(1), hullSide(-1));
+
+  /* ---------- deck and inner bulwark ---------- */
+  const INSET = 0.05;
+  {
+    const pos: number[] = [], idx: number[] = [];
+    for (let i = 0; i <= NU; i++) {
+      const u = us[i], w = Math.max(0, halfBeam(u) - INSET);
+      pos.push(xOf(u), deckY(u), w, xOf(u), deckY(u), -w);
+    }
+    for (let i = 0; i < NU; i++) { const a = i * 2; idx.push(a, a + 2, a + 1, a + 1, a + 2, a + 3); }
+    const geo = new THREE.BufferGeometry();
+    geo.setAttribute("position", new THREE.Float32BufferAttribute(pos, 3));
+    geo.setIndex(idx);
+    geo.computeVertexNormals();
+    const deck = new THREE.Mesh(geo, M.deck);
+    deck.name = "deck";
+    boat.add(deck);
+  }
   for (const side of [1, -1]) {
-    for (const t of [0.34, 0.45, 0.56, 0.67, 0.78]) {
-      const tr = tyre();
-      tr.position.set(xAt(t), sheerY(t) - 0.42, side * (halfBeam(t) + 0.15));
-      tr.rotation.y = side * flare(t);
-      group.add(tr);
+    const pos: number[] = [], idx: number[] = [];
+    for (let i = 0; i <= NU; i++) {
+      const u = us[i], w = side * Math.max(0, halfBeam(u) - INSET);
+      pos.push(xOf(u), deckY(u), w, xOf(u), topY(u), w);
     }
-    // Rope swag along the bow
+    for (let i = 0; i < NU; i++) { const a = i * 2; idx.push(a, a + 1, a + 2, a + 1, a + 3, a + 2); }
+    const geo = new THREE.BufferGeometry();
+    geo.setAttribute("position", new THREE.Float32BufferAttribute(pos, 3));
+    geo.setIndex(idx);
+    geo.computeVertexNormals();
+    boat.add(new THREE.Mesh(geo, M.hullInner));
+  }
+
+  /* ---------- rail cap and rubbing strake ---------- */
+  function ringCurve(yFn: (u: number) => number, zFn: (u: number) => number) {
     const pts: THREE.Vector3[] = [];
-    for (let i = 0; i <= 24; i++) {
-      const t = 0.62 + (i / 24) * 0.35;
-      const sag = Math.sin((i / 24) * Math.PI * 2) * 0.25 + Math.sin((i / 24) * Math.PI) * 0.35;
-      pts.push(new THREE.Vector3(xAt(t), sheerY(t) - 0.1 - Math.abs(sag), side * (halfBeam(t) + 0.06)));
+    const N = 70;
+    for (let i = 0; i <= N; i++) { const u = 0.5 - 0.5 * Math.cos((Math.PI * i) / N); pts.push(new THREE.Vector3(xOf(u), yFn(u), zFn(u))); }
+    for (let i = N - 1; i >= 1; i--) { const u = 0.5 - 0.5 * Math.cos((Math.PI * i) / N); pts.push(new THREE.Vector3(xOf(u), yFn(u), -zFn(u))); }
+    return new THREE.CatmullRomCurve3(pts, true, "centripetal");
+  }
+  const rail = new THREE.Mesh(new THREE.TubeGeometry(ringCurve(topY, (u) => Math.max(0.02, halfBeam(u) - 0.02)), 300, 0.055, 8, true), M.black);
+  rail.name = "rail";
+  boat.add(rail);
+  const strake = new THREE.Mesh(
+    new THREE.TubeGeometry(ringCurve((u) => deckY(u) - 0.08, (u) => Math.max(0.03, hullZ(u, deckY(u) - 0.08))), 300, 0.085, 8, true),
+    M.strake,
+  );
+  strake.name = "rubbing-strake";
+  boat.add(strake);
+
+  /* ---------- small helpers ---------- */
+  const box = (lx: number, ly: number, lz: number, mat: THREE.Material, x: number, y: number, z: number, parent: THREE.Object3D = boat) => {
+    const m = new THREE.Mesh(new THREE.BoxGeometry(lx, ly, lz), mat);
+    m.position.set(x, y, z);
+    parent.add(m);
+    return m;
+  };
+  const cyl = (r: number, h: number, mat: THREE.Material, x: number, y: number, z: number, parent: THREE.Object3D = boat, seg = 16) => {
+    const m = new THREE.Mesh(new THREE.CylinderGeometry(r, r, h, seg), mat);
+    m.position.set(x, y, z);
+    parent.add(m);
+    return m;
+  };
+  const tube = (pts: THREE.Vector3[], r: number, mat: THREE.Material, parent: THREE.Object3D = boat) => {
+    const m = new THREE.Mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(pts), pts.length * 8, r, 8, false), mat);
+    parent.add(m);
+    return m;
+  };
+  const V = (x: number, y: number, z: number) => new THREE.Vector3(x, y, z);
+
+  // stem bar
+  box(0.14, topY(1) - keelY(1) + 0.15, 0.14, M.black, L / 2 - 0.03, (topY(1) + keelY(1)) / 2 + 0.07, 0);
+
+  /* ---------- wheelhouse ---------- */
+  const wh = new THREE.Group();
+  wh.name = "wheelhouse";
+  boat.add(wh);
+  const WX0 = 2.2, WX1 = 4.8, WW = 2.5, WBASE = 0.9, WTOP = 3.3;
+  const WCX = (WX0 + WX1) / 2, WH = WTOP - WBASE;
+  box(WX1 - WX0, WH, WW, M.white, WCX, WBASE + WH / 2, 0, wh);
+  box(WX1 - WX0 + 0.34, 0.17, WW + 0.34, M.red, WCX, WTOP + 0.02, 0, wh); // red roof band
+  box(WX1 - WX0 + 0.24, 0.06, WW + 0.24, M.greyLight, WCX, WTOP + 0.13, 0, wh); // roof
+  const WINY = 2.72, WINH = 0.62;
+  for (const side of [1, -1]) {
+    for (const x of [3.3, 3.88, 4.46]) box(0.46, WINH, 0.03, M.glass, x, WINY, (side * WW) / 2, wh);
+    box(0.34, 0.4, 0.03, M.glass, 2.62, WINY + 0.1, (side * WW) / 2, wh);
+    box(0.66, 1.75, 0.035, M.grey, 2.62, deckAt(2.6) + 0.95, (side * WW) / 2, wh); // door
+    const port = new THREE.Mesh(new THREE.CylinderGeometry(0.11, 0.11, 0.05, 20), M.glass);
+    port.rotation.x = Math.PI / 2;
+    port.position.set(2.62, deckAt(2.6) + 1.3, (side * WW) / 2);
+    wh.add(port);
+  }
+  for (const z of [-0.8, 0, 0.8]) box(0.03, WINH, 0.62, M.glass, WX1, WINY, z, wh);
+  for (const z of [-0.6, 0.6]) box(0.03, 0.5, 0.6, M.glass, WX0, WINY + 0.05, z, wh);
+
+  // company lettering on both sides
+  {
+    const c = document.createElement("canvas");
+    c.width = 512;
+    c.height = 320;
+    const g = c.getContext("2d")!;
+    g.textAlign = "center";
+    g.textBaseline = "middle";
+    g.fillStyle = "#3d4348";
+    g.font = '600 58px "Arial Narrow", Arial, sans-serif';
+    g.fillText("02203689", 256, 60);
+    g.fillStyle = "#16384f";
+    g.font = "bold 104px Arial, sans-serif";
+    g.fillText("MAZA", 256, 170);
+    g.fillStyle = "#2aa3b8";
+    g.font = "600 44px Arial, sans-serif";
+    "SHIPPING".split("").forEach((ch, i) => g.fillText(ch, 256 + (i - 3.5) * 40, 258));
+    const tex = new THREE.CanvasTexture(c);
+    tex.colorSpace = THREE.SRGBColorSpace;
+    tex.anisotropy = 8;
+    const mat = new THREE.MeshStandardMaterial({ map: tex, transparent: true, roughness: 0.6 });
+    for (const side of [1, -1]) {
+      const p = new THREE.Mesh(new THREE.PlaneGeometry(1.1, 0.69), mat);
+      p.position.set(3.88, 1.92, side * (WW / 2 + 0.012));
+      if (side < 0) p.rotation.y = Math.PI;
+      p.name = "lettering";
+      wh.add(p);
     }
-    group.add(new THREE.Mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(pts), 60, 0.025, 6, false), mat(COLORS.rope, { roughness: 0.9 })));
+  }
+  // lifebuoys
+  const buoy = (x: number, y: number, z: number, ry: number) => {
+    const m = new THREE.Mesh(new THREE.TorusGeometry(0.27, 0.075, 10, 28), M.orange);
+    m.position.set(x, y, z);
+    m.rotation.y = ry;
+    wh.add(m);
+  };
+  buoy(WX1 + 0.08, 1.95, -0.55, Math.PI / 2);
+  buoy(WX0 - 0.08, 2.0, 0.0, Math.PI / 2);
 
-    // Name on the bow
-    const t = 0.88;
-    const name = decal(2.1, 0.5, (ctx, W, H) => {
-      ctx.fillStyle = "#f3f3ef";
-      ctx.font = `bold ${H * 0.62}px Georgia, "Times New Roman", serif`;
-      ctx.textAlign = "center";
-      ctx.textBaseline = "middle";
-      ctx.fillText("FERRY-JO", W / 2, H / 2);
+  // roof gear
+  const ROOF = WTOP + 0.16;
+  cyl(0.045, 2.5, M.steel, 2.55, ROOF + 1.25, 0, wh); // mast
+  box(0.04, 0.04, 1.0, M.steel, 2.55, ROOF + 1.55, 0, wh);
+  box(0.04, 0.04, 0.6, M.steel, 2.55, ROOF + 2.05, 0, wh);
+  for (const [y, z] of [[1.62, 0.45], [1.62, -0.45], [2.12, 0.25], [2.12, -0.25], [2.55, 0]]) {
+    const l = new THREE.Mesh(new THREE.SphereGeometry(0.06, 10, 8), M.lamp);
+    l.position.set(2.55, ROOF + y, z);
+    wh.add(l);
+  }
+  cyl(0.08, 0.3, M.white, 4.2, ROOF + 0.15, 0, wh); // radar pedestal
+  box(0.34, 0.16, 0.3, M.white, 4.2, ROOF + 0.36, 0, wh);
+  const scanner = box(0.13, 0.1, 1.7, M.white, 4.2, ROOF + 0.5, 0, wh);
+  scanner.rotation.y = 0.5;
+  scanner.name = "radar";
+  for (const z of [-0.95, 0.95]) {
+    // searchlights
+    cyl(0.025, 0.25, M.steel, 4.6, ROOF + 0.12, z, wh);
+    const s = new THREE.Mesh(new THREE.CylinderGeometry(0.11, 0.09, 0.16, 16), M.steel);
+    s.rotation.z = Math.PI / 2;
+    s.position.set(4.62, ROOF + 0.3, z);
+    wh.add(s);
+    const lens = new THREE.Mesh(new THREE.CylinderGeometry(0.1, 0.1, 0.02, 16), M.lamp);
+    lens.rotation.z = Math.PI / 2;
+    lens.position.set(4.71, ROOF + 0.3, z);
+    wh.add(lens);
+  }
+  for (const [x, z] of [[3.6, -0.5], [3.35, 0.2], [3.05, -0.75]]) {
+    const d = new THREE.Mesh(new THREE.SphereGeometry(0.1, 12, 8, 0, Math.PI * 2, 0, Math.PI / 2), M.white);
+    d.position.set(x, ROOF, z);
+    wh.add(d);
+  }
+  box(0.55, 0.04, 0.4, M.blue, 3.2, ROOF + 0.03, 0.7, wh); // blue roof panel
+
+  /* ---------- forward trunk ---------- */
+  box(1.6, 0.95, 1.8, M.grey, 5.6, 1.325, 0);
+  box(0.6, 0.06, 0.6, M.greyLight, 5.6, 1.83, 0);
+
+  /* ---------- engine casing (sloped aft) ---------- */
+  {
+    const s = new THREE.Shape();
+    s.moveTo(-1.1, 0.8);
+    s.lineTo(2.2, 0.8);
+    s.lineTo(2.2, 2.3);
+    s.lineTo(1.0, 2.3);
+    s.lineTo(0.2, 1.75);
+    s.lineTo(-1.1, 1.55);
+    s.closePath();
+    const geo = new THREE.ExtrudeGeometry(s, { depth: 2.0, bevelEnabled: false });
+    geo.translate(0, 0, -1.0);
+    const m = new THREE.Mesh(geo, M.grey);
+    m.name = "engine-casing";
+    boat.add(m);
+    const hatch = box(0.75, 0.05, 0.9, M.greyLight, 0.6, 2.05, 0);
+    hatch.rotation.z = Math.atan2(0.55, 0.8);
+  }
+  // exhausts
+  tube([V(1.85, 2.2, 0.6), V(1.85, 3.2, 0.6), V(1.8, 3.6, 0.6), V(1.55, 3.78, 0.6), V(1.2, 3.8, 0.6)], 0.115, M.exhaust);
+  tube([V(1.9, 2.2, 0.25), V(1.9, 3.3, 0.25), V(1.8, 3.5, 0.25), V(1.55, 3.55, 0.25)], 0.06, M.steel);
+
+  /* ---------- aft deck ---------- */
+  {
+    const y = deckAt(-1.9);
+    for (const z of [-0.32, 0.32]) cyl(0.1, 0.85, M.black, -1.9, y + 0.42, z); // towing bitt
+    box(0.1, 0.1, 1.0, M.black, -1.9, y + 0.62, 0);
+    for (let i = 0; i < 5; i++) {
+      // yellow rope coil
+      const t = new THREE.Mesh(new THREE.TorusGeometry(0.19, 0.055, 8, 20), M.rope);
+      t.rotation.x = Math.PI / 2;
+      t.position.set(-1.9, y + 0.12 + i * 0.1, 0.32);
+      boat.add(t);
+    }
+    const yb = deckAt(-3.8);
+    box(1.7, 0.45, 1.5, M.grey, -3.8, yb + 0.22, 0); // deck box
+    box(0.75, 0.04, 1.2, M.greyLight, -3.4, yb + 0.47, 0);
+    box(0.5, 0.04, 0.5, M.greyLight, -4.25, yb + 0.47, -0.3);
+    box(1.0, 0.1, 1.2, M.greyLight, -6.4, deckAt(-6.4) + 0.05, 0); // aft hatch
+  }
+  // bollards
+  const bollard = (x: number, z: number, capMat: THREE.Material = M.redDeep) => {
+    const y = deckAt(x);
+    for (const dx of [-0.17, 0.17]) {
+      cyl(0.075, 0.36, M.black, x + dx, y + 0.18, z);
+      cyl(0.095, 0.05, capMat, x + dx, y + 0.38, z);
+    }
+  };
+  for (const s of [1, -1]) {
+    bollard(6.5, s * 0.8);
+    bollard(1.0, s * 1.75, M.rope);
+    bollard(-5.6, s * 1.55);
+  }
+  bollard(7.35, 0);
+
+  /* ---------- flags ---------- */
+  function flag(stripes: string[], w: number, h: number) {
+    const c = document.createElement("canvas");
+    c.width = 96;
+    c.height = 64;
+    const g = c.getContext("2d")!;
+    stripes.forEach((col, i) => {
+      g.fillStyle = col;
+      g.fillRect(0, (i * 64) / stripes.length, 96, 64 / stripes.length + 1);
     });
-    name.position.set(xAt(t), sheerY(t) - 0.38, side * (halfBeam(t) + 0.04));
-    name.rotation.y = side > 0 ? flare(t) : Math.PI - flare(t);
-    group.add(name);
+    const tex = new THREE.CanvasTexture(c);
+    tex.colorSpace = THREE.SRGBColorSpace;
+    const geo = new THREE.PlaneGeometry(w, h, 8, 1);
+    const p = geo.attributes.position;
+    for (let i = 0; i < p.count; i++) p.setZ(i, 0.06 * Math.sin(p.getX(i) * 7));
+    geo.computeVertexNormals();
+    return new THREE.Mesh(geo, new THREE.MeshStandardMaterial({ map: tex, side: THREE.DoubleSide, roughness: 0.9 }));
   }
-  // Stem fender (stacked tyres at the bow)
-  for (let k = 0; k < 3; k++) {
-    const bt = tyre(1.1);
-    bt.position.set(xAt(1) + 0.55, sheerY(0.99) - 0.6 - k * 0.55, 0);
-    bt.rotation.y = Math.PI / 2;
-    group.add(bt);
+  const staff = new THREE.Group();
+  staff.position.set(-8.0, deckAt(-8.0), 0);
+  staff.rotation.z = 0.45;
+  boat.add(staff);
+  cyl(0.03, 2.6, M.steel, 0, 1.3, 0, staff);
+  const ensign = flag(["#ae1c28", "#ffffff", "#21468b"], 0.9, 0.6);
+  ensign.position.set(-0.47, 2.25, 0);
+  ensign.name = "flag-nl";
+  staff.add(ensign);
+  cyl(0.02, 1.0, M.steel, 8.15, topY(uOf(8.15)) + 0.4, 0);
+  const pennant = flag(["#c8102e", "#ffffff", "#c8102e"], 0.34, 0.24);
+  pennant.position.set(7.96, topY(uOf(8.15)) + 0.75, 0);
+  boat.add(pennant);
+
+  /* ---------- tyre fenders ---------- */
+  const tires = new THREE.Group();
+  tires.name = "fenders";
+  boat.add(tires);
+  const tireGeo = new THREE.TorusGeometry(0.25, 0.125, 10, 24);
+  for (const x of [-5.4, 0.6, 2.2, 3.8, 5.4, 6.7, 7.6, 8.15]) {
+    const u = uOf(x), y = deckY(u) - 0.12;
+    const slope = (hullZ(u + 0.004, y) - hullZ(u - 0.004, y)) / (0.008 * L);
+    for (const side of [1, -1]) {
+      const n = V(-slope, 0, side).normalize();
+      const t = new THREE.Mesh(tireGeo, M.tire);
+      t.position.set(x + n.x * 0.15, y, side * hullZ(u, y) + n.z * 0.15);
+      t.rotation.y = Math.atan2(n.x, n.z);
+      tires.add(t);
+      const hang = topY(u) - (y + 0.3);
+      cyl(0.015, hang, M.ropePale, t.position.x, y + 0.3 + hang / 2, t.position.z, tires, 6);
+    }
   }
 
-  // Dutch ensign on a raked pole on the aft deck, pennant on the bow
-  const ensign = flag(["#ae1c28", "#ffffff", "#21468b"], 1.0, 0.66, 2.6);
-  ensign.group.position.set(xAt(0.3), deckY(0.3), 1.3);
-  ensign.group.rotation.z = 0.42;
-  group.add(ensign.group);
-  const pennant = flag(["#d9261c", "#ffffff", "#d9261c"], 0.5, 0.34, 1.6);
-  pennant.group.position.set(xAt(0.95), sheerY(0.95), 0);
-  group.add(pennant.group);
+  /* ---------- rope draped round the bow ---------- */
+  for (const side of [1, -1]) {
+    const pts: THREE.Vector3[] = [];
+    for (let i = 0; i <= 14; i++) {
+      const t = i / 14, x = lerp(8.38, 5.9, t), u = uOf(x);
+      const y = topY(u) + 0.03 - 0.95 * Math.pow(Math.sin(Math.PI * t), 0.8);
+      pts.push(V(x, y, side * (hullZ(u, y) + 0.07)));
+    }
+    tube(pts, 0.035, M.ropePale).name = "bow-rope";
+  }
 
-  group.traverse((o) => {
+  boat.traverse((o) => {
     if ((o as THREE.Mesh).isMesh) {
       o.castShadow = true;
       o.receiveShadow = true;
     }
   });
 
-  const radar = wh.getObjectByName("radar")!;
-  const beacon = wh.getObjectByName("beacon") as THREE.Mesh;
-  const cloths = [ensign.cloth, pennant.cloth].map((c) => ({
-    mesh: c,
-    base: (c.geometry.attributes.position.array as Float32Array).slice(),
-    w: (c.geometry as THREE.PlaneGeometry).parameters.width,
-  }));
+  // Animated cloth: ripple travels along the flags
+  const cloths = [ensign, pennant].map((m) => {
+    const geo = m.geometry as THREE.PlaneGeometry;
+    return { m, base: (geo.attributes.position.array as Float32Array).slice(), w: geo.parameters.width };
+  });
 
   return {
-    group,
+    group: boat,
     anchors: {
-      bow: new THREE.Vector3(xAt(0.97), sheerY(0.97) + 0.2, 0),
-      stern: new THREE.Vector3(xAt(0.36), deckY(0.36) + 0.9, 0),
-      engine: new THREE.Vector3(xAt(csT), deckY(csT) + 1.0, 0),
-      wheelhouse: new THREE.Vector3(xAt(whT) + 0.85, deckY(whT) + 2.95, 0),
-      length: new THREE.Vector3(0, -0.1, HB + 0.3),
+      bow: V(L / 2, topY(1) + 0.2, 0),
+      stern: V(-1.9, deckAt(-1.9) + 0.85, 0), // towing bitt
+      engine: V(0.6, 2.3, 0), // engine casing
+      wheelhouse: V(4.2, ROOF + 0.55, 0), // radar
+      length: V(0, -0.1, B + 0.3),
     },
     update(time: number) {
-      radar.rotation.y = time * 1.6;
-      (beacon.material as THREE.MeshStandardMaterial).emissiveIntensity = 1.2 + Math.max(0, Math.sin(time * 6)) * 3;
+      scanner.rotation.y = time * 2.2;
       for (const c of cloths) {
-        const p = c.mesh.geometry.attributes.position;
+        const p = c.m.geometry.attributes.position;
         for (let i = 0; i < p.count; i++) {
           const x = c.base[i * 3];
-          p.setZ(i, Math.sin(x * 6 + time * 7) * 0.06 * (c.w / 2 - x) * 2);
+          p.setZ(i, Math.sin(x * 7 + time * 6) * 0.07 * (0.5 + (c.w / 2 - x) / c.w));
         }
         p.needsUpdate = true;
       }

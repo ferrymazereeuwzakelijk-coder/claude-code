@@ -23,7 +23,7 @@ const phoneRe = /^[+()0-9\s.-]{6,25}$/;
 export const enquirySchema = z.object({
   name: z.string().trim().min(2, "name").max(120, "name"),
   company: z.string().trim().max(160).optional().default(""),
-  email: z.string().trim().email("email").max(200, "email"),
+  email: z.string().trim().max(200, "email").pipe(z.email("email")),
   phone: z
     .string()
     .trim()
@@ -31,12 +31,12 @@ export const enquirySchema = z.object({
     .refine((v) => v === "" || phoneRe.test(v), "phone")
     .optional()
     .default(""),
-  service: z.enum(serviceKeys, { errorMap: () => ({ message: "service" }) }),
+  service: z.enum(serviceKeys, { error: "service" }),
   location: z.string().trim().max(200).optional().default(""),
   startDate: z.string().trim().max(40).optional().default(""),
   duration: z.string().trim().max(80).optional().default(""),
   description: z.string().trim().min(10, "description").max(5000, "description"),
-  consent: z.literal(true, { errorMap: () => ({ message: "consent" }) }),
+  consent: z.literal(true, { error: "consent" }),
   variant: z.enum(["charter", "brokerage", "contact"]).default("contact"),
   locale: z.enum(locales).default(defaultLocale),
   // Spam protection

@@ -81,7 +81,7 @@ export default async function BrokeragePage({ params }: Props) {
         <div className="container-x grid gap-14 lg:grid-cols-[0.8fr_1.2fr] lg:gap-20">
           <div className="hidden lg:sticky lg:top-32 lg:block lg:self-start">
             <div data-reveal className="relative aspect-[4/5] overflow-hidden rounded-3xl">
-              <Photo name="aerialTow" alt={t.photos.aerialTow} sizes="(min-width:1024px) 35vw, 100vw" />
+              <Photo name="dockHunteborg" alt={t.photos.dockHunteborg} sizes="(min-width:1024px) 35vw, 100vw" />
               <div className="absolute inset-0 bg-gradient-to-t from-navy/80 via-transparent to-transparent" />
               <p className="absolute right-6 bottom-6 left-6 font-heading text-2xl leading-tight font-extrabold text-white uppercase">
                 {b.hero.title.join(" ")}

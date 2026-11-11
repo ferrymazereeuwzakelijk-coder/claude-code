@@ -46,7 +46,7 @@ export default async function AboutPage({ params }: Props) {
           </div>
         </div>
         <div className="container-x mt-20 grid gap-4 sm:grid-cols-3">
-          {(["aerialTow", "iceWork", "launch"] as const).map((k, i) => (
+          {(["deckTowSea", "dockHunteborgPortrait", "deckTowClose"] as const).map((k, i) => (
             <div
               key={k}
               data-reveal
@@ -114,8 +114,8 @@ export default async function AboutPage({ params }: Props) {
         button={t.common.discussProject}
         buttonHref={href(locale, "contact", "quote")}
         callLabel={t.common.callMarc}
-        photo="iceDusk"
-        alt={t.photos.iceDusk}
+        photo="pontoonTow"
+        alt={t.photos.pontoonTow}
       />
     </>
   );

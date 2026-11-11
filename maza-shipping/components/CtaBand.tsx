@@ -14,7 +14,7 @@ type Props = {
   alt?: string;
 };
 
-export default function CtaBand({ title, text, button, buttonHref, callLabel, photo = "iceDusk", alt = "" }: Props) {
+export default function CtaBand({ title, text, button, buttonHref, callLabel, photo = "pontoonTow", alt = "" }: Props) {
   return (
     <section className="relative isolate overflow-hidden bg-navy text-white">
       <div className="absolute inset-0 -z-10 opacity-35">

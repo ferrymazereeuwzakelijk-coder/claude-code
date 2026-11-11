@@ -74,8 +74,8 @@ export const clips = {
   assist: { src: "/video/assist-tow.mp4", poster: "/video/assist-tow.jpg" },
 };
 
-export const ogImage =
-  "https://media.base44.com/images/public/6ae120e2d6811e952d184a8f/e43dd3741_logo.png/v1/fill/w_1200,h_630/e43dd3741_logo.png";
+/** Social share image (1200×630), generated from the Weserborg photo and the logo. */
+export const ogImage = `${SITE_URL}/og.jpg`;
 
 /* ------------------------------------------------------------------ */
 /* Vessel                                                              */

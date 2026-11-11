@@ -41,7 +41,7 @@ export default async function TugboatPage({ params }: Props) {
       areaServed: { "@type": "Country", name: "Netherlands" },
       description: t.meta.tugboat.description,
       url: `${SITE_URL}${href(locale, "tugboat")}`,
-      image: photos.assistWeserborg.src,
+      image: `${SITE_URL}${photos.assistWeserborg.src}`,
     },
     {
       "@context": "https://schema.org",
