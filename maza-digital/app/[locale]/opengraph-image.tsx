@@ -24,16 +24,13 @@ export default async function OgImage({ params }: { params: Promise<{ locale: st
           padding: 72,
           background: "#080B12",
           backgroundImage:
-            "radial-gradient(circle at 85% 20%, rgba(75,123,255,0.45), transparent 45%), radial-gradient(circle at 70% 90%, rgba(128,102,255,0.35), transparent 45%)",
+            "radial-gradient(circle at 85% 20%, rgba(75,123,255,0.28), transparent 45%)",
           color: "white",
           fontFamily: "sans-serif",
         }}
       >
         <div style={{ display: "flex", fontSize: 28, fontWeight: 600, letterSpacing: -0.5 }}>{site.brandName}</div>
-        <div style={{ display: "flex", flexDirection: "column", fontSize: 96, fontWeight: 700, lineHeight: 0.95, letterSpacing: -4, textTransform: "uppercase" }}>
-          <span style={{ color: "#8B93A7" }}>{h.titleLine1}</span>
-          <span>{h.titleLine2}</span>
-        </div>
+        <div style={{ display: "flex", maxWidth: 980, fontSize: 68, fontWeight: 700, lineHeight: 1.05, letterSpacing: -2.5 }}>{h.title}</div>
         <div style={{ display: "flex", fontSize: 24, color: "#C6CCD9" }}>{h.eyebrow}</div>
       </div>
     ),

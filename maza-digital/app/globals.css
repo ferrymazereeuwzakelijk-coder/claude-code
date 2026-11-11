@@ -94,17 +94,17 @@
   .type-hero {
     font-family: var(--font-display);
     font-weight: 600;
-    font-size: clamp(3rem, 10.5vw, 10.5rem);
-    line-height: 0.88;
-    letter-spacing: -0.055em;
+    font-size: clamp(2.5rem, 4.6vw, 4.5rem);
+    line-height: 1.02;
+    letter-spacing: -0.04em;
     text-wrap: balance;
   }
   .type-section {
     font-family: var(--font-display);
     font-weight: 600;
-    font-size: clamp(2.25rem, 5.6vw, 5rem);
-    line-height: 0.95;
-    letter-spacing: -0.045em;
+    font-size: clamp(2rem, 4vw, 3.5rem);
+    line-height: 1.05;
+    letter-spacing: -0.035em;
     text-wrap: balance;
   }
   .type-lead {
@@ -132,10 +132,10 @@
   }
   /* Soft glow surfaces */
   .glow-blue {
-    background: radial-gradient(60% 60% at 50% 50%, rgb(75 123 255 / 0.22), transparent 70%);
+    background: radial-gradient(60% 60% at 50% 50%, rgb(75 123 255 / 0.12), transparent 70%);
   }
   .glow-violet {
-    background: radial-gradient(60% 60% at 50% 50%, rgb(128 102 255 / 0.2), transparent 70%);
+    background: radial-gradient(60% 60% at 50% 50%, rgb(128 102 255 / 0.08), transparent 70%);
   }
 }
 
@@ -154,4 +154,18 @@
   opacity: var(--glare);
   background: radial-gradient(40% 50% at var(--mx) var(--my), rgb(169 188 255 / 0.12), transparent 70%);
   transition: opacity 0.5s ease;
+}
+
+/* Hero showcase (components/hero/hero-showcase.tsx) */
+.showcase {
+  --px: 0;
+  --py: 0;
+  --s: 0;
+}
+.showcase-stage {
+  transform: rotateX(calc(10deg - var(--py) * 3deg)) rotateY(calc(-10deg + var(--px) * 5deg)) rotateZ(2deg)
+    translateY(calc(var(--s) * -40px));
+}
+.showcase-layer {
+  transform: translateZ(calc(var(--z, 0px) * (1 + var(--s) * 0.6)));
 }

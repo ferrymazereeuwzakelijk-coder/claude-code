@@ -41,6 +41,7 @@ All copy and data live in `content/`. Components never contain hard-coded text.
 | Privacy policy | `content/privacy.ts` |
 | Homepage pain points, FAQ, trust line, mobile sticky CTA | `problems`, `faq`, `hero.trust`, `stickyCta` in the dictionaries |
 | Founder photo | `components/sections/portrait.tsx` (`PORTRAIT_SRC`) |
+| Demo products | `app/demo/<slug>/app.tsx` |
 
 ### Switch brand name
 
@@ -50,7 +51,7 @@ Set `NEXT_PUBLIC_BRAND_NAME="MAZAMARKETING"` in your environment. Everything fol
 
 Projects have a `kind`:
 
-- `"concept"`: a worked-out example project with a fictional brand. Always public, always labelled **Concept** on the card and the case page, with a generated interface (`mockup`) instead of a screenshot (`components/projects/concept-mockup.tsx`). Six ship with the site. Never add a real client name, metrics or quotes to a concept.
+- `"concept"`: a working demo product with a fictional brand (`demoUrl`). Always public, always labelled **Demo** on the card and the case page. Six ship with the site. Never add a real client name, metrics or quotes to a concept.
 - `"client"`: real work. These ship with `verified: false`. Unverified client projects are:
 
 - **shown** in development (`npm run dev`) with a "Placeholder, not yet verified" badge
@@ -163,11 +164,13 @@ middleware.ts               redirects / to /nl
 
 `components.json` is set up, so `npx shadcn@latest add dialog` (for example) works and uses the existing theme tokens in `app/globals.css`.
 
-### 3D world (homepage)
+### Hero showcase
 
-`components/world/engine.ts` (three.js, framework-free) draws one cloud of points that morphs as you scroll: sphere (hero) → tunnel ("Stap binnen" section, `components/sections/warp.tsx`) → digital landscape → double helix → galaxy (closing CTA). Empty `<div data-world="n" />` markers in `app/[locale]/page.tsx` decide where each shape starts to dissolve. three.js is lazy-loaded after the page is interactive. Fewer points on phones, DPR capped, paused in background tabs; with reduced motion the scene only redraws on scroll and the warp section becomes static text. Without WebGL the page keeps its plain background.
+`components/hero/hero-showcase.tsx` places real screenshots of the demos in 3D space; it leans towards the pointer and drifts as you scroll. Still for touch and reduced-motion visitors.
 
-Cards on the homepage and portfolio tilt in 3D towards the mouse (`components/motion/tilt.tsx`).
+### Demo products
+
+`app/demo/<slug>/` holds six working demo products (Kadeboek, Veldwerk, Stroomlijn, Korrel, Vlootzicht, Diepte), each with its own root layout and look (`app/demo/demo.css`). They use fictional brands, carry a "Demo" badge, are `noindex`, and are embedded on their case pages (`X-Frame-Options: SAMEORIGIN`). Screenshots in `public/projects/` are taken from these demos: retake them when a demo changes.
 
 ---
 

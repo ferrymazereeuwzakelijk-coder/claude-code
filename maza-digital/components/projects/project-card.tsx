@@ -61,6 +61,15 @@ export function ProjectCard({
           className="mt-8 size-5 shrink-0 text-mist transition-[transform,color] duration-500 group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-white"
         />
       </div>
+      {project.demoUrl && (
+        <a
+          href={project.demoUrl}
+          className="relative z-10 mt-5 inline-flex items-center gap-2 rounded-full border border-line-strong px-4 py-2 text-sm font-medium text-white transition-colors hover:border-blue hover:bg-blue/10"
+        >
+          <span className="size-1.5 rounded-full bg-emerald-400" aria-hidden />
+          {dict.tryDemo}
+        </a>
+      )}
       {project.liveUrl && (
         <a
           href={project.liveUrl}

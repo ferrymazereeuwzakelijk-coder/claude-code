@@ -17,5 +17,5 @@ export function middleware(req: NextRequest) {
 
 export const config = {
   // Skip API routes, Next internals, metadata files and anything with a file extension.
-  matcher: ["/((?!api|_next|icon|apple-icon|opengraph-image|sitemap.xml|robots.txt|.*\\..*).*)"],
+  matcher: ["/((?!api|demo|_next|icon|apple-icon|opengraph-image|sitemap.xml|robots.txt|.*\\..*).*)"],
 };

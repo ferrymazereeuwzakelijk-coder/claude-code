@@ -96,6 +96,11 @@ export default async function ProjectPage({ params }: Props) {
               </div>
             </dl>
           </div>
+          {project.demoUrl && (
+            <Button asChild variant="accent" size="lg" className="mt-10">
+              <a href={project.demoUrl}>{w.openDemo}</a>
+            </Button>
+          )}
           {project.liveUrl && (
             <Button asChild variant="outline" className="mt-10">
               <a href={project.liveUrl} target="_blank" rel="noopener noreferrer">
@@ -108,7 +113,25 @@ export default async function ProjectPage({ params }: Props) {
 
       <section className="pb-20">
         <div className="container-x">
-          <ProjectVisual project={project} pendingLabel={w.screenshotPending} priority sizes="100vw" className="md:aspect-[16/8]" />
+          {project.demoUrl ? (
+            <>
+              {/* Desktop: the real demo, embedded and clickable. Phones get the screenshot and a button. */}
+              <div className="hidden overflow-hidden rounded-xl border border-line-strong bg-ink-2 shadow-2xl md:block">
+                <div className="flex items-center gap-3 border-b border-line px-4 py-3">
+                  <span className="flex gap-1.5">
+                    <span className="size-2.5 rounded-full bg-white/15" />
+                    <span className="size-2.5 rounded-full bg-white/15" />
+                    <span className="size-2.5 rounded-full bg-white/15" />
+                  </span>
+                  <span className="text-xs text-mist">{w.demoHint}</span>
+                </div>
+                <iframe src={project.demoUrl} title={`${project.name} demo`} loading="lazy" className="block h-[min(80vh,820px)] w-full bg-white" />
+              </div>
+              <ProjectVisual project={project} pendingLabel={w.screenshotPending} priority sizes="100vw" className="md:hidden" />
+            </>
+          ) : (
+            <ProjectVisual project={project} pendingLabel={w.screenshotPending} priority sizes="100vw" className="md:aspect-[16/8]" />
+          )}
         </div>
       </section>
 

@@ -11,20 +11,17 @@ export const projectCategories: { key: ProjectCategory; label: Localized }[] = [
   { key: "game", label: { nl: "Games", en: "Games" } },
 ];
 
-/** Which generated interface a concept project shows instead of a screenshot. */
-export type MockupKind = "booking" | "mobile" | "automation" | "shop" | "dashboard" | "game";
-
 export type Project = {
   slug: string;
   name: string;
   /**
    * "client": real work (yours or for a client). Needs `verified: true` to be public.
-   * "concept": a worked-out example project, always labelled "Concept" on the site.
-   * Concepts use fictional brands and never claim a client, metrics or quotes.
+   * "concept": a working demo product with a fictional brand, always labelled "Demo".
+   * Concepts never claim a client, metrics or quotes.
    */
   kind: "client" | "concept";
-  /** Concepts only: the generated interface shown as the visual. */
-  mockup?: MockupKind;
+  /** Path of the live, clickable demo, e.g. "/demo/kadeboek". */
+  demoUrl?: string;
   /**
    * Set to true ONLY after Ferry confirms the project is his and may be shown.
    * Unverified projects are hidden in production (see isProjectVisible).
@@ -65,11 +62,11 @@ export const projects: Project[] = [
     slug: "kadeboek",
     name: "Kadeboek",
     kind: "concept",
-    mockup: "booking",
+    demoUrl: "/demo/kadeboek",
     verified: false,
     category: "software",
     services: ["platforms", "websites"],
-    screenshot: null,
+    screenshot: "/projects/kadeboek.webp",
     accent: "#3FA7FF",
     summary: {
       nl: "Online ligplaatsen boeken en betalen bij een jachthaven, met een live kaart van de steigers en automatische bevestigingen.",
@@ -94,11 +91,11 @@ export const projects: Project[] = [
     slug: "veldwerk",
     name: "Veldwerk",
     kind: "concept",
-    mockup: "mobile",
+    demoUrl: "/demo/veldwerk",
     verified: false,
     category: "app",
     services: ["apps", "software"],
-    screenshot: null,
+    screenshot: "/projects/veldwerk.webp",
     accent: "#8066FF",
     summary: {
       nl: "Een app voor monteurs: werkbonnen, foto's, materiaal en een handtekening van de klant, ook zonder bereik.",
@@ -123,11 +120,11 @@ export const projects: Project[] = [
     slug: "stroomlijn",
     name: "Stroomlijn",
     kind: "concept",
-    mockup: "automation",
+    demoUrl: "/demo/stroomlijn",
     verified: false,
     category: "ai",
     services: ["ai"],
-    screenshot: null,
+    screenshot: "/projects/stroomlijn.webp",
     accent: "#5E6BFF",
     summary: {
       nl: "AI leest binnenkomende offerteaanvragen, haalt de belangrijke gegevens eruit en zet een conceptofferte klaar in het CRM.",
@@ -152,11 +149,11 @@ export const projects: Project[] = [
     slug: "korrel",
     name: "Korrel",
     kind: "concept",
-    mockup: "shop",
+    demoUrl: "/demo/korrel",
     verified: false,
     category: "website",
     services: ["ecommerce", "websites"],
-    screenshot: null,
+    screenshot: "/projects/korrel.webp",
     accent: "#FF9F5A",
     summary: {
       nl: "Webshop voor een ambachtelijke bakkerij: vandaag bestellen, morgen ophalen op een gekozen tijdslot.",
@@ -181,11 +178,11 @@ export const projects: Project[] = [
     slug: "vlootzicht",
     name: "Vlootzicht",
     kind: "concept",
-    mockup: "dashboard",
+    demoUrl: "/demo/vlootzicht",
     verified: false,
     category: "software",
     services: ["software"],
-    screenshot: null,
+    screenshot: "/projects/vlootzicht.webp",
     accent: "#4B7BFF",
     summary: {
       nl: "Dashboard voor een binnenvaartrederij: posities, planning, certificaten en onderhoud van de hele vloot op één scherm.",
@@ -210,11 +207,11 @@ export const projects: Project[] = [
     slug: "diepte",
     name: "Diepte",
     kind: "concept",
-    mockup: "game",
+    demoUrl: "/demo/diepte",
     verified: false,
     category: "game",
     services: ["games"],
-    screenshot: null,
+    screenshot: "/projects/diepte.webp",
     accent: "#2FD4C6",
     summary: {
       nl: "Interactieve browserervaring voor een zeeaquarium: duik met je muis of telefoon steeds dieper en ontdek wat daar leeft.",

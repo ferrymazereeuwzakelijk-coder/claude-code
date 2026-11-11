@@ -7,7 +7,7 @@ import { SectionHeading } from "./section-heading";
 /** Pain points the visitor recognises, each answered with the matching service. */
 export function Problems({ locale, dict }: { locale: Locale; dict: Dictionary["problems"] }) {
   return (
-    <section id="problems" aria-labelledby="problems-title" className="scroll-mt-24 py-24 md:py-36">
+    <section id="problems" aria-labelledby="problems-title" className="scroll-mt-24 border-t border-line py-24 md:py-36">
       <div className="container-x">
         <SectionHeading id="problems-title" title={dict.title} intro={dict.intro} />
         <ul className="mt-16 grid gap-4 md:grid-cols-2">
@@ -15,7 +15,7 @@ export function Problems({ locale, dict }: { locale: Locale; dict: Dictionary["p
             <li key={item.problem}>
               <Link
                 href={href(locale, `/services/${item.service}`)}
-                className="group flex h-full flex-col rounded-xl border border-line bg-ink-2/80 p-7 backdrop-blur-md transition-colors duration-500 hover:border-line-strong md:p-9"
+                className="group flex h-full flex-col rounded-xl border border-line bg-ink-2 p-7 transition-colors duration-500 hover:border-line-strong md:p-9"
               >
                 <p className="font-display text-xl font-semibold leading-snug tracking-[-0.02em] text-white md:text-2xl">
                   {item.problem}

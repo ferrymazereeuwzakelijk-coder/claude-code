@@ -3,10 +3,10 @@
 import Link from "next/link";
 import { motion, useReducedMotion } from "framer-motion";
 import type { Dictionary } from "@/content/dictionaries";
-import { site } from "@/content/site";
-import { href, t, type Locale } from "@/lib/i18n";
+import { href, type Locale } from "@/lib/i18n";
 import { Button } from "@/components/ui/button";
 import { TrustList } from "@/components/ui/trust-list";
+import { HeroShowcase } from "./hero-showcase";
 
 const ease = [0.16, 1, 0.3, 1] as const;
 
@@ -16,59 +16,54 @@ export function Hero({ locale, dict }: { locale: Locale; dict: Dictionary["hero"
   // (hidden) frame before it knows the visitor's motion preference, so
   // dropping the animation entirely would leave the text invisible.
   const item = (delay: number) => ({
-    initial: { opacity: 0, y: reduce ? 0 : 28 },
+    initial: { opacity: 0, y: reduce ? 0 : 20 },
     animate: { opacity: 1, y: 0 },
-    transition: reduce ? { duration: 0 } : { duration: 1.1, delay, ease },
+    transition: reduce ? { duration: 0 } : { duration: 0.9, delay, ease },
   });
 
   return (
-    <section className="relative isolate flex min-h-[100svh] flex-col overflow-hidden" aria-labelledby="hero-title">
-      {/* Atmosphere */}
+    <section className="relative isolate overflow-hidden pb-20 pt-32 md:pb-28 md:pt-40" aria-labelledby="hero-title">
       <div aria-hidden className="pointer-events-none absolute inset-0 -z-10">
-        <div className="glow-blue absolute -right-[10%] top-[5%] h-[90vh] w-[70vw] opacity-80" />
-        <div className="glow-violet absolute right-[15%] top-[40%] h-[60vh] w-[45vw] opacity-70" />
+        <div className="glow-blue absolute -right-[10%] top-[0%] h-[80vh] w-[60vw]" />
       </div>
 
-      <div className="container-x flex flex-1 flex-col justify-end pb-16 pt-36 md:justify-center md:pb-24">
-        <motion.p {...item(0.1)} className="mb-8 flex items-center gap-3 text-sm text-fog">
-          <span className="h-px w-10 bg-gradient-to-r from-blue to-violet" aria-hidden />
-          {dict.eyebrow}
-        </motion.p>
+      <div className="container-x grid items-center gap-14 lg:grid-cols-[1.05fr_1fr] lg:gap-10">
+        <div>
+          <motion.p {...item(0.05)} className="mb-6 flex items-center gap-3 text-sm text-fog">
+            <span className="h-px w-8 bg-blue" aria-hidden />
+            {dict.eyebrow}
+          </motion.p>
 
-        <h1 id="hero-title" className="type-hero uppercase">
-          <motion.span {...item(0.2)} className="block text-mist">
-            {dict.titleLine1}
-          </motion.span>
-          <motion.span {...item(0.35)} className="block text-white">
-            {dict.titleLine2}
-          </motion.span>
-        </h1>
+          <motion.h1 {...item(0.15)} id="hero-title" className="type-hero text-white">
+            {dict.title}
+          </motion.h1>
 
-        <motion.p {...item(0.55)} className="type-lead mt-10 max-w-[38rem]">
-          {dict.body}
-        </motion.p>
+          <motion.p {...item(0.3)} className="type-lead mt-7 max-w-[36rem]">
+            {dict.body}
+          </motion.p>
 
-        <motion.div {...item(0.7)} className="mt-10 flex flex-wrap items-center gap-3">
-          <Button asChild size="lg" variant="accent">
-            <Link href={href(locale, "/contact")}>{dict.primary}</Link>
-          </Button>
-          <Button asChild size="lg" variant="outline">
-            <Link href={href(locale, "/projects")}>{dict.secondary}</Link>
-          </Button>
+          <motion.div {...item(0.42)} className="mt-9 flex flex-wrap items-center gap-3">
+            <Button asChild size="lg" variant="accent">
+              <Link href={href(locale, "/contact")}>{dict.primary}</Link>
+            </Button>
+            <Button asChild size="lg" variant="outline">
+              <a href="#work">{dict.secondary}</a>
+            </Button>
+          </motion.div>
+
+          <motion.div {...item(0.55)}>
+            <TrustList items={dict.trust} className="mt-8" />
+          </motion.div>
+        </div>
+
+        <motion.div
+          initial={{ opacity: 0, y: reduce ? 0 : 40 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={reduce ? { duration: 0 } : { duration: 1.2, delay: 0.25, ease }}
+          className="mx-auto w-full max-w-[640px]"
+        >
+          <HeroShowcase alt={dict.showcaseAlt} />
         </motion.div>
-
-        <motion.div {...item(0.85)}>
-          <TrustList items={dict.trust} className="mt-8" />
-        </motion.div>
-      </div>
-
-      <div className="container-x hidden items-center justify-between border-t border-line py-5 text-xs text-mist md:flex">
-        <span>
-          {site.founder}, {t(site.location, locale)}
-        </span>
-        <a href="#problems" className="transition-colors hover:text-white">
-          {dict.scroll}
-        </a>
       </div>
     </section>
   );

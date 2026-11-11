@@ -23,7 +23,7 @@ export function ClosingCta({
         <div className="glow-violet absolute left-[70%] top-[30%] h-[50vh] w-[50vw] -translate-x-1/2" />
       </div>
       <div className="container-x">
-        <h2 id="cta-title" className="type-hero uppercase">
+        <h2 id="cta-title" className="type-hero">
           <span className="block text-mist">{dict.title1}</span>
           <span className="block text-white">{dict.title2}</span>
         </h2>

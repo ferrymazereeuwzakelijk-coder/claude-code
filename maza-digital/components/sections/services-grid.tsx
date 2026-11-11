@@ -33,11 +33,11 @@ export function ServicesGrid({ locale, dict }: { locale: Locale; dict: Dictionar
             const tall = i < 2;
             return (
               <li key={s.slug} className={cn(layout[i], wide && "md:col-span-2")}>
-                <Tilt max={4}>
+                <Tilt max={2}>
                 <Link
                   href={href(locale, `/services/${s.slug}`)}
                   className={cn(
-                    "group relative flex h-full flex-col overflow-hidden rounded-xl border border-line bg-ink-2/80 p-7 backdrop-blur-md transition-colors duration-500 hover:border-line-strong md:p-9",
+                    "group relative flex h-full flex-col overflow-hidden rounded-xl border border-line bg-ink-2 p-7 transition-colors duration-500 hover:border-line-strong md:p-9",
                     wide && "lg:flex-row lg:items-center lg:gap-12",
                   )}
                 >

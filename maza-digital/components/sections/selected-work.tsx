@@ -2,7 +2,6 @@ import Link from "next/link";
 import type { Dictionary } from "@/content/dictionaries";
 import { visibleProjects } from "@/content/projects";
 import { href, type Locale } from "@/lib/i18n";
-import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { ProjectCard } from "@/components/projects/project-card";
 import { SectionHeading } from "./section-heading";
@@ -29,19 +28,9 @@ export function SelectedWork({ locale, dict }: { locale: Locale; dict: Dictionar
             </Button>
           </div>
         ) : (
-          <div className="mt-16 grid gap-x-8 gap-y-20 md:grid-cols-12">
-            {items.map((p, i) => (
-              <div
-                key={p.slug}
-                className={cn(
-                  i === 0 && "md:col-span-12",
-                  i === 1 && "md:col-span-7",
-                  i === 2 && "md:col-span-5 md:mt-32",
-                  i === 3 && "md:col-span-8 md:col-start-3",
-                )}
-              >
-                <ProjectCard project={p} locale={locale} dict={dict} large={i === 0} priority={i === 0} />
-              </div>
+          <div className="mt-14 grid gap-x-8 gap-y-16 md:grid-cols-2">
+            {items.map((p) => (
+              <ProjectCard key={p.slug} project={p} locale={locale} dict={dict} />
             ))}
           </div>
         )}
