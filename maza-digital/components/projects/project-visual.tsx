@@ -1,6 +1,7 @@
 import Image from "next/image";
 import type { Project } from "@/content/projects";
 import { cn } from "@/lib/utils";
+import { ConceptMockup } from "./concept-mockup";
 
 /**
  * Shows the real screenshot when one is supplied. Until then, a neutral
@@ -31,6 +32,8 @@ export function ProjectVisual({
           priority={priority}
           className="object-cover object-top transition-transform duration-[1.2s] ease-[var(--ease-out-expo)] group-hover:scale-[1.03]"
         />
+      ) : project.mockup ? (
+        <ConceptMockup kind={project.mockup} accent={project.accent} />
       ) : (
         <div className="absolute inset-0 flex flex-col">
           <div className="flex items-center gap-1.5 border-b border-line px-4 py-3">

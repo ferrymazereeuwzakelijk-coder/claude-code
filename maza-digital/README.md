@@ -48,7 +48,10 @@ Set `NEXT_PUBLIC_BRAND_NAME="MAZAMARKETING"` in your environment. Everything fol
 
 ### Adding or confirming a project
 
-Projects ship with `verified: false`. Unverified projects are:
+Projects have a `kind`:
+
+- `"concept"`: a worked-out example project with a fictional brand. Always public, always labelled **Concept** on the card and the case page, with a generated interface (`mockup`) instead of a screenshot (`components/projects/concept-mockup.tsx`). Six ship with the site. Never add a real client name, metrics or quotes to a concept.
+- `"client"`: real work. These ship with `verified: false`. Unverified client projects are:
 
 - **shown** in development (`npm run dev`) with a "Placeholder, not yet verified" badge
 - **hidden** in production (unless `NEXT_PUBLIC_SHOW_UNVERIFIED_PROJECTS=true`, useful for a private preview deployment)
@@ -160,9 +163,11 @@ middleware.ts               redirects / to /nl
 
 `components.json` is set up, so `npx shadcn@latest add dialog` (for example) works and uses the existing theme tokens in `app/globals.css`.
 
-### Hero animation
+### 3D world (homepage)
 
-`components/hero/hero-canvas.tsx`: a 2D canvas (no WebGL dependency) where a loose cloud of points assembles into a structured lattice, an "idea built into reality". It caps device pixel ratio, uses fewer points on mobile, pauses off-screen and in background tabs, and draws one static frame when the visitor prefers reduced motion.
+`components/world/engine.ts` (three.js, framework-free) draws one cloud of points that morphs as you scroll: sphere (hero) → tunnel ("Stap binnen" section, `components/sections/warp.tsx`) → digital landscape → double helix → galaxy (closing CTA). Empty `<div data-world="n" />` markers in `app/[locale]/page.tsx` decide where each shape starts to dissolve. three.js is lazy-loaded after the page is interactive. Fewer points on phones, DPR capped, paused in background tabs; with reduced motion the scene only redraws on scroll and the warp section becomes static text. Without WebGL the page keeps its plain background.
+
+Cards on the homepage and portfolio tilt in 3D towards the mouse (`components/motion/tilt.tsx`).
 
 ---
 

@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getDictionary } from "@/content/dictionaries";
-import { getProject, visibleProjects } from "@/content/projects";
+import { getProject, isProjectIndexable, visibleProjects } from "@/content/projects";
 import { getService } from "@/content/services";
 import { href, isLocale, locales, t } from "@/lib/i18n";
 import { pageMetadata } from "@/lib/seo";
@@ -24,8 +24,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   if (!isLocale(locale) || !project) return {};
   return {
     ...pageMetadata({ locale, path: `/projects/${slug}`, title: project.name, description: t(project.summary, locale) }),
-    // Placeholders must never be indexed.
-    robots: project.verified ? undefined : { index: false, follow: false },
+    // Unverified client drafts must never be indexed.
+    robots: isProjectIndexable(project) ? undefined : { index: false, follow: false },
   };
 }
 
@@ -39,10 +39,11 @@ export default async function ProjectPage({ params }: Props) {
   const idx = visibleProjects.findIndex((p) => p.slug === project.slug);
   const nextProject = visibleProjects.length > 1 ? visibleProjects[(idx + 1) % visibleProjects.length] : undefined;
 
+  const concept = project.kind === "concept";
   const sections = [
-    { title: w.context, body: t(project.caseStudy.context, locale) },
-    { title: w.approach, body: t(project.caseStudy.approach, locale) },
-    { title: w.outcome, body: t(project.caseStudy.outcome, locale) },
+    { title: concept ? w.contextConcept : w.context, body: t(project.caseStudy.context, locale) },
+    { title: concept ? w.approachConcept : w.approach, body: t(project.caseStudy.approach, locale) },
+    { title: concept ? w.outcomeConcept : w.outcome, body: t(project.caseStudy.outcome, locale) },
   ];
 
   return (
@@ -52,10 +53,17 @@ export default async function ProjectPage({ params }: Props) {
           <Link href={href(locale, "/projects")} className="text-sm text-mist hover:text-white">
             {w.back}
           </Link>
-          {!project.verified && (
-            <div className="mt-6">
-              <Badge variant="warning">{w.placeholderBadge}</Badge>
+          {concept ? (
+            <div className="mt-6 flex flex-wrap items-center gap-3">
+              <Badge variant="accent">{w.conceptBadge}</Badge>
+              <p className="text-sm text-mist">{w.conceptNote}</p>
             </div>
+          ) : (
+            !project.verified && (
+              <div className="mt-6">
+                <Badge variant="warning">{w.placeholderBadge}</Badge>
+              </div>
+            )
           )}
           <h1 className="mt-8 font-display text-[clamp(3rem,10vw,9rem)] font-semibold leading-[0.9] tracking-[-0.055em]">
             {project.name}

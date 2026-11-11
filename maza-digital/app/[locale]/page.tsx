@@ -5,6 +5,8 @@ import { site } from "@/content/site";
 import { isLocale } from "@/lib/i18n";
 import { pageMetadata } from "@/lib/seo";
 import { Hero } from "@/components/hero/hero";
+import { Warp } from "@/components/sections/warp";
+import { WorldLoader } from "@/components/world/world-loader";
 import { Faq } from "@/components/sections/faq";
 import { Problems } from "@/components/sections/problems";
 import { AboutTeaser } from "@/components/sections/about-teaser";
@@ -33,14 +35,22 @@ export default async function HomePage({ params }: Props) {
 
   return (
     <>
+      {/* The 3D world behind the page. data-world marks where each shape starts to dissolve. */}
+      <WorldLoader />
       <Hero locale={locale} dict={dict.hero} />
+      <div data-world="0" />
+      <Warp dict={dict.warp} />
+      <div data-world="1" />
       <Problems locale={locale} dict={dict.problems} />
       <ServicesGrid locale={locale} dict={dict.services} />
       <SelectedWork locale={locale} dict={dict.work} />
+      <div data-world="2" />
       <Process dict={dict.process} />
       <AboutTeaser locale={locale} dict={dict.about} />
       <Why dict={dict.why} />
+      <div data-world="3" />
       <Faq dict={dict.faq} />
+      <div data-world="4" />
       <ClosingCta locale={locale} dict={dict.cta} trust={dict.hero.trust} />
     </>
   );

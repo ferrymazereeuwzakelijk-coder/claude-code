@@ -7,7 +7,6 @@ import { site } from "@/content/site";
 import { href, t, type Locale } from "@/lib/i18n";
 import { Button } from "@/components/ui/button";
 import { TrustList } from "@/components/ui/trust-list";
-import { HeroCanvas } from "./hero-canvas";
 
 const ease = [0.16, 1, 0.3, 1] as const;
 
@@ -28,10 +27,6 @@ export function Hero({ locale, dict }: { locale: Locale; dict: Dictionary["hero"
       <div aria-hidden className="pointer-events-none absolute inset-0 -z-10">
         <div className="glow-blue absolute -right-[10%] top-[5%] h-[90vh] w-[70vw] opacity-80" />
         <div className="glow-violet absolute right-[15%] top-[40%] h-[60vh] w-[45vw] opacity-70" />
-        <div className="absolute inset-x-0 bottom-0 h-48 bg-gradient-to-b from-transparent to-ink" />
-      </div>
-      <div aria-hidden className="absolute inset-0 -z-10 opacity-60 md:opacity-100">
-        <HeroCanvas />
       </div>
 
       <div className="container-x flex flex-1 flex-col justify-end pb-16 pt-36 md:justify-center md:pb-24">

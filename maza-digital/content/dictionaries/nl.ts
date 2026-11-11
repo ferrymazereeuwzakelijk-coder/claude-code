@@ -35,6 +35,14 @@ export const nl = {
     secondary: "Bekijk mijn werk",
     scroll: "Scroll",
   },
+  warp: {
+    label: "Stap binnen",
+    title: "Stap binnen.",
+    line: "Hier krijgen ideeën vorm.",
+    sub: "Websites, apps, software en AI. Gebouwd in een wereld waar je idee de bouwtekening is.",
+    loading: "Wereld laden",
+    done: "Welkom",
+  },
   problems: {
     title: "Herken je dit?",
     intro: "De meeste projecten beginnen niet met een technische vraag, maar met iets dat schuurt in het bedrijf.",
@@ -61,7 +69,7 @@ export const nl = {
   },
   work: {
     title: "Geselecteerd werk",
-    intro: "Projecten die ik heb gebouwd of waar ik aan heb gewerkt.",
+    intro: "Klantwerk en conceptprojecten: uitgewerkte voorbeelden van wat ik voor jou kan bouwen.",
     all: "Alle projecten",
     view: "Bekijk case",
     visit: "Bezoek website",
@@ -71,6 +79,11 @@ export const nl = {
     portfolioPending:
       "Het portfolio wordt op dit moment aangevuld met cases die volledig zijn uitgewerkt. Benieuwd naar eerder werk? Vraag ernaar in een kennismakingsgesprek.",
     portfolioPendingCta: "Plan een kennismaking",
+    conceptBadge: "Concept",
+    conceptNote: "Uitgewerkt voorbeeldproject met een fictief merk. Zo pak ik dit type product aan.",
+    contextConcept: "Het scenario",
+    approachConcept: "Het ontwerp",
+    outcomeConcept: "Beoogd resultaat",
     placeholderBadge: "Placeholder, nog niet geverifieerd",
     screenshotPending: "Screenshot volgt",
     context: "Context",

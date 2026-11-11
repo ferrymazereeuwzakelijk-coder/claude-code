@@ -1,5 +1,5 @@
 import type { MetadataRoute } from "next";
-import { visibleProjects } from "@/content/projects";
+import { isProjectIndexable, visibleProjects } from "@/content/projects";
 import { services } from "@/content/services";
 import { site } from "@/content/site";
 import { locales } from "@/lib/i18n";
@@ -10,8 +10,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
     "/services",
     ...services.map((s) => `/services/${s.slug}`),
     "/projects",
-    // Only verified projects are indexed, even on preview deployments.
-    ...visibleProjects.filter((p) => p.verified).map((p) => `/projects/${p.slug}`),
+    // Only verified work and labelled concepts are indexed, even on preview deployments.
+    ...visibleProjects.filter(isProjectIndexable).map((p) => `/projects/${p.slug}`),
     "/about",
     "/contact",
     "/privacy",

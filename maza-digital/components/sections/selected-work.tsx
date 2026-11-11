@@ -8,8 +8,9 @@ import { ProjectCard } from "@/components/projects/project-card";
 import { SectionHeading } from "./section-heading";
 
 export function SelectedWork({ locale, dict }: { locale: Locale; dict: Dictionary["work"] }) {
-  // Verified projects first; the homepage shows up to four.
-  const items = [...visibleProjects].sort((a, b) => Number(b.verified) - Number(a.verified)).slice(0, 4);
+  // Verified work first, then concepts; the homepage shows up to four.
+  const rank = (p: (typeof visibleProjects)[number]) => (p.verified ? 2 : p.kind === "concept" ? 1 : 0);
+  const items = [...visibleProjects].sort((a, b) => rank(b) - rank(a)).slice(0, 4);
 
   return (
     <section id="work" aria-labelledby="work-title" className="scroll-mt-24 border-t border-line py-24 md:py-36">

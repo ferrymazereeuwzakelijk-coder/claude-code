@@ -4,6 +4,7 @@ import type { Dictionary } from "@/content/dictionaries";
 import { homeServices } from "@/content/services";
 import { href, t, type Locale } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
+import { Tilt } from "@/components/motion/tilt";
 import { SectionHeading } from "./section-heading";
 import { ServiceVisual } from "./service-visual";
 
@@ -32,10 +33,11 @@ export function ServicesGrid({ locale, dict }: { locale: Locale; dict: Dictionar
             const tall = i < 2;
             return (
               <li key={s.slug} className={cn(layout[i], wide && "md:col-span-2")}>
+                <Tilt max={4}>
                 <Link
                   href={href(locale, `/services/${s.slug}`)}
                   className={cn(
-                    "group relative flex h-full flex-col overflow-hidden rounded-xl border border-line bg-ink-2 p-7 transition-colors duration-500 hover:border-line-strong md:p-9",
+                    "group relative flex h-full flex-col overflow-hidden rounded-xl border border-line bg-ink-2/80 p-7 backdrop-blur-md transition-colors duration-500 hover:border-line-strong md:p-9",
                     wide && "lg:flex-row lg:items-center lg:gap-12",
                   )}
                 >
@@ -81,6 +83,7 @@ export function ServicesGrid({ locale, dict }: { locale: Locale; dict: Dictionar
                     <ServiceVisual kind={s.icon} className={tall ? "mx-auto max-w-md" : "max-w-xs"} />
                   </div>
                 </Link>
+                </Tilt>
               </li>
             );
           })}

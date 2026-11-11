@@ -15,7 +15,7 @@ export function Problems({ locale, dict }: { locale: Locale; dict: Dictionary["p
             <li key={item.problem}>
               <Link
                 href={href(locale, `/services/${item.service}`)}
-                className="group flex h-full flex-col rounded-xl border border-line bg-ink-2 p-7 transition-colors duration-500 hover:border-line-strong md:p-9"
+                className="group flex h-full flex-col rounded-xl border border-line bg-ink-2/80 p-7 backdrop-blur-md transition-colors duration-500 hover:border-line-strong md:p-9"
               >
                 <p className="font-display text-xl font-semibold leading-snug tracking-[-0.02em] text-white md:text-2xl">
                   {item.problem}

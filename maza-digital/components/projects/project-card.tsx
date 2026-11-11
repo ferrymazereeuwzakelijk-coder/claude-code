@@ -5,6 +5,7 @@ import { projectCategories, type Project } from "@/content/projects";
 import { href, t, type Locale } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
+import { Tilt } from "@/components/motion/tilt";
 import { ProjectVisual } from "./project-visual";
 
 export function categoryLabel(project: Project, locale: Locale): string {
@@ -28,19 +29,25 @@ export function ProjectCard({
   return (
     <article className="group relative">
       <Link href={href(locale, `/projects/${project.slug}`)} className="block" aria-label={`${project.name}: ${dict.view}`}>
-        <ProjectVisual
-          project={project}
-          pendingLabel={dict.screenshotPending}
-          priority={priority}
-          className={cn("transition-[border-color] duration-500 group-hover:border-line-strong", large && "md:aspect-[16/9]")}
-        />
+        <Tilt max={5}>
+          <ProjectVisual
+            project={project}
+            pendingLabel={dict.screenshotPending}
+            priority={priority}
+            className={cn("transition-[border-color] duration-500 group-hover:border-line-strong", large && "md:aspect-[16/9]")}
+          />
+        </Tilt>
       </Link>
       <div className="mt-6 flex items-start justify-between gap-6">
         <div>
           <div className="flex flex-wrap items-center gap-2 text-sm text-mist">
             <span>{categoryLabel(project, locale)}</span>
             {project.year && <span>{project.year}</span>}
-            {!project.verified && <Badge variant="warning">{dict.placeholderBadge}</Badge>}
+            {project.kind === "concept" ? (
+              <Badge variant="accent">{dict.conceptBadge}</Badge>
+            ) : (
+              !project.verified && <Badge variant="warning">{dict.placeholderBadge}</Badge>
+            )}
           </div>
           <h3 className={cn("mt-2 font-semibold tracking-[-0.03em]", large ? "text-3xl md:text-4xl" : "text-2xl")}>
             <Link href={href(locale, `/projects/${project.slug}`)} className="after:absolute after:inset-0 after:content-['']">

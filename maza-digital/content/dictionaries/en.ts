@@ -37,6 +37,14 @@ export const en: Dictionary = {
     secondary: "Explore my work",
     scroll: "Scroll",
   },
+  warp: {
+    label: "Step inside",
+    title: "Step inside.",
+    line: "This is where ideas take shape.",
+    sub: "Websites, apps, software and AI. Built in a world where your idea is the blueprint.",
+    loading: "Loading world",
+    done: "Welcome",
+  },
   problems: {
     title: "Sound familiar?",
     intro: "Most projects don't start with a technical question, but with something that's holding the business back.",
@@ -63,7 +71,7 @@ export const en: Dictionary = {
   },
   work: {
     title: "Selected work",
-    intro: "Projects I've built or worked on.",
+    intro: "Client work and concept projects: worked-out examples of what I can build for you.",
     all: "All projects",
     view: "View case",
     visit: "Visit website",
@@ -73,6 +81,11 @@ export const en: Dictionary = {
     portfolioPending:
       "The portfolio is being expanded with fully documented case studies. Curious about earlier work? Ask about it in an intro call.",
     portfolioPendingCta: "Book an intro call",
+    conceptBadge: "Concept",
+    conceptNote: "Worked-out example project with a fictional brand. This is how I approach this type of product.",
+    contextConcept: "The scenario",
+    approachConcept: "The design",
+    outcomeConcept: "Intended result",
     placeholderBadge: "Placeholder, not yet verified",
     screenshotPending: "Screenshot coming",
     context: "Context",
