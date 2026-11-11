@@ -55,7 +55,7 @@ export default async function LocaleLayout({ children, params }: Props) {
     geo: { "@type": "GeoCoordinates", latitude: company.geo.lat, longitude: company.geo.lng },
     areaServed: { "@type": "Country", name: "Netherlands" },
     employee: { "@type": "Person", name: company.contactPerson },
-    knowsLanguage: ["nl", "en"],
+    knowsLanguage: [...locales],
   };
 
   return (

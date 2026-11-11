@@ -67,6 +67,7 @@ const nl: Dictionary = {
     homePort: "Thuishaven",
     kvk: "KvK-nummer",
     vat: "Btw-nummer",
+    units: { hp: "pk", electric: "elektrisch", decimalComma: true },
   },
 
   photos: {

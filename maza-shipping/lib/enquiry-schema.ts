@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { defaultLocale, locales } from "@/content/i18n";
 
 export const serviceKeys = [
   "ferryjo", "towing", "launch", "ice", "escort",
@@ -37,7 +38,7 @@ export const enquirySchema = z.object({
   description: z.string().trim().min(10, "description").max(5000, "description"),
   consent: z.literal(true, { errorMap: () => ({ message: "consent" }) }),
   variant: z.enum(["charter", "brokerage", "contact"]).default("contact"),
-  locale: z.enum(["en", "nl"]).default("en"),
+  locale: z.enum(locales).default(defaultLocale),
   // Spam protection
   website: z.string().max(0).optional().default(""), // honeypot: must stay empty
   startedAt: z.number().int().positive(),

@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { getDictionary } from "@/content/dictionaries";
-import { isLocale, type Locale } from "@/content/i18n";
+import { isLocale, defaultLocale, localeTags, type Locale } from "@/content/i18n";
 import { company } from "@/content/site";
 import { pageMetadata } from "@/lib/seo";
 
@@ -15,7 +15,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function PrivacyPage({ params }: Props) {
   const { locale: l } = await params;
-  const locale = (isLocale(l) ? l : "en") as Locale;
+  const locale = (isLocale(l) ? l : defaultLocale) as Locale;
   const t = getDictionary(locale).privacy;
   return (
     <>
@@ -23,7 +23,7 @@ export default async function PrivacyPage({ params }: Props) {
       <article id="content" className="container-x max-w-3xl py-20 sm:py-28">
         <h1 className="text-4xl font-extrabold text-navy sm:text-5xl">{t.title}</h1>
         <p className="mt-4 text-sm text-slate">
-          {t.updated}: {new Date(UPDATED).toLocaleDateString(locale === "nl" ? "nl-NL" : "en-GB", { dateStyle: "long" })}
+          {t.updated}: {new Date(UPDATED).toLocaleDateString(localeTags[locale].bcp47, { dateStyle: "long" })}
         </p>
         {t.sections.map((s) => (
           <section key={s.h} className="mt-10">

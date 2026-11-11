@@ -1,7 +1,7 @@
 # Maza Shipping — website
 
 Next.js 15 (App Router) · React 19 · TypeScript · Tailwind CSS 4 · Lucide icons (via `react-icons/lu`) · Zod.
-English (primary, `/en`) and Dutch (`/nl`).
+Dutch (primary, `/nl`), English (`/en`) and German (`/de`).
 
 ## Quick start
 
@@ -9,7 +9,7 @@ English (primary, `/en`) and Dutch (`/nl`).
 npm install
 cp .env.example .env.local      # fill in RESEND_API_KEY for the forms
 npm run images:download         # optional: copy the original photos into /public/images
-npm run dev                     # http://localhost:3000 → redirects to /en
+npm run dev                     # http://localhost:3000 → redirects to /nl
 ```
 
 Deploy: push to GitHub and import into **Vercel** (zero config). Set the env vars from `.env.example` in the Vercel project, then point `mazashipping.com` to it.
@@ -18,7 +18,7 @@ Deploy: push to GitHub and import into **Vercel** (zero config). Set the env var
 
 | Route | Content |
 |---|---|
-| `/en`, `/nl` | Home: hero, two divisions, about, featured vessel, solutions grid, why us, CTA |
+| `/nl`, `/en`, `/de` | Home: hero, two divisions, about, featured vessel, solutions grid, why us, CTA |
 | `/[locale]/tugboat-services` | Ferry-Jo: specs table, capabilities, gallery + lightbox, charter request form, FAQ |
 | `/[locale]/maritime-brokerage` | Brokerage division: 5 services, 3-step process, project enquiry form |
 | `/[locale]/about` | Company, Marc Mazereeuw, approach |
@@ -30,7 +30,8 @@ Old URLs (`/diensten`, `/ferry-jo`, `/vragen`, `/about`, `/contact`, `/services-
 ## Editing content
 
 - **Company facts, vessel specs, photos:** `content/site.ts`
-- **All text (EN / NL), SEO titles and descriptions, alt texts:** `content/dictionaries/en.ts` and `nl.ts` (the Dutch file is type-checked against the English one, so nothing can be missing)
+- **All text (NL / EN / DE), SEO titles and descriptions, alt texts:** `content/dictionaries/nl.ts`, `en.ts` and `de.ts` (the Dutch and German files are type-checked against the English one, so nothing can be missing)
+- **Languages:** `content/i18n.ts` (`locales`, `defaultLocale`)
 - **Form service options:** `lib/enquiry-schema.ts`
 
 ## Photos

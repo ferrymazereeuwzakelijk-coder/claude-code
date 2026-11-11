@@ -11,8 +11,8 @@ import EnquiryForm from "@/components/EnquiryForm";
 import ContactDetails from "@/components/ContactDetails";
 import JsonLd from "@/components/JsonLd";
 import { getDictionary } from "@/content/dictionaries";
-import { href, isLocale, type Locale } from "@/content/i18n";
-import { SITE_URL, ferryJo, photos } from "@/content/site";
+import { href, isLocale, defaultLocale, type Locale } from "@/content/i18n";
+import { SITE_URL, ferryJo, localizeSpec, photos } from "@/content/site";
 import { pageMetadata } from "@/lib/seo";
 
 type Props = { params: Promise<{ locale: string }> };
@@ -26,7 +26,7 @@ const capIcons = [LuRoute, LuShip, LuSnowflake, LuNavigation, LuLayers];
 
 export default async function TugboatPage({ params }: Props) {
   const { locale: l } = await params;
-  const locale = (isLocale(l) ? l : "en") as Locale;
+  const locale = (isLocale(l) ? l : defaultLocale) as Locale;
   const t = getDictionary(locale);
   const p = t.tug;
 
@@ -59,8 +59,8 @@ export default async function TugboatPage({ params }: Props) {
         title={p.hero.title}
         sub={p.hero.sub}
         stats={[
-          { label: p.specs.labels.length, value: ferryJo.lengthM, unit: "m" },
-          { label: p.specs.labels.mainEngine, value: ferryJo.powerHp, unit: "hp" },
+          { label: p.specs.labels.length, value: localizeSpec(ferryJo.lengthM, t.common.units), unit: "m" },
+          { label: p.specs.labels.mainEngine, value: ferryJo.powerHp, unit: t.common.units.hp },
           { label: p.specs.labels.bollardPull, value: ferryJo.bollardPullT, unit: "t" },
         ]}
         actions={
@@ -113,7 +113,7 @@ export default async function TugboatPage({ params }: Props) {
             </div>
             <p data-reveal className="mt-6 text-slate">{p.specs.downloadHint}</p>
           </div>
-          <SpecTable rows={ferryJo.specs} labels={p.specs.labels} typeValue={p.specs.typeValue} caption={`${ferryJo.name} – ${p.specs.title}`} note={p.specs.note} />
+          <SpecTable rows={ferryJo.specs} labels={p.specs.labels} typeValue={p.specs.typeValue} caption={`${ferryJo.name} – ${p.specs.title}`} units={t.common.units} note={p.specs.note} />
         </div>
       </section>
 

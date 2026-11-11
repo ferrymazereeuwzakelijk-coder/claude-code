@@ -4,11 +4,13 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { locales, type Locale } from "@/content/i18n";
 
+const localePrefix = new RegExp(`^/(${locales.join("|")})(?=/|$)`);
+
 type Props = { locale: Locale; label: string; className?: string };
 
 export default function LanguageSwitcher({ locale, label, className = "" }: Props) {
   const pathname = usePathname() || `/${locale}`;
-  const rest = pathname.replace(/^\/(en|nl)(?=\/|$)/, "");
+  const rest = pathname.replace(localePrefix, "");
   return (
     <nav aria-label={label} className={`flex items-center gap-1 text-[0.78rem] font-bold tracking-[0.12em] ${className}`}>
       {locales.map((l, i) => (

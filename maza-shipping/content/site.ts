@@ -65,6 +65,14 @@ export const ogImage =
 
 export type SpecRow = { key: string; value: string };
 
+export type Units = { hp: string; electric: string; decimalComma: boolean };
+
+/** Translates units in a spec value ("450 hp", "15 hp (electric)", "17.40 m") for the page language. */
+export function localizeSpec(value: string, u: Units) {
+  const v = value.replace(/\bhp\b/g, u.hp).replace("(electric)", `(${u.electric})`);
+  return u.decimalComma ? v.replace(/(\d)\.(\d)/g, "$1,$2") : v;
+}
+
 export const ferryJo = {
   name: "Ferry-Jo",
   homePort: "Urk",

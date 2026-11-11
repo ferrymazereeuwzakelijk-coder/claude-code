@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { getDictionary } from "@/content/dictionaries";
-import { href, locales, type Locale, type RouteKey } from "@/content/i18n";
+import { defaultLocale, href, localeTags, locales, type Locale, type RouteKey } from "@/content/i18n";
 import { SITE_URL, ogImage, company } from "@/content/site";
 
 type MetaKey = Exclude<keyof ReturnType<typeof getDictionary>["meta"], "siteName">;
@@ -13,15 +13,15 @@ export function pageMetadata(locale: Locale, route: RouteKey, key: MetaKey, imag
   return {
     title: { absolute: title },
     description,
-    alternates: { canonical: url, languages: { ...languages, "x-default": `${SITE_URL}${href("en", route)}` } },
+    alternates: { canonical: url, languages: { ...languages, "x-default": `${SITE_URL}${href(defaultLocale, route)}` } },
     openGraph: {
       type: "website",
       url,
       title,
       description,
       siteName: t.siteName,
-      locale: locale === "nl" ? "nl_NL" : "en_GB",
-      alternateLocale: locale === "nl" ? ["en_GB"] : ["nl_NL"],
+      locale: localeTags[locale].og,
+      alternateLocale: locales.filter((l) => l !== locale).map((l) => localeTags[l].og),
       images: [{ url: image ?? ogImage, width: 1200, height: 630, alt: company.name }],
     },
     twitter: { card: "summary_large_image", title, description, images: [image ?? ogImage] },

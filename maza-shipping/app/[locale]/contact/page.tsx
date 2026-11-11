@@ -6,7 +6,7 @@ import ContactDetails from "@/components/ContactDetails";
 import EnquiryForm from "@/components/EnquiryForm";
 import MapEmbed from "@/components/MapEmbed";
 import { getDictionary } from "@/content/dictionaries";
-import { href, isLocale, type Locale } from "@/content/i18n";
+import { href, isLocale, defaultLocale, type Locale } from "@/content/i18n";
 import { company } from "@/content/site";
 import { pageMetadata } from "@/lib/seo";
 
@@ -19,7 +19,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function ContactPage({ params }: Props) {
   const { locale: l } = await params;
-  const locale = (isLocale(l) ? l : "en") as Locale;
+  const locale = (isLocale(l) ? l : defaultLocale) as Locale;
   const t = getDictionary(locale);
   const c = t.contact;
 

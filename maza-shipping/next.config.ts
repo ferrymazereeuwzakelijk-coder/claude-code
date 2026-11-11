@@ -11,14 +11,14 @@ const nextConfig: NextConfig = {
   },
   async redirects() {
     return [
-      { source: "/", destination: "/en", permanent: true },
+      { source: "/", destination: "/nl", permanent: true },
       // Legacy URLs from the previous website
       { source: "/diensten", destination: "/nl/tugboat-services", permanent: true },
       { source: "/services-1", destination: "/nl/tugboat-services", permanent: true },
-      { source: "/ferry-jo", destination: "/en/tugboat-services", permanent: true },
+      { source: "/ferry-jo", destination: "/nl/tugboat-services", permanent: true },
       { source: "/vragen", destination: "/nl/tugboat-services#faq", permanent: true },
-      { source: "/about", destination: "/en/about", permanent: true },
-      { source: "/contact", destination: "/en/contact", permanent: true },
+      { source: "/about", destination: "/nl/about", permanent: true },
+      { source: "/contact", destination: "/nl/contact", permanent: true },
     ];
   },
   async headers() {

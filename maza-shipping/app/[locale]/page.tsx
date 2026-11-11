@@ -8,8 +8,8 @@ import Photo from "@/components/Photo";
 import SectionHeading from "@/components/SectionHeading";
 import CtaBand from "@/components/CtaBand";
 import { getDictionary } from "@/content/dictionaries";
-import { href, isLocale, type Locale } from "@/content/i18n";
-import { company, ferryJo } from "@/content/site";
+import { href, isLocale, defaultLocale, type Locale } from "@/content/i18n";
+import { company, ferryJo, localizeSpec } from "@/content/site";
 import { pageMetadata } from "@/lib/seo";
 
 type Props = { params: Promise<{ locale: string }> };
@@ -23,13 +23,13 @@ const solutionIcons = [LuShip, LuRoute, LuLayers, LuAnchor, LuHandshake, LuClipb
 
 export default async function HomePage({ params }: Props) {
   const { locale: l } = await params;
-  const locale = (isLocale(l) ? l : "en") as Locale;
+  const locale = (isLocale(l) ? l : defaultLocale) as Locale;
   const t = getDictionary(locale);
   const h = t.home;
 
   const vesselStats = [
-    { label: t.tug.specs.labels.length, value: ferryJo.lengthM, unit: "m" },
-    { label: t.tug.specs.labels.mainEngine, value: ferryJo.powerHp, unit: "hp" },
+    { label: t.tug.specs.labels.length, value: localizeSpec(ferryJo.lengthM, t.common.units), unit: "m" },
+    { label: t.tug.specs.labels.mainEngine, value: ferryJo.powerHp, unit: t.common.units.hp },
     { label: t.tug.specs.labels.bollardPull, value: ferryJo.bollardPullT, unit: "t" },
   ];
 

@@ -6,7 +6,7 @@ import Photo from "@/components/Photo";
 import SectionHeading from "@/components/SectionHeading";
 import CtaBand from "@/components/CtaBand";
 import { getDictionary } from "@/content/dictionaries";
-import { href, isLocale, type Locale } from "@/content/i18n";
+import { href, isLocale, defaultLocale, type Locale } from "@/content/i18n";
 import { company, photos } from "@/content/site";
 import { pageMetadata } from "@/lib/seo";
 
@@ -19,7 +19,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function AboutPage({ params }: Props) {
   const { locale: l } = await params;
-  const locale = (isLocale(l) ? l : "en") as Locale;
+  const locale = (isLocale(l) ? l : defaultLocale) as Locale;
   const t = getDictionary(locale);
   const a = t.about;
 

@@ -1,15 +1,16 @@
-import type { SpecRow } from "@/content/site";
+import { localizeSpec, type SpecRow, type Units } from "@/content/site";
 
 type Props = {
   rows: readonly SpecRow[];
   labels: Record<string, string>;
   typeValue: string;
   caption: string;
+  units: Units;
   note?: string;
 };
 
 /** Technical datasheet table. Values come from content/site.ts; labels from the dictionary. */
-export default function SpecTable({ rows, labels, typeValue, caption, note }: Props) {
+export default function SpecTable({ rows, labels, typeValue, caption, units, note }: Props) {
   return (
     <div data-reveal className="overflow-hidden rounded-2xl border border-line bg-white">
       <table className="w-full border-collapse text-left">
@@ -27,7 +28,7 @@ export default function SpecTable({ rows, labels, typeValue, caption, note }: Pr
                 {labels[r.key] ?? r.key}
               </th>
               <td className="py-4 pr-5 font-heading text-[1.02rem] font-bold text-navy tabular-nums sm:pr-7">
-                {r.key === "type" ? typeValue : r.value}
+                {r.key === "type" ? typeValue : localizeSpec(r.value, units)}
               </td>
             </tr>
           ))}

@@ -67,6 +67,7 @@ const en = {
     homePort: "Home port",
     kvk: "Chamber of Commerce (KvK)",
     vat: "VAT",
+    units: { hp: "hp", electric: "electric", decimalComma: false },
   },
 
   photos: {
