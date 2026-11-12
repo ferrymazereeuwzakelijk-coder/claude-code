@@ -1,10 +1,9 @@
 import React from 'react';
-import {AbsoluteFill, OffthreadVideo, staticFile, useCurrentFrame} from 'remotion';
+import {AbsoluteFill, Freeze, OffthreadVideo, Sequence, staticFile, useCurrentFrame} from 'remotion';
 import {Footage} from '../components/Footage';
 import {Phone} from '../components/Phone';
 import {Highlight, Tap} from '../components/ScreenUI';
 import {DECKHAND, FOOTAGE} from '../footage';
-import counterRows from '../rec-counter.json';
 import {camera, CamKey, cameraSpeed, easeIn, easeOut, ramp, TL} from '../lib/anim';
 
 const FONT = 'Inter, sans-serif';
@@ -64,16 +63,18 @@ const R = TL.companyResult;
 const RESULT_CAM: CamKey[] = [
   {f: 1465, s: 0.55, fx: 660, fy: 1434, rx: -6, ry: -38, rz: -6, tx: 1700, ty: 250},
   {f: 1482, s: 1.0, rx: 2, ry: -6, rz: -1, tx: 0},
-  {f: 1497, s: 1.3, fy: 2080, rx: 0, ry: 0, rz: 0},
-  {f: 1507, s: 1.3, fy: 2080},
-  {f: 1520, s: 1.05, fy: 1434},
-  {f: 1546, s: 1.3, fy: 1180},
-  {f: 1582, s: 1.34, fy: 1180},
+  {f: 1497, s: 1.3, fy: 2250, rx: 0, ry: 0, rz: 0},
+  {f: 1552, s: 1.3, fy: 2250},
+  {f: 1570, s: 1.05, fy: 1434},
+  {f: 1585, s: 1.3, fy: 1300},
+  {f: 1696, s: 1.3, fy: 1330},
+  {f: 1712, s: 1.3, fy: 1200},
+  {f: 1800, s: 1.36, fy: 1200},
 ];
 
 /**
- * Step 7, from the company's own screen recording: tap the link in WhatsApp,
- * the reactions page opens and the freelancer's reaction is there.
+ * The company's own screen recording: the WhatsApp alert that a deckhand
+ * reacted, the reactions page, and contacting him in one tap.
  */
 export const CompanyResult: React.FC = () => {
   const {from, to} = TL.scenes.companyResult;
@@ -81,10 +82,9 @@ export const CompanyResult: React.FC = () => {
   const cam = camera(f, RESULT_CAM);
   const blur = Math.min(26, Math.max(0, cameraSpeed(f, RESULT_CAM) - 140) * 0.1);
   const out = ramp(f, [to - 6, to], [0, 1], easeIn);
-  // the recording is 512px wide: K maps its pixels to native screen pixels
-  const K = 1320 / 512;
-  const rows = counterRows as (number | null)[];
-  const counterY = rows[Math.min(rows.length - 1, Math.max(0, f - from))] ?? null;
+  const video = (
+    <OffthreadVideo src={staticFile('footage/rec-reactions.mp4')} muted style={{width: 1320, height: 2868, display: 'block'}} />
+  );
   return (
     <AbsoluteFill style={{background: '#02060d', overflow: 'hidden'}}>
       <AbsoluteFill style={{filter: 'blur(22px) brightness(0.9)', transform: 'scale(1.12)'}}>
@@ -98,22 +98,28 @@ export const CompanyResult: React.FC = () => {
       <AbsoluteFill style={{opacity: 1 - out}}>
         <Phone cam={cam} blur={blur} glare={1.3}>
           <div style={{position: 'absolute', left: 0, top: 0, width: 1320, height: 2868}}>
-            <OffthreadVideo
-              src={staticFile('footage/rec-reactions.mp4')}
-              muted
-              style={{width: 1320, height: 2868, display: 'block'}}
-            />
-            {/* screen-recording dot */}
-            <div style={{position: 'absolute', left: 443 - 28, top: 95 - 28, width: 56, height: 56, borderRadius: 28, background: '#000'}} />
-            {/* the page's interest counter does not update yet — hide it */}
-            {counterY !== null && (
-              <div style={{position: 'absolute', left: 30, top: (counterY - 9) * K, width: 660, height: 34 * K, background: '#f3f4f7'}} />
+            {f < R.clipStart ? (
+              <Freeze frame={0}>{video}</Freeze>
+            ) : (
+              <Sequence from={R.clipStart - from} layout="none">
+                {video}
+              </Sequence>
             )}
-            {counterY !== null && (
-              <Highlight frame={f} at={R.reaction + 8} x={44} y={(counterY + 33) * K} w={1232} h={528} radius={40} color="#21c063" />
+            {f < R.tapLink + 4 && (
+              <Highlight frame={f} at={R.clipStart + 2} x={36} y={2178} w={1010} h={396} radius={40} color="#21c063" />
+            )}
+            {f >= R.pageOpen && f < R.tapContact + 2 && (
+              <Highlight frame={f} at={R.pageOpen + 14} x={36} y={944} w={1248} h={776} radius={40} color="#21c063" />
+            )}
+            {f >= R.contact && (
+              <Highlight frame={f} at={R.contact + 6} x={40} y={840} w={1240} h={520} radius={40} color="#21c063" />
             )}
           </div>
-          <Tap frame={f} at={R.tapLink} x={500} y={2310} />
+          {TL.taps
+            .filter((t) => t.phone === 'result')
+            .map((t) => (
+              <Tap key={t.frame} frame={f} at={t.frame} x={t.x} y={t.y} dark={f < R.tapLink + 10} />
+            ))}
         </Phone>
       </AbsoluteFill>
     </AbsoluteFill>

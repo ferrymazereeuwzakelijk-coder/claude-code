@@ -57,21 +57,27 @@ for name, src, start, length, title, author, lic in CLIPS:
     url = "https://commons.wikimedia.org/wiki/File:" + title.replace(" ", "_")
     credits.append(f"| `{name}.mp4` | [{title}]({url}) | {author} | {lic} |")
 
-# --- the company's own screen recording: tapping the link and seeing the reaction ---
-rec = ROOT / "assets" / "source" / "rec-company-reactions.mp4"
+# --- the company's own screen recording: WhatsApp alert -> reactions page -> contact in one tap ---
+rec = ROOT / "assets" / "source" / "rec-company-reactions-v2.mp4"
 if rec.exists():
-    subprocess.run(["ffmpeg", "-v", "error", "-y", "-ss", "7.6", "-t", "5.0", "-i", str(rec), "-an",
-                    "-vf", "fps=30", "-c:v", "libx264", "-crf", "18", "-g", "10", "-pix_fmt", "yuv420p",
-                    "-movflags", "+faststart", str(OUT / "rec-reactions.mp4")], check=True)
+    hide = ",".join([
+        "format=rgb24",
+        "drawbox=x=424:y=74:w=46:h=46:color=black:t=fill",                        # recording dot
+        "drawbox=x=86:y=1386:w=300:h=50:color=0xfefefe:t=fill:enable='gte(t,7.85)'",  # phone number (card)
+        "drawbox=x=86:y=2756:w=300:h=50:color=0xf2f1f3:t=fill:enable='gte(t,7.85)'",  # phone number (bottom)
+    ])
+    # (start, end, speed): alert in WhatsApp, open link (sped up), reactions page + tap, contact options
+    segs = [(0.0, 2.1, 1.0), (2.1, 3.35, 2.5), (3.35, 7.9, 1.0), (7.9, 11.0, 1.0)]
+    parts = [f"[0:v]{hide}[c]", "[c]split=%d%s" % (len(segs), "".join(f"[s{i}]" for i in range(len(segs))))]
+    for i, (a_, b_, sp) in enumerate(segs):
+        parts.append(f"[s{i}]trim=start={a_}:end={b_},setpts=(PTS-STARTPTS)/{sp},fps=30[v{i}]")
+    parts.append("".join(f"[v{i}]" for i in range(len(segs))) + f"concat=n={len(segs)}:v=1:a=0,scale=990:2150[out]")
+    subprocess.run(["ffmpeg", "-v", "error", "-y", "-i", str(rec), "-filter_complex", ";".join(parts), "-map", "[out]",
+                    "-c:v", "libx264", "-crf", "20", "-g", "10", "-pix_fmt", "yuv420p", "-movflags", "+faststart",
+                    str(OUT / "rec-reactions.mp4")], check=True)
     still = ROOT / "public" / "screens" / "company-reactions.png"
-    subprocess.run(["ffmpeg", "-v", "error", "-y", "-ss", "12", "-i", str(rec), "-frames:v", "1",
-                    "-vf", "scale=1320:2868:flags=lanczos", str(still)], check=True)
-    from PIL import Image, ImageDraw
-    im = Image.open(still).convert("RGB")
-    d = ImageDraw.Draw(im)
-    d.ellipse((443 - 26, 95 - 26, 443 + 26, 95 + 26), fill=(0, 0, 0))  # recording dot
-    d.rectangle((30, 810, 690, 935), fill=(243, 244, 247))  # stale "0 interesse" counter
-    im.save(still)
+    subprocess.run(["ffmpeg", "-v", "error", "-y", "-ss", "6.0", "-i", str(rec), "-frames:v", "1",
+                    "-vf", ",".join(hide.split(",")[:2]), str(still)], check=True)
     print("wrote rec-reactions.mp4 + company-reactions.png")
 
 credits.append("\nThe U.S. Navy clip is public domain; it is cropped so no insignia show and implies no endorsement.")

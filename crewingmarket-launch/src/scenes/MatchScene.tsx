@@ -75,7 +75,7 @@ export const MatchScene: React.FC = () => {
         />
         <Phone cam={camera(f, COMPANY)} shadow={0.8}>
           <Shot src="company-reactions.png">
-            <Highlight frame={f} at={M.impact + 4} x={44} y={950} w={1232} h={528} color="#21c063" radius={40} />
+            <Highlight frame={f} at={M.impact + 4} x={36} y={944} w={1248} h={776} color="#21c063" radius={40} />
           </Shot>
         </Phone>
         <Phone cam={camera(f, FREELANCER)} shadow={0.8} glare={1.4}>
@@ -115,7 +115,7 @@ export const MatchScene: React.FC = () => {
         </svg>
         {/* role captions */}
         {[
-          {x: 316, t: 'BEDRIJF', s: 'ziet direct wie er reageert'},
+          {x: 316, t: 'BEDRIJF', s: 'neemt direct contact op'},
           {x: 764, t: "ZZP'ER", s: 'reageerde met één tik'},
         ].map((c) => (
           <div

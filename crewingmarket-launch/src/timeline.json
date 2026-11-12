@@ -3,7 +3,7 @@
   "fps": 30,
   "width": 1080,
   "height": 1920,
-  "durationInFrames": 1885,
+  "durationInFrames": 2105,
   "bpm": 120,
   "scenes": {
     "opening": {
@@ -32,19 +32,19 @@
     },
     "companyResult": {
       "from": 1465,
-      "to": 1585
+      "to": 1805
     },
     "match": {
-      "from": 1585,
-      "to": 1705
+      "from": 1805,
+      "to": 1925
     },
     "underway": {
-      "from": 1705,
-      "to": 1765
+      "from": 1925,
+      "to": 1985
     },
     "reveal": {
-      "from": 1765,
-      "to": 1885
+      "from": 1985,
+      "to": 2105
     }
   },
   "copy": {
@@ -149,11 +149,29 @@
     {
       "n": 3,
       "from": 1469,
-      "to": 1581,
+      "to": 1552,
       "route": "company",
-      "title": "Jij ziet wie er reageert",
-      "sub": "via de link of in je dashboard",
-      "group": "after"
+      "group": "after",
+      "title": "Je krijgt direct een appje",
+      "sub": "zodra een matroos reageert"
+    },
+    {
+      "n": 4,
+      "from": 1552,
+      "to": 1702,
+      "route": "company",
+      "group": "after",
+      "title": "Bekijk wie er reageert",
+      "sub": "met één tik op de link"
+    },
+    {
+      "n": 5,
+      "from": 1702,
+      "to": 1801,
+      "route": "company",
+      "group": "after",
+      "title": "Neem direct contact op",
+      "sub": "bellen of WhatsApp — met één tik"
     }
   ],
   "hookWords": [
@@ -190,16 +208,16 @@
     "reacted": 1377
   },
   "match": {
-    "impact": 1585,
-    "line1": 1627,
-    "line2": 1643
+    "impact": 1805,
+    "line1": 1847,
+    "line2": 1863
   },
   "reveal": {
-    "logoHit": 1765,
-    "wordmark": 1773,
-    "date": 1807,
-    "live": 1822,
-    "url": 1838
+    "logoHit": 1985,
+    "wordmark": 1993,
+    "date": 2027,
+    "live": 2042,
+    "url": 2058
   },
   "taps": [
     {
@@ -275,9 +293,15 @@
       "phone": "freelancer"
     },
     {
-      "frame": 1504,
-      "x": 500,
-      "y": 2310,
+      "frame": 1550,
+      "x": 680,
+      "y": 2370,
+      "phone": "result"
+    },
+    {
+      "frame": 1701,
+      "x": 324,
+      "y": 1599,
       "phone": "result"
     }
   ],
@@ -292,14 +316,15 @@
       788,
       1206,
       1461,
-      1698,
-      1758
+      1918,
+      1978
     ],
     "receive": [
       352,
       425,
       626,
-      1529
+      1494,
+      1570
     ],
     "send": [
       334,
@@ -307,22 +332,23 @@
     ],
     "confirm": [
       1041,
-      1377
+      1377,
+      1706
     ],
     "impact": [
       0,
-      1585,
-      1765,
-      1822
+      1805,
+      1985,
+      2042
     ],
     "riser": [
       [
-        1525,
-        1585
+        1745,
+        1805
       ],
       [
-        1705,
-        1765
+        1925,
+        1985
       ]
     ],
     "step": [
@@ -335,14 +361,19 @@
       1023,
       1217,
       1333,
-      1469
+      1469,
+      1552,
+      1702
     ]
   },
   "companyResult": {
-    "recStart": 1465,
-    "tapLink": 1504,
-    "pageOpen": 1510,
-    "reaction": 1529
+    "phoneIn": 1465,
+    "clipStart": 1490,
+    "tapLink": 1550,
+    "pageOpen": 1568,
+    "tapContact": 1701,
+    "contact": 1704,
+    "clipEnd": 1798
   },
   "appRoute": {
     "cardTo": 765,
