@@ -8,7 +8,7 @@ import counterRows from '../rec-counter.json';
 import {camera, CamKey, cameraSpeed, easeIn, easeOut, ramp, TL} from '../lib/anim';
 
 const FONT = 'Inter, sans-serif';
-const BLUE = '#3b74ff';
+const ORANGE = '#ff8a3d';
 
 /** "Ondertussen bij de matroos…" — the deckhand at work, back to camera. */
 export const Deckhand: React.FC = () => {
@@ -40,8 +40,8 @@ export const Deckhand: React.FC = () => {
             display: 'inline-block',
             padding: '10px 22px',
             borderRadius: 999,
-            border: `2px solid ${BLUE}`,
-            color: BLUE,
+            border: `2px solid ${ORANGE}`,
+            color: ORANGE,
             fontSize: 26,
             fontWeight: 800,
             letterSpacing: '0.14em',
@@ -62,13 +62,13 @@ export const Deckhand: React.FC = () => {
 
 const R = TL.companyResult;
 const RESULT_CAM: CamKey[] = [
-  {f: 1095, s: 0.55, fx: 660, fy: 1434, rx: -6, ry: -38, rz: -6, tx: 1700, ty: 250},
-  {f: 1112, s: 1.0, rx: 2, ry: -6, rz: -1, tx: 0},
-  {f: 1127, s: 1.3, fy: 2080, rx: 0, ry: 0, rz: 0},
-  {f: 1137, s: 1.3, fy: 2080},
-  {f: 1150, s: 1.05, fy: 1434},
-  {f: 1176, s: 1.3, fy: 1180},
-  {f: 1212, s: 1.34, fy: 1180},
+  {f: 1465, s: 0.55, fx: 660, fy: 1434, rx: -6, ry: -38, rz: -6, tx: 1700, ty: 250},
+  {f: 1482, s: 1.0, rx: 2, ry: -6, rz: -1, tx: 0},
+  {f: 1497, s: 1.3, fy: 2080, rx: 0, ry: 0, rz: 0},
+  {f: 1507, s: 1.3, fy: 2080},
+  {f: 1520, s: 1.05, fy: 1434},
+  {f: 1546, s: 1.3, fy: 1180},
+  {f: 1582, s: 1.34, fy: 1180},
 ];
 
 /**

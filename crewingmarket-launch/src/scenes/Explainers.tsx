@@ -1,7 +1,9 @@
 import React from 'react';
-import {AbsoluteFill, Img, staticFile, useCurrentFrame} from 'remotion';
+import {AbsoluteFill, Freeze, Img, OffthreadVideo, Sequence, staticFile, useCurrentFrame} from 'remotion';
+import {Phone} from '../components/Phone';
+import {Tap} from '../components/ScreenUI';
 import {Footage} from '../components/Footage';
-import {easeIn, easeOut, ramp, TL} from '../lib/anim';
+import {camera, CamKey, cameraSpeed, easeIn, easeOut, ramp, TL} from '../lib/anim';
 
 const FONT = 'Inter, sans-serif';
 const WA_GREEN = '#21c063';
@@ -126,71 +128,91 @@ export const Intro: React.FC = () => {
   );
 };
 
-/** 0:24 – 0:26.5  Route 2: the same request, from the app. */
+const APP = TL.appRoute;
+const APP_CAM: CamKey[] = [
+  {f: 760, s: 0.5, fx: 660, fy: 1434, rx: 10, ry: 36, rz: 6, tx: 1500, ty: 250},
+  {f: 785, s: 1.0, rx: 3, ry: 8, rz: 1, tx: 0},
+  {f: 805, s: 1.22, fy: 1500, rx: 0, ry: 0, rz: 0},
+  {f: 850, s: 1.22, fy: 1500},
+  {f: 870, s: 1.2, fy: 1300},
+  {f: 1000, s: 1.2, fy: 1500},
+  {f: 1030, s: 1.08, fy: 1434},
+  {f: 1060, s: 1.3, fy: 1500},
+  {f: 1150, s: 1.36, fy: 1480},
+  {f: 1165, s: 1.2, tx: -1700, rz: -10, ry: 34},
+];
+
+/** Route 2: the company posts the same request in the CrewingMarket app (real recording). */
 export const AppRoute: React.FC = () => {
   const from = TL.scenes.appRoute.from;
-  const to = TL.scenes.appRoute.to;
   const f = useCurrentFrame() + from;
-  const a = ramp(f, [from + 2, from + 14], [0, 1], easeOut);
-  const b = ramp(f, [from + 12, from + 24], [0, 1], easeOut);
-  const c = ramp(f, [from + 24, from + 36], [0, 1], easeOut);
-  const out = ramp(f, [to - 8, to], [0, 1], easeIn);
+  const a = ramp(f, [from + 2, from + 12], [0, 1], easeOut);
+  const cardOut = ramp(f, [APP.cardTo - 8, APP.cardTo], [0, 1], easeIn);
+  const cam = camera(f, APP_CAM);
+  const blur = Math.min(26, Math.max(0, cameraSpeed(f, APP_CAM) - 140) * 0.1);
+  const video = (
+    <OffthreadVideo src={staticFile('footage/app-route.mp4')} muted style={{width: 1320, height: 2868, display: 'block'}} />
+  );
   return (
-    <AbsoluteFill style={{background: '#02060d'}}>
+    <AbsoluteFill style={{background: '#02060d', overflow: 'hidden'}}>
       <Backdrop t={f - from} clip={{src: 'footage/rotterdam-night.mp4', start: 7, focusX: 0.55, credit: ''}} />
       <AbsoluteFill
-        style={{
-          alignItems: 'center',
-          justifyContent: 'center',
-          fontFamily: FONT,
-          textAlign: 'center',
-          opacity: 1 - out,
-          transform: `translateX(${-out * 120}px)`,
-        }}
-      >
-        <div style={{opacity: a, transform: `translateY(${(1 - a) * 30}px)`}}>
-          <div
-            style={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: 14,
-              padding: '12px 28px 12px 18px',
-              borderRadius: 999,
-              border: `3px solid ${BLUE}`,
-              color: BLUE,
-              fontSize: 30,
-              fontWeight: 800,
-              letterSpacing: '0.16em',
-            }}
-          >
-            <AppIcon size={40} /> MANIER 2
+        style={{background: 'radial-gradient(circle at 50% 55%, rgba(59,116,255,0.22) 0%, rgba(0,0,0,0) 58%)'}}
+      />
+      {f >= APP.phoneIn - 6 && (
+        <Phone cam={cam} blur={blur} glare={1.3}>
+          <div style={{position: 'absolute', left: 0, top: 0, width: 1320, height: 2868}}>
+            {f < APP.clipStart ? (
+              <Freeze frame={0}>{video}</Freeze>
+            ) : (
+              <Sequence from={APP.clipStart - from} layout="none">
+                {video}
+              </Sequence>
+            )}
           </div>
-          <div style={{fontSize: 96, fontWeight: 900, color: '#fff', marginTop: 34, lineHeight: 1.05}}>
-            Liever via
-            <br />
-            de app?
-          </div>
-        </div>
-        <div style={{opacity: b, transform: `translateY(${(1 - b) * 30}px)`, marginTop: 40}}>
-          <div style={{fontSize: 44, fontWeight: 500, color: 'rgba(255,255,255,0.8)'}}>Plaats je opdracht direct op</div>
-          <div style={{display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 18, marginTop: 18}}>
-            <Img src={staticFile('brand/logo-mark-white.png')} style={{width: 72, height: 72}} />
-            <div style={{fontSize: 66, fontWeight: 800, color: BLUE}}>crewingmarket.com</div>
-          </div>
-        </div>
-        <div
+          {TL.taps
+            .filter((t) => t.phone === 'app')
+            .map((t) => (
+              <Tap key={t.frame} frame={f} at={t.frame} x={t.x} y={t.y} dark={false} />
+            ))}
+        </Phone>
+      )}
+      {f < APP.cardTo && (
+        <AbsoluteFill
           style={{
-            opacity: c,
-            marginTop: 70,
-            fontSize: 36,
-            fontWeight: 600,
-            color: 'rgba(255,255,255,0.7)',
-            transform: `translateY(${(1 - c) * 20}px)`,
+            alignItems: 'center',
+            justifyContent: 'center',
+            fontFamily: FONT,
+            textAlign: 'center',
+            background: 'rgba(2,6,13,0.55)',
+            opacity: 1 - cardOut,
           }}
         >
-          En dan? Zo ziet de zzp’er het ↓
-        </div>
-      </AbsoluteFill>
+          <div style={{opacity: a, transform: `translateY(${(1 - a) * 30}px) scale(${1 + cardOut * 0.06})`}}>
+            <div
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: 14,
+                padding: '12px 28px 12px 18px',
+                borderRadius: 999,
+                border: `3px solid ${BLUE}`,
+                color: BLUE,
+                fontSize: 30,
+                fontWeight: 800,
+                letterSpacing: '0.16em',
+              }}
+            >
+              <AppIcon size={40} /> MANIER 2
+            </div>
+            <div style={{fontSize: 104, fontWeight: 900, color: '#fff', marginTop: 30, lineHeight: 1.05}}>Via de app</div>
+            <div style={{display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 16, marginTop: 22}}>
+              <Img src={staticFile('brand/logo-mark-white.png')} style={{width: 60, height: 60}} />
+              <div style={{fontSize: 52, fontWeight: 800, color: BLUE}}>crewingmarket.com</div>
+            </div>
+          </div>
+        </AbsoluteFill>
+      )}
     </AbsoluteFill>
   );
 };

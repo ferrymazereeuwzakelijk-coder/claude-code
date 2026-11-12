@@ -6,10 +6,13 @@ const FONT = 'Inter, sans-serif';
 const WA_GREEN = '#21c063';
 const BLUE = '#3b74ff';
 
-const ROUTES: Record<string, {label: string; color: string}> = {
-  whatsapp: {label: 'BEDRIJF · VIA WHATSAPP', color: WA_GREEN},
-  freelancer: {label: 'ZZP’ER · IN DE APP', color: BLUE},
-  company: {label: 'BEDRIJF', color: WA_GREEN},
+const ORANGE = '#ff8a3d';
+
+const ROUTES: Record<string, {label: string; color: string; ink: string}> = {
+  whatsapp: {label: 'MANIER 1 · VIA WHATSAPP', color: WA_GREEN, ink: '#06210f'},
+  app: {label: 'MANIER 2 · VIA DE APP', color: BLUE, ink: '#fff'},
+  freelancer: {label: 'DAARNA · DE ZZP’ER', color: ORANGE, ink: '#2a1200'},
+  company: {label: 'DAARNA · JIJ ALS BEDRIJF', color: WA_GREEN, ink: '#06210f'},
 };
 
 const WaIcon: React.FC<{color: string}> = ({color}) => (
@@ -39,8 +42,9 @@ export const StepCaptions: React.FC<{frame: number}> = ({frame}) => {
   const steps = TL.steps;
   const active = steps.filter((s) => frame >= s.from - 2 && frame < s.to + 8);
   if (active.length === 0) return null;
-  const total = steps.length;
   const cur = active[active.length - 1];
+  const group = steps.filter((x) => x.group === cur.group);
+  const total = group.length;
   const anyIn = Math.max(...active.map((s) => ramp(frame, [s.from - 2, s.from + 8], [0, 1], easeOut) * (1 - ramp(frame, [s.to, s.to + 8], [0, 1], easeIn))));
   return (
     <AbsoluteFill style={{pointerEvents: 'none'}}>
@@ -56,14 +60,15 @@ export const StepCaptions: React.FC<{frame: number}> = ({frame}) => {
         const pin = ramp(frame, [s.from - 2, s.from + 8], [0, 1], easeOut);
         const pout = ramp(frame, [s.to, s.to + 8], [0, 1], easeIn);
         // only animate the route chip when the route changes
-        const prev = steps.find((x) => x.n === s.n - 1);
+        const idx = steps.indexOf(s);
+        const prev = steps[idx - 1];
         const sameRoute = prev && prev.route === s.route && prev.to === s.from;
-        const next = steps.find((x) => x.n === s.n + 1);
+        const next = steps[idx + 1];
         const nextSame = next && next.route === s.route && next.from === s.to;
         const chipOp = (sameRoute ? 1 : pin) * (nextSame ? 1 : 1 - pout);
         const r = ROUTES[s.route];
         return (
-          <div key={s.n} style={{position: 'absolute', left: 64, right: 64, top: 112}}>
+          <div key={`${s.group}-${s.n}`} style={{position: 'absolute', left: 64, right: 64, top: 112}}>
             <div
               style={{
                 display: 'inline-flex',
@@ -81,7 +86,7 @@ export const StepCaptions: React.FC<{frame: number}> = ({frame}) => {
                 color: r.color,
               }}
             >
-              {s.route === 'freelancer' ? <AppIcon color={r.color} /> : <WaIcon color={r.color} />}
+              {s.route === 'whatsapp' || s.route === 'company' ? <WaIcon color={r.color} /> : <AppIcon color={r.color} />}
               {r.label}
             </div>
             <div
@@ -101,7 +106,7 @@ export const StepCaptions: React.FC<{frame: number}> = ({frame}) => {
                   height: 104,
                   borderRadius: 52,
                   background: r.color,
-                  color: s.route === 'freelancer' ? '#fff' : '#06210f',
+                  color: r.ink,
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
@@ -126,12 +131,12 @@ export const StepCaptions: React.FC<{frame: number}> = ({frame}) => {
       })}
       {/* progress: which step of the total */}
       <div style={{position: 'absolute', left: 64, top: 392, display: 'flex', gap: 10, opacity: anyIn}}>
-        {steps.map((s) => {
+        {group.map((s) => {
           const done = s.n < cur.n;
           const on = s.n === cur.n;
           return (
             <div
-              key={s.n}
+              key={`${s.group}-${s.n}`}
               style={{
                 width: on ? 56 : 18,
                 height: 8,

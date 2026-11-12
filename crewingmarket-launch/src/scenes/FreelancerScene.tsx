@@ -11,15 +11,15 @@ const F = TL.freelancer;
 const FROM = TL.scenes.freelancer.from;
 
 export const FREELANCER_CAM: CamKey[] = [
-  {f: 840, s: 0.55, fx: 660, fy: 1434, rx: -8, ry: 40, rz: 8, tx: 1700, ty: 250},
-  {f: 860, s: 1.0, rx: 3, ry: 8, rz: 1, tx: 0},
-  {f: 885, s: 1.28, fy: 1950, rx: 0, ry: 0, rz: 0},
-  {f: 917, s: 1.22, fy: 1550},
-  {f: 945, s: 1.28, fy: 1300},
-  {f: 990, s: 1.28, fy: 1450},
-  {f: 1017, s: 1.28, fy: 900},
-  {f: 1080, s: 1.34, fy: 880},
-  {f: 1095, s: 1.2, tx: -1700, rz: -10, ry: 34},
+  {f: 1210, s: 0.55, fx: 660, fy: 1434, rx: -8, ry: 40, rz: 8, tx: 1700, ty: 250},
+  {f: 1230, s: 1.0, rx: 3, ry: 8, rz: 1, tx: 0},
+  {f: 1255, s: 1.28, fy: 1950, rx: 0, ry: 0, rz: 0},
+  {f: 1287, s: 1.22, fy: 1550},
+  {f: 1315, s: 1.28, fy: 1300},
+  {f: 1360, s: 1.28, fy: 1450},
+  {f: 1387, s: 1.28, fy: 900},
+  {f: 1450, s: 1.34, fy: 880},
+  {f: 1465, s: 1.2, tx: -1700, rz: -10, ry: 34},
 ];
 
 /** The freelancer's CrewingMarket web app — real screenshots only. */

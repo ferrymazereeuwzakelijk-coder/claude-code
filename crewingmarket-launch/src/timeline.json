@@ -3,7 +3,7 @@
   "fps": 30,
   "width": 1080,
   "height": 1920,
-  "durationInFrames": 1515,
+  "durationInFrames": 1885,
   "bpm": 120,
   "scenes": {
     "opening": {
@@ -20,31 +20,31 @@
     },
     "appRoute": {
       "from": 720,
-      "to": 795
+      "to": 1165
     },
     "deckhand": {
-      "from": 795,
-      "to": 840
+      "from": 1165,
+      "to": 1210
     },
     "freelancer": {
-      "from": 840,
-      "to": 1095
+      "from": 1210,
+      "to": 1465
     },
     "companyResult": {
-      "from": 1095,
-      "to": 1215
+      "from": 1465,
+      "to": 1585
     },
     "match": {
-      "from": 1215,
-      "to": 1335
+      "from": 1585,
+      "to": 1705
     },
     "underway": {
-      "from": 1335,
-      "to": 1395
+      "from": 1705,
+      "to": 1765
     },
     "reveal": {
-      "from": 1395,
-      "to": 1515
+      "from": 1765,
+      "to": 1885
     }
   },
   "copy": {
@@ -60,7 +60,7 @@
       "DE JUISTE MENSEN.",
       "OP HET JUISTE MOMENT."
     ],
-    "launchDate": "13 NOVEMBER 2026",
+    "launchDate": "20 NOVEMBER 2026",
     "launchLine": "WE GAAN LIVE",
     "url": "www.crewingmarket.com"
   },
@@ -71,7 +71,8 @@
       "to": 362,
       "route": "whatsapp",
       "title": "Stuur een appje",
-      "sub": "naar CrewingMarket op WhatsApp"
+      "sub": "naar CrewingMarket op WhatsApp",
+      "group": "wa"
     },
     {
       "n": 2,
@@ -79,7 +80,8 @@
       "to": 437,
       "route": "whatsapp",
       "title": "Kies ‘Bemanning’",
-      "sub": "de assistent helpt je verder"
+      "sub": "de assistent helpt je verder",
+      "group": "wa"
     },
     {
       "n": 3,
@@ -87,7 +89,8 @@
       "to": 588,
       "route": "whatsapp",
       "title": "Vul het formulier in",
-      "sub": "functie, datum, locatie, werktijden"
+      "sub": "functie, datum, locatie, werktijden",
+      "group": "wa"
     },
     {
       "n": 4,
@@ -95,31 +98,62 @@
       "to": 714,
       "route": "whatsapp",
       "title": "Verstuur",
-      "sub": "je opdracht staat direct online"
+      "sub": "je opdracht staat direct online",
+      "group": "wa"
     },
     {
-      "n": 5,
-      "from": 847,
-      "to": 963,
+      "n": 1,
+      "from": 785,
+      "to": 855,
+      "route": "app",
+      "group": "app",
+      "title": "Tik op ‘Plaats opdracht’",
+      "sub": "in je CrewingMarket-dashboard"
+    },
+    {
+      "n": 2,
+      "from": 855,
+      "to": 1023,
+      "route": "app",
+      "group": "app",
+      "title": "Vul de opdracht in",
+      "sub": "functie, datum, locatie, werktijden"
+    },
+    {
+      "n": 3,
+      "from": 1023,
+      "to": 1161,
+      "route": "app",
+      "group": "app",
+      "title": "Plaats je opdracht",
+      "sub": "hij staat direct online"
+    },
+    {
+      "n": 1,
+      "from": 1217,
+      "to": 1333,
       "route": "freelancer",
       "title": "Zzp’ers zien je opdracht",
-      "sub": "in de CrewingMarket-app"
+      "sub": "in de CrewingMarket-app",
+      "group": "after"
     },
     {
-      "n": 6,
-      "from": 963,
-      "to": 1091,
+      "n": 2,
+      "from": 1333,
+      "to": 1461,
       "route": "freelancer",
       "title": "Ze reageren met één tik",
-      "sub": "op ‘Ik heb interesse’"
+      "sub": "op ‘Ik heb interesse’",
+      "group": "after"
     },
     {
-      "n": 7,
-      "from": 1099,
-      "to": 1211,
+      "n": 3,
+      "from": 1469,
+      "to": 1581,
       "route": "company",
       "title": "Jij ziet wie er reageert",
-      "sub": "tik op de link in je WhatsApp"
+      "sub": "via de link of in je dashboard",
+      "group": "after"
     }
   ],
   "hookWords": [
@@ -149,23 +183,23 @@
     "out": 706
   },
   "freelancer": {
-    "phoneIn": 840,
-    "tapNaarOpdrachten": 907,
-    "assignments": 911,
-    "tapInteresse": 1003,
-    "reacted": 1007
+    "phoneIn": 1210,
+    "tapNaarOpdrachten": 1277,
+    "assignments": 1281,
+    "tapInteresse": 1373,
+    "reacted": 1377
   },
   "match": {
-    "impact": 1215,
-    "line1": 1257,
-    "line2": 1273
+    "impact": 1585,
+    "line1": 1627,
+    "line2": 1643
   },
   "reveal": {
-    "logoHit": 1395,
-    "wordmark": 1403,
-    "date": 1437,
-    "live": 1452,
-    "url": 1468
+    "logoHit": 1765,
+    "wordmark": 1773,
+    "date": 1807,
+    "live": 1822,
+    "url": 1838
   },
   "taps": [
     {
@@ -205,19 +239,43 @@
       "phone": "company"
     },
     {
-      "frame": 907,
+      "frame": 825,
+      "x": 660,
+      "y": 1516,
+      "phone": "app"
+    },
+    {
+      "frame": 867,
+      "x": 660,
+      "y": 1671,
+      "phone": "app"
+    },
+    {
+      "frame": 906,
+      "x": 660,
+      "y": 879,
+      "phone": "app"
+    },
+    {
+      "frame": 1021,
+      "x": 660,
+      "y": 2475,
+      "phone": "app"
+    },
+    {
+      "frame": 1277,
       "x": 659,
       "y": 2147,
       "phone": "freelancer"
     },
     {
-      "frame": 1003,
+      "frame": 1373,
       "x": 659,
       "y": 1642,
       "phone": "freelancer"
     },
     {
-      "frame": 1134,
+      "frame": 1504,
       "x": 500,
       "y": 2310,
       "phone": "result"
@@ -230,39 +288,41 @@
       464,
       602,
       712,
+      760,
       788,
-      836,
-      1091,
-      1328,
-      1388
+      1206,
+      1461,
+      1698,
+      1758
     ],
     "receive": [
       352,
       425,
       626,
-      1159
+      1529
     ],
     "send": [
       334,
       399
     ],
     "confirm": [
-      1007
+      1041,
+      1377
     ],
     "impact": [
       0,
-      1215,
-      1395,
-      1452
+      1585,
+      1765,
+      1822
     ],
     "riser": [
       [
-        1155,
-        1215
+        1525,
+        1585
       ],
       [
-        1335,
-        1395
+        1705,
+        1765
       ]
     ],
     "step": [
@@ -270,15 +330,24 @@
       362,
       437,
       588,
-      847,
-      963,
-      1099
+      785,
+      855,
+      1023,
+      1217,
+      1333,
+      1469
     ]
   },
   "companyResult": {
-    "recStart": 1095,
-    "tapLink": 1134,
-    "pageOpen": 1140,
-    "reaction": 1159
+    "recStart": 1465,
+    "tapLink": 1504,
+    "pageOpen": 1510,
+    "reaction": 1529
+  },
+  "appRoute": {
+    "cardTo": 765,
+    "phoneIn": 765,
+    "clipStart": 795,
+    "clipEnd": 1159
   }
 }

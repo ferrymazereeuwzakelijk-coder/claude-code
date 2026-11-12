@@ -1,23 +1,23 @@
 # CrewingMarket — launch commercial
 
-A 50-second vertical (1080×1920, 30 fps, H.264 + AAC) explainer/launch spot made with Remotion, React and TypeScript.
+A 63-second vertical (1080×1920, 30 fps, H.264 + AAC) explainer/launch spot made with Remotion, React and TypeScript.
 
 **Rendered video:** `out/crewingmarket-launch.mp4`
 
 ## Structure: understandable at a glance
-Every step has a large caption at the top (route, step number, title, subtitle, progress 1/7). Copy and timing are in `src/timeline.json` → `steps`.
+Every step has a large caption at the top: route, step number, title, subtitle and progress. Each part has its own colour and its own counter: **Manier 1 · WhatsApp** (green, 1–4), **Manier 2 · App** (blue, 1–3), **Daarna** (orange for the freelancer, green for the company, 1–3). Copy and timing are in `src/timeline.json` → `steps`.
 
 | Time | Scene | On screen |
 |---|---|---|
-| 0:00–0:04.5 | Hook | Real footage: tug, tanker. "MORGEN EEN MATROOS NODIG?" |
+| 0:00–0:04.5 | Hook | Real footage: skipper's hand on the throttle, tug, a deckhand (back to camera) on "MATROOS", tanker. "MORGEN EEN MATROOS NODIG?" |
 | 0:04.5–0:07.5 | Zo werkt het | "Personeel aanvragen kan op 2 manieren": ① Via WhatsApp ② Via de app |
-| 0:07.5–0:24 | Way 1: WhatsApp | ① Stuur een appje → ② Kies 'Bemanning' → ③ Vul het formulier in → ④ Verstuur: opdracht staat online |
-| 0:24–0:26.5 | Way 2: app | "Liever via de app? Plaats je opdracht direct op crewingmarket.com" |
-| 0:26.5–0:28 | The deckhand | Real footage: a deckhand, back to camera, hauling a line. "Ondertussen bij de matroos…" |
-| 0:28–0:36.5 | Freelancer | ⑤ Zzp'ers zien je opdracht → ⑥ Ze reageren met één tik ("Reactie verstuurd!") |
-| 0:36.5–0:40.5 | Company | ⑦ Jij ziet wie er reageert: **the company's own screen recording**, tapping the link and seeing the reaction from Ferry Professional |
-| 0:40.5–0:44.5 | Match | Both phones. "DE JUISTE MENSEN. OP HET JUISTE MOMENT." |
-| 0:44.5–0:50.5 | Reveal | Vessel underway, logo, 13 NOVEMBER 2026, WE GAAN LIVE |
+| 0:07.5–0:24 | Way 1: WhatsApp | Stuur een appje → Kies 'Bemanning' → Vul het formulier in → Verstuur |
+| 0:24–0:39 | Way 2: app | **The company's own app recording**: Tik op 'Plaats opdracht' → Vul de opdracht in (fast-forward) → "Je opdracht staat online" + short link to the reactions |
+| 0:39–0:40.5 | The deckhand | "Ondertussen bij de matroos…" |
+| 0:40.5–0:49 | Freelancer | Zzp'ers zien je opdracht → Ze reageren met één tik |
+| 0:49–0:53 | Company | Jij ziet wie er reageert: the company's own recording of the reactions page |
+| 0:53–0:57 | Match | "DE JUISTE MENSEN. OP HET JUISTE MOMENT." |
+| 0:57–1:03 | Reveal | Vessel underway, logo, **20 NOVEMBER 2026**, WE GAAN LIVE, www.crewingmarket.com |
 
 All phone content is the real screenshots (`assets/source/`). Only these things were added on top of them:
 * The typed message "Ik zoek een matroos voor morgen." This text comes from the brief. The recording itself starts with "Hoi". It is drawn as a bubble matching WhatsApp's own color and size, and you can change it in `src/timeline.json` → `copy.typedMessage`.
@@ -32,6 +32,7 @@ All phone content is the real screenshots (`assets/source/`). Only these things 
 
 ```bash
 npm install
+python3 scripts/prepare_app_recording.py  # clean + edit the app recording (removes admin/test banners, phone number)
 npm run assets   # regenerate public/screens + logo mark from assets/source
 npm run audio    # regenerate public/audio/soundtrack.wav (python3 + numpy + scipy)
 npm run studio   # live preview with a scrubbable timeline
