@@ -7,6 +7,8 @@ import '@fontsource/inter/700.css';
 import '@fontsource/inter/800.css';
 import '@fontsource/inter/900.css';
 import {Commercial} from './Commercial';
+import {ShortCommercial} from './short/Short';
+import SHORT from './short/timeline.json';
 import {TL} from './lib/anim';
 
 // Make sure every Inter weight is loaded before the first frame is captured.
@@ -19,6 +21,14 @@ Promise.all(
 
 export const RemotionRoot: React.FC = () => (
   <>
+    <Composition
+      id="CrewingMarketLaunch35"
+      component={ShortCommercial}
+      durationInFrames={SHORT.durationInFrames}
+      fps={SHORT.fps}
+      width={SHORT.width}
+      height={SHORT.height}
+    />
     <Composition
       id="CrewingMarketLaunch"
       component={Commercial}

@@ -4,6 +4,28 @@ A 70-second vertical (1080×1920, 30 fps, H.264 + AAC) explainer/launch spot mad
 
 **Rendered video:** `out/crewingmarket-launch.mp4`
 
+## 35-second launch cut (recommended for social)
+**File:** `out/crewingmarket-launch-35s.mp4` (composition `CrewingMarketLaunch35`, source in `src/short/`, timing in `src/short/timeline.json`). Every cut lands on a beat (120 BPM).
+
+| Time | Section | On screen |
+|---|---|---|
+| 0–3 s | Hook | Throttle hand → deckhand at work → tanker. "MORGEN EEN MATROOS NODIG?" |
+| 3–6.5 s | Solution | Logo + "Vind maritieme professionals" · Matrozen · Schippers · Stuurlieden |
+| 6.5–11.5 s | Way 1 | WhatsApp: message → completed form → Verstuur → "Je opdracht staat online!" |
+| 11.5–16 s | Way 2 | Platform (company's own recording): Plaats opdracht → Matroos → Opdracht plaatsen → online + reactions link |
+| 16–17.5 s | Crew | Real footage: "Beschikbare zzp'ers zien je opdracht" |
+| 17.5–23 s | Freelancer | Tap "Ik heb interesse" → "Reactie verstuurd!" |
+| 23–28.5 s | Result | WhatsApp alert → reactions page → Contact opnemen → Bel / WhatsApp |
+| 28.5–35 s | CTA | Logo, "Personeel nodig? Of beschikbaar voor werk?", crewingmarket.com, live vanaf 20 november 2026 |
+
+```bash
+python3 scripts/prepare_short_clips.py                      # essential moments of the two recordings
+python3 scripts/make_soundtrack.py src/short/timeline.json  # -> public/audio/soundtrack-short.wav
+npx remotion render src/index.ts CrewingMarketLaunch35 out/crewingmarket-launch-35s.mp4
+```
+
+The long explainer below (70 s, composition `CrewingMarketLaunch`) is kept for the website or a demo.
+
 ## Structure: understandable at a glance
 Every step has a large caption at the top: route, step number, title, subtitle and progress. Each part has its own colour and its own counter: **Manier 1 · WhatsApp** (green, 1–4), **Manier 2 · App** (blue, 1–3), **Daarna** (orange for the freelancer, green for the company, 1–5). Copy and timing are in `src/timeline.json` → `steps`.
 

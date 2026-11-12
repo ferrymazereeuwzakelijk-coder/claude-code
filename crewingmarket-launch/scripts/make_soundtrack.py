@@ -15,7 +15,10 @@ from scipy.io import wavfile
 from scipy.signal import butter, fftconvolve, sosfilt
 
 ROOT = Path(__file__).resolve().parent.parent
-TL = json.loads((ROOT / "src" / "timeline.json").read_text())
+import sys
+TL_PATH = Path(sys.argv[1]) if len(sys.argv) > 1 else ROOT / "src" / "timeline.json"
+TL = json.loads(TL_PATH.read_text())
+OUT_REL = TL.get("audioOut", "audio/soundtrack.wav")
 SR = 48000
 FPS = TL["fps"]
 DUR = TL["durationInFrames"] / FPS + 0.5
@@ -296,14 +299,15 @@ def bell_chord(notes, dur=4.0):
 # ---------------------------------------------------------------- arrangement
 sc = TL["scenes"]
 
-# --- 1. OPENING: deep atmosphere ---------------------------------------------
-add(ocean(fr(sc["whatsapp"]["from"]) + 1.5), 0, 0.30)
-add(ocean(fr(sc["reveal"]["from"] - sc["underway"]["from"]) + 0.6), fr(sc["underway"]["from"]), 0.22)
-add(drone(fr(sc["opening"]["to"]) + 0.4), 0, 0.42, verb=0.3)
-add(ship_horn(2.4), 1.55, 0.30, pan=-0.2, verb=0.9)
-for f in TL["hookWords"]:
-    add(taiko(1.4, 88 if f != TL["hookWords"][2] else 70), fr(f), 0.55, verb=0.25)
-add(riser(fr(sc["opening"]["to"] - 96)), fr(96), 0.22, verb=0.2)
+if "music" not in TL:
+    # --- 1. OPENING: deep atmosphere ---------------------------------------------
+    add(ocean(fr(sc["whatsapp"]["from"]) + 1.5), 0, 0.30)
+    add(ocean(fr(sc["reveal"]["from"] - sc["underway"]["from"]) + 0.6), fr(sc["underway"]["from"]), 0.22)
+    add(drone(fr(sc["opening"]["to"]) + 0.4), 0, 0.42, verb=0.3)
+    add(ship_horn(2.4), 1.55, 0.30, pan=-0.2, verb=0.9)
+    for f in TL["hookWords"]:
+        add(taiko(1.4, 88 if f != TL["hookWords"][2] else 70), fr(f), 0.55, verb=0.25)
+    add(riser(fr(sc["opening"]["to"] - 96)), fr(96), 0.22, verb=0.2)
 
 # chord progression: Dm - Bb - F - C   (root MIDI notes for pads)
 PROG = [(50, 53, 57, 62), (46, 50, 53, 58), (45, 48, 53, 57), (43, 48, 52, 55)]
@@ -342,58 +346,102 @@ def groove(start_f, end_f, intensity=1.0, arp=True, hats=True, bright=1400):
         bar_i += 1
 
 
-# --- 2. WHATSAPP: driving tech groove -----------------------------------------
-groove(sc["intro"]["from"], sc["whatsapp"]["to"], 0.8, arp=True, hats=True, bright=1100)
+if "music" not in TL:
+    # --- 2. WHATSAPP: driving tech groove -----------------------------------------
+    groove(sc["intro"]["from"], sc["whatsapp"]["to"], 0.8, arp=True, hats=True, bright=1100)
 
-# --- 3. FREELANCER: lift, then build ------------------------------------------
-groove(sc["appRoute"]["from"], TL["match"]["impact"] - 6, 0.95, arp=True, hats=True, bright=1900)
-# accelerating snare roll into the match
-roll_start, roll_end = fr(TL["sfx"]["riser"][0][0]), fr(TL["match"]["impact"] - 4)
-t = roll_start
-step = BEAT / 2
-while t < roll_end:
-    prog = (t - roll_start) / (roll_end - roll_start)
-    add(snare_hit(), t, 0.10 + 0.25 * prog, pan=(rng.random() - 0.5) * 0.4, verb=0.2)
-    step = max(BEAT / 8, step * 0.86)
-    t += step
+    # --- 3. FREELANCER: lift, then build ------------------------------------------
+    groove(sc["appRoute"]["from"], TL["match"]["impact"] - 6, 0.95, arp=True, hats=True, bright=1900)
+    # accelerating snare roll into the match
+    roll_start, roll_end = fr(TL["sfx"]["riser"][0][0]), fr(TL["match"]["impact"] - 4)
+    t = roll_start
+    step = BEAT / 2
+    while t < roll_end:
+        prog = (t - roll_start) / (roll_end - roll_start)
+        add(snare_hit(), t, 0.10 + 0.25 * prog, pan=(rng.random() - 0.5) * 0.4, verb=0.2)
+        step = max(BEAT / 8, step * 0.86)
+        t += step
 
-# --- 4. MATCH: big anthem section ----------------------------------------------
-m0 = fr(TL["match"]["impact"])
-add(sub_boom(3.5), m0, 0.95, verb=0.3)
-add(crash(4.0), m0, 0.45, verb=0.5)
-groove(TL["match"]["impact"], sc["match"]["to"] - 8, 1.15, arp=True, hats=True, bright=2600)
-# heroic lead: original melody over Dm - Bb - F - C
-MEL = [(0, 74, 1.0), (1, 72, 0.5), (1.5, 74, 0.5), (2, 77, 1.5), (4, 74, 1.0), (5, 72, 1.0), (6, 70, 2.0),
-       (8, 69, 1.0), (9, 72, 1.0), (10, 77, 2.0), (12, 76, 1.0), (13, 74, 0.5), (13.5, 72, 2.0)]
-for beat_off, n, ln in MEL:
-    at = m0 + beat_off * BEAT
-    if at < fr(sc["match"]["to"]) - 0.1:
-        add(brass_lead(n, ln * BEAT * 0.98), at, 0.15, verb=0.5)
-        add(brass_lead(n - 12, ln * BEAT * 0.98), at, 0.07, verb=0.5)
+    # --- 4. MATCH: big anthem section ----------------------------------------------
+    m0 = fr(TL["match"]["impact"])
+    add(sub_boom(3.5), m0, 0.95, verb=0.3)
+    add(crash(4.0), m0, 0.45, verb=0.5)
+    groove(TL["match"]["impact"], sc["match"]["to"] - 8, 1.15, arp=True, hats=True, bright=2600)
+    # heroic lead: original melody over Dm - Bb - F - C
+    MEL = [(0, 74, 1.0), (1, 72, 0.5), (1.5, 74, 0.5), (2, 77, 1.5), (4, 74, 1.0), (5, 72, 1.0), (6, 70, 2.0),
+           (8, 69, 1.0), (9, 72, 1.0), (10, 77, 2.0), (12, 76, 1.0), (13, 74, 0.5), (13.5, 72, 2.0)]
+    for beat_off, n, ln in MEL:
+        at = m0 + beat_off * BEAT
+        if at < fr(sc["match"]["to"]) - 0.1:
+            add(brass_lead(n, ln * BEAT * 0.98), at, 0.15, verb=0.5)
+            add(brass_lead(n - 12, ln * BEAT * 0.98), at, 0.07, verb=0.5)
 
-# --- 5. UNDERWAY: swell into the reveal ----------------------------------------
-u0 = fr(sc["underway"]["from"])
-add(pad((38, 50, 57, 62, 65), fr(sc["reveal"]["from"] - sc["underway"]["from"]) + 0.6, bright=2200,
-        attack=0.4, release=0.5), u0, 0.42, verb=0.6)
-add(drone(fr(sc["reveal"]["from"] - sc["underway"]["from"]) + 0.2, (26, 38), 300, 1600), u0, 0.35)
-for a, b in TL["sfx"]["riser"][1:]:
-    add(riser(fr(b - a)), fr(a), 0.30, verb=0.3)
-add(reverse_cymbal(fr(sc["reveal"]["from"] - sc["underway"]["from"])), u0, 0.30)
+    # --- 5. UNDERWAY: swell into the reveal ----------------------------------------
+    u0 = fr(sc["underway"]["from"])
+    add(pad((38, 50, 57, 62, 65), fr(sc["reveal"]["from"] - sc["underway"]["from"]) + 0.6, bright=2200,
+            attack=0.4, release=0.5), u0, 0.42, verb=0.6)
+    add(drone(fr(sc["reveal"]["from"] - sc["underway"]["from"]) + 0.2, (26, 38), 300, 1600), u0, 0.35)
+    for a, b in TL["sfx"]["riser"][1:]:
+        add(riser(fr(b - a)), fr(a), 0.30, verb=0.3)
+    add(reverse_cymbal(fr(sc["reveal"]["from"] - sc["underway"]["from"])), u0, 0.30)
 
-# --- 6. REVEAL: logo hit with a D-major resolution ------------------------------
-r0 = fr(TL["reveal"]["logoHit"])
-add(sub_boom(4.0, 80, 26), r0, 1.0, verb=0.4)
-add(crash(4.5), r0, 0.40, verb=0.6)
-add(bell_chord((62, 66, 69, 74, 78), 4.5), r0, 0.35, verb=0.9)
-add(pad((38, 50, 54, 57, 62, 66), fr(TL["durationInFrames"] - TL["reveal"]["logoHit"]) + 0.3,
-        bright=2400, attack=0.05, release=1.2), r0, 0.40, verb=0.8)
-live = fr(TL["reveal"]["live"])
-add(taiko(1.6, 60), live, 0.75, verb=0.4)
-add(bell_chord((74, 78, 81, 86), 3.0), live, 0.22, verb=0.9)
+    # --- 6. REVEAL: logo hit with a D-major resolution ------------------------------
+    r0 = fr(TL["reveal"]["logoHit"])
+    add(sub_boom(4.0, 80, 26), r0, 1.0, verb=0.4)
+    add(crash(4.5), r0, 0.40, verb=0.6)
+    add(bell_chord((62, 66, 69, 74, 78), 4.5), r0, 0.35, verb=0.9)
+    add(pad((38, 50, 54, 57, 62, 66), fr(TL["durationInFrames"] - TL["reveal"]["logoHit"]) + 0.3,
+            bright=2400, attack=0.05, release=1.2), r0, 0.40, verb=0.8)
+    live = fr(TL["reveal"]["live"])
+    add(taiko(1.6, 60), live, 0.75, verb=0.4)
+    add(bell_chord((74, 78, 81, 86), 3.0), live, 0.22, verb=0.9)
+
+else:
+    # ---- 35-second cut ------------------------------------------------------------
+    M = TL["music"]
+    hook_end = sc["hook"]["to"]
+    add(ocean(fr(hook_end) + 1.2), 0, 0.30)
+    add(drone(fr(hook_end) + 0.4), 0, 0.42, verb=0.3)
+    add(ship_horn(1.8), 0.35, 0.26, pan=-0.2, verb=0.9)
+    for f in TL["hookWords"]:
+        add(taiko(1.2, 88 if f != TL["hookWords"][2] else 70), fr(f), 0.55, verb=0.25)
+    add(riser(fr(hook_end - 45)), fr(45), 0.22, verb=0.2)
+    groove(M["grooveFrom"], M["lift"], 0.85, bright=1300)
+    groove(M["lift"], M["buildFrom"], 1.0, bright=2000)
+    groove(M["buildFrom"], M["impact"] - 4, 1.05, bright=2400)
+    roll_start, roll_end = fr(M["buildFrom"]), fr(M["impact"] - 3)
+    t = roll_start
+    step = BEAT / 2
+    while t < roll_end:
+        prog = (t - roll_start) / (roll_end - roll_start)
+        add(snare_hit(), t, 0.08 + 0.24 * prog, pan=(rng.random() - 0.5) * 0.4, verb=0.2)
+        step = max(BEAT / 8, step * 0.86)
+        t += step
+    add(riser(fr(M["impact"] - M["buildFrom"])), fr(M["buildFrom"]), 0.26, verb=0.3)
+    i0 = fr(M["impact"])
+    tail = fr(TL["durationInFrames"] - M["impact"]) + 0.3
+    add(sub_boom(4.0, 80, 26), i0, 1.0, verb=0.4)
+    add(crash(4.5), i0, 0.40, verb=0.6)
+    add(bell_chord((62, 66, 69, 74, 78), 4.5), i0, 0.32, verb=0.9)
+    add(pad((38, 50, 54, 57, 62, 66), tail, bright=2400, attack=0.05, release=1.2), i0, 0.40, verb=0.8)
+    add(ocean(tail), i0, 0.12)
+    # light pulse under the CTA so the end keeps moving
+    t = i0
+    while t < i0 + tail - 1.2:
+        add(kick(), t, 0.35)
+        add(hat(), t + BEAT / 2, 0.06, pan=0.3)
+        t += BEAT
+    MEL = [(0, 74, 1.0), (1, 78, 1.0), (2, 81, 2.0), (4, 79, 1.0), (5, 78, 1.0), (6, 74, 2.5)]
+    for beat_off, n, ln in MEL:
+        add(brass_lead(n, ln * BEAT * 0.98), i0 + beat_off * BEAT, 0.12, verb=0.6)
+        add(brass_lead(n - 12, ln * BEAT * 0.98), i0 + beat_off * BEAT, 0.06, verb=0.6)
+    c = fr(M["ctaHit"])
+    add(taiko(1.6, 60), c, 0.7, verb=0.4)
+    add(bell_chord((74, 78, 81, 86), 3.0), c, 0.2, verb=0.9)
 
 # --- generic SFX from the timeline ------------------------------------------------
 for f in TL["sfx"]["impact"]:
-    if f == 0:
+    if f == 0:  # (other impacts are part of the arrangements)
         add(sub_boom(3.2, 75, 27), 0.0, 1.0, verb=0.5)
         add(crash(3.0), 0.0, 0.25, verb=0.6)
 for f in TL["sfx"]["whoosh"]:
@@ -453,5 +501,5 @@ mixL, mixR = mixL[:end_i], mixR[:end_i]
 peak = max(np.abs(mixL).max(), np.abs(mixR).max())
 out = np.stack([mixL, mixR], 1) / peak * 0.89
 (ROOT / "public" / "audio").mkdir(parents=True, exist_ok=True)
-wavfile.write(ROOT / "public" / "audio" / "soundtrack.wav", SR, (out * 32767).astype(np.int16))
-print("wrote public/audio/soundtrack.wav", f"{end_i / SR:.2f}s")
+wavfile.write(ROOT / "public" / OUT_REL, SR, (out * 32767).astype(np.int16))
+print("wrote public/" + OUT_REL, f"{end_i / SR:.2f}s")

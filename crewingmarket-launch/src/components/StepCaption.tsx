@@ -8,7 +8,10 @@ const BLUE = '#3b74ff';
 
 const ORANGE = '#ff8a3d';
 
-const ROUTES: Record<string, {label: string; color: string; ink: string}> = {
+export type Step = {n: number; group: string; route: string; from: number; to: number; title: string; sub: string};
+export type Routes = Record<string, {label: string; color: string; ink: string}>;
+
+const ROUTES: Routes = {
   whatsapp: {label: 'MANIER 1 · VIA WHATSAPP', color: WA_GREEN, ink: '#06210f'},
   app: {label: 'MANIER 2 · VIA DE APP', color: BLUE, ink: '#fff'},
   freelancer: {label: 'DAARNA · DE ZZP’ER', color: ORANGE, ink: '#2a1200'},
@@ -38,8 +41,12 @@ const AppIcon: React.FC<{color: string}> = ({color}) => (
  * Big, always-readable step caption at the top of the frame.
  * Steps are defined in timeline.json → "steps", so copy and timing are editable.
  */
-export const StepCaptions: React.FC<{frame: number}> = ({frame}) => {
-  const steps = TL.steps;
+export const StepCaptions: React.FC<{frame: number; steps?: Step[]; routes?: Routes; showProgress?: boolean}> = ({
+  frame,
+  steps = TL.steps as Step[],
+  routes = ROUTES,
+  showProgress = true,
+}) => {
   const active = steps.filter((s) => frame >= s.from - 2 && frame < s.to + 8);
   if (active.length === 0) return null;
   const cur = active[active.length - 1];
@@ -66,7 +73,7 @@ export const StepCaptions: React.FC<{frame: number}> = ({frame}) => {
         const next = steps[idx + 1];
         const nextSame = next && next.route === s.route && next.from === s.to;
         const chipOp = (sameRoute ? 1 : pin) * (nextSame ? 1 : 1 - pout);
-        const r = ROUTES[s.route];
+        const r = routes[s.route];
         return (
           <div key={`${s.group}-${s.n}`} style={{position: 'absolute', left: 64, right: 64, top: 112}}>
             <div
@@ -130,7 +137,7 @@ export const StepCaptions: React.FC<{frame: number}> = ({frame}) => {
         );
       })}
       {/* progress: which step of the total */}
-      <div style={{position: 'absolute', left: 64, top: 392, display: 'flex', gap: 10, opacity: anyIn}}>
+      <div style={{position: 'absolute', left: 64, top: 392, display: showProgress ? 'flex' : 'none', gap: 10, opacity: anyIn}}>
         {group.map((s) => {
           const done = s.n < cur.n;
           const on = s.n === cur.n;
@@ -141,7 +148,7 @@ export const StepCaptions: React.FC<{frame: number}> = ({frame}) => {
                 width: on ? 56 : 18,
                 height: 8,
                 borderRadius: 4,
-                background: on ? ROUTES[s.route].color : done ? 'rgba(255,255,255,0.7)' : 'rgba(255,255,255,0.25)',
+                background: on ? routes[s.route].color : done ? 'rgba(255,255,255,0.7)' : 'rgba(255,255,255,0.25)',
               }}
             />
           );

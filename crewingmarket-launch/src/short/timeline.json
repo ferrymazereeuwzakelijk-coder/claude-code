@@ -1,0 +1,244 @@
+{
+  "_doc": "35-second cut. Frames @30fps, 120 BPM (1 beat = 15 frames): every scene cut lands on a beat. Read by src/short/*.tsx and by scripts/make_soundtrack.py (python3 scripts/make_soundtrack.py src/short/timeline.json).",
+  "fps": 30,
+  "width": 1080,
+  "height": 1920,
+  "durationInFrames": 1050,
+  "bpm": 120,
+  "audioOut": "audio/soundtrack-short.wav",
+  "scenes": {
+    "hook": {
+      "from": 0,
+      "to": 90
+    },
+    "solution": {
+      "from": 90,
+      "to": 195
+    },
+    "whatsapp": {
+      "from": 195,
+      "to": 345
+    },
+    "app": {
+      "from": 345,
+      "to": 480
+    },
+    "crew": {
+      "from": 480,
+      "to": 525
+    },
+    "freelancer": {
+      "from": 525,
+      "to": 690
+    },
+    "contact": {
+      "from": 690,
+      "to": 855
+    },
+    "end": {
+      "from": 855,
+      "to": 1050
+    }
+  },
+  "hookWords": [
+    4,
+    12,
+    20,
+    32
+  ],
+  "copy": {
+    "hook": [
+      "MORGEN",
+      "EEN",
+      "MATROOS",
+      "NODIG?"
+    ],
+    "solution": "Vind maritieme professionals",
+    "roles": [
+      "Matrozen",
+      "Schippers",
+      "Stuurlieden"
+    ],
+    "typedMessage": "Ik zoek een matroos voor morgen.",
+    "messageTime": "16:29",
+    "crew": "Beschikbare zzp’ers zien je opdracht",
+    "ctaQ1": "Personeel nodig?",
+    "ctaQ2": "Of beschikbaar voor werk?",
+    "url": "crewingmarket.com",
+    "live": "LIVE VANAF 20 NOVEMBER 2026"
+  },
+  "whatsapp": {
+    "typeStart": 210,
+    "typeEnd": 242,
+    "send": 248,
+    "sheetUp": 268,
+    "tapVerstuur": 290,
+    "sheetDown": 294,
+    "online": 300,
+    "out": 330
+  },
+  "app": {
+    "phoneIn": 345,
+    "clipStart": 350
+  },
+  "freelancer": {
+    "tapInteresse": 588,
+    "reacted": 592
+  },
+  "contact": {
+    "clipStart": 692,
+    "tapLink": 737,
+    "pageOpen": 740,
+    "tapContact": 793,
+    "contactOpen": 794
+  },
+  "end": {
+    "logo": 855,
+    "q1": 885,
+    "q2": 900,
+    "cta": 922,
+    "live": 945
+  },
+  "steps": [
+    {
+      "n": 1,
+      "group": "ways",
+      "route": "whatsapp",
+      "from": 200,
+      "to": 342,
+      "title": "Stuur je aanvraag",
+      "sub": "via WhatsApp"
+    },
+    {
+      "n": 2,
+      "group": "ways",
+      "route": "app",
+      "from": 350,
+      "to": 477,
+      "title": "Of plaats je opdracht",
+      "sub": "direct op crewingmarket.com"
+    },
+    {
+      "n": 1,
+      "group": "after",
+      "route": "freelancer",
+      "from": 530,
+      "to": 687,
+      "title": "Zzp’ers reageren",
+      "sub": "met één tik op ‘Ik heb interesse’"
+    },
+    {
+      "n": 2,
+      "group": "after",
+      "route": "company",
+      "from": 694,
+      "to": 757,
+      "title": "Je krijgt direct een appje",
+      "sub": "zodra iemand reageert"
+    },
+    {
+      "n": 3,
+      "group": "after",
+      "route": "company",
+      "from": 757,
+      "to": 851,
+      "title": "Neem direct contact op",
+      "sub": "bellen of WhatsApp, met één tik"
+    }
+  ],
+  "taps": [
+    {
+      "frame": 248,
+      "x": 1211,
+      "y": 1756,
+      "phone": "company"
+    },
+    {
+      "frame": 290,
+      "x": 659,
+      "y": 2565,
+      "phone": "company"
+    },
+    {
+      "frame": 374,
+      "x": 660,
+      "y": 1516,
+      "phone": "app"
+    },
+    {
+      "frame": 394,
+      "x": 660,
+      "y": 879,
+      "phone": "app"
+    },
+    {
+      "frame": 411,
+      "x": 660,
+      "y": 2475,
+      "phone": "app"
+    },
+    {
+      "frame": 588,
+      "x": 659,
+      "y": 1642,
+      "phone": "freelancer"
+    },
+    {
+      "frame": 737,
+      "x": 680,
+      "y": 2370,
+      "phone": "contact"
+    },
+    {
+      "frame": 793,
+      "x": 324,
+      "y": 1599,
+      "phone": "contact"
+    }
+  ],
+  "music": {
+    "grooveFrom": 90,
+    "lift": 480,
+    "buildFrom": 795,
+    "impact": 855,
+    "ctaHit": 922
+  },
+  "sfx": {
+    "whoosh": [
+      86,
+      190,
+      341,
+      476,
+      521,
+      686,
+      851
+    ],
+    "receive": [
+      300,
+      414,
+      696
+    ],
+    "send": [
+      248
+    ],
+    "confirm": [
+      592,
+      794
+    ],
+    "impact": [
+      0,
+      855
+    ],
+    "step": [
+      200,
+      350,
+      530,
+      694,
+      757
+    ],
+    "keys": [
+      210,
+      242
+    ]
+  }
+}
