@@ -1,13 +1,13 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 import { LuArrowRight, LuArrowUpRight, LuPhone } from "react-icons/lu";
-import ShipHero, { type Callout } from "@/components/ShipHero";
+import StoryHero from "@/components/StoryHero";
 import ScrollVideo from "@/components/ScrollVideo";
 import Photo from "@/components/Photo";
 import Logo from "@/components/Logo";
 import { getDictionary } from "@/content/dictionaries";
 import { href, isLocale, defaultLocale, type Locale } from "@/content/i18n";
-import { clips, company, ferryJo, localizeSpec, photos, video } from "@/content/site";
+import { clips, company, photos, video } from "@/content/site";
 import ClipStrip from "@/components/ClipStrip";
 import { pageMetadata } from "@/lib/seo";
 
@@ -25,50 +25,15 @@ export default async function HomePage({ params }: Props) {
   const h = t.home;
   const u = t.common.units;
 
-  // Spec values shown in the 3D callouts, in the same order as the dictionary entries
-  const values: Pick<Callout, "value" | "unit">[] = [
-    { value: localizeSpec(ferryJo.lengthM, u), unit: "m" },
-    { value: ferryJo.powerHp, unit: u.hp },
-    { value: ferryJo.bollardPullT, unit: "t" },
-    { value: localizeSpec("20.5", u), unit: "km/h" },
-  ];
-  const callouts: Callout[] = h.ship.callouts.map((c, i) => ({ ...c, ...values[i] }));
-
   const marquee = t.tug.capabilities.items.map((c) => c.title).concat(t.nav.brokerage);
 
   return (
     <>
-      <ShipHero
-        eyebrow={h.hero.eyebrow}
-        title={h.hero.title}
-        sub={h.hero.sub}
-        hint={h.ship.hint}
-        hud={h.ship.hud}
-        callouts={callouts}
-        final={h.ship.final}
-        fallbackText={h.ship.fallback}
-        fallbackImage={{ src: photos.assistWeserborg.src, alt: t.photos.assistWeserborg }}
-        coords={company.geo.label}
-        actions={
-          <>
-            <a href="#content" className="btn-signal">
-              {t.common.exploreServices} <LuArrowRight aria-hidden className="h-4 w-4" />
-            </a>
-            <Link href={href(locale, "contact", "quote")} className="btn-ghost-light">
-              {t.common.requestSolution}
-            </Link>
-          </>
-        }
-        finalActions={
-          <>
-            <Link href={href(locale, "tugboat", "request")} className="btn-signal">
-              {t.common.requestFerryJo} <LuArrowRight aria-hidden className="h-4 w-4" />
-            </Link>
-            <Link href={href(locale, "tugboat")} className="btn-ghost-light">
-              {t.common.viewVessel}
-            </Link>
-          </>
-        }
+      <StoryHero
+        copy={h.story}
+        quoteHref={href(locale, "contact", "quote")}
+        servicesHref="#content"
+        poster={{ src: photos.pushPontoon.src, alt: t.photos.pushPontoon }}
       />
 
       {/* Marquee */}

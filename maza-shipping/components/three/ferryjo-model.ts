@@ -372,7 +372,8 @@ export function createFerryJo(): FerryJo {
     return new THREE.Mesh(geo, new THREE.MeshStandardMaterial({ map: tex, side: THREE.DoubleSide, roughness: 0.9 }));
   }
   const staff = new THREE.Group();
-  staff.position.set(-8.0, deckAt(-8.0), 0);
+  // Ensign staff on the port quarter, clear of the towline that runs over the stern on the centreline
+  staff.position.set(-7.0, deckAt(-7.0), -1.2);
   staff.rotation.z = 0.45;
   boat.add(staff);
   cyl(0.03, 2.6, M.steel, 0, 1.3, 0, staff);

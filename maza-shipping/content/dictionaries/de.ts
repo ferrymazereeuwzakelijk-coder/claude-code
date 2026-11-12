@@ -92,6 +92,7 @@ const de: Dictionary = {
     dockHunteborgPortrait: "Die Ferry-Jo mit Schleppleinen am Bug eines Neubaus, der das Dock verlässt",
     ferryjoIce: "Die Ferry-Jo bricht Eis auf einer zugefrorenen Wasserstraße, mit niederländischer Flagge",
     pontoonTow: "Die Ferry-Jo schleppt einen mit Gerät beladenen Ponton durch den Hafen",
+    pushPontoon: "Die Ferry-Jo schiebt einen Ponton mit Raupenbagger über eine niederländische Wasserstraße",
   },
 
   home: {
@@ -154,16 +155,25 @@ const de: Dictionary = {
       title: ["Ihr Projekt.", "Unsere maritime Lösung."],
       text: "Sie suchen einen Schlepper, einen Ponton, ein Arbeitsboot oder einen zuverlässigen maritimen Partner? Sagen Sie uns, was Sie brauchen.",
     },
+    story: {
+      skip: "Animation überspringen",
+      hint: "Scrollen Sie, um der Ferry-Jo zu folgen",
+      loading: "3D-Szene wird geladen…",
+      illustration: "Illustrative 3D-Darstellung",
+      chaptersLabel: "Kapitel",
+      chapters: {
+        intro: { nav: "Ferry-Jo", eyebrow: "Schlepperdienste · Maritime Vermittlung", title: ["Ferry-Jo.", "Kompakt im Format.", "Groß im Einsatz."], text: "Schleppen und Schieben, Stapelläufe, Eisbrechen und Schiffsbegleitung ab Urk." },
+        push: { nav: "Schieben", eyebrow: "Schubarbeit", title: ["Schubtransport", "nach Maß."], text: "Die Ferry-Jo schiebt Pontons und Schuten sicher ans Ziel, auch in engen Wasserstraßen und Häfen." },
+        transition: { text: "Ponton am Kai festgemacht. Weiter zum nächsten Auftrag." },
+        tow: { nav: "Schleppen", eyebrow: "Schleppen", title: ["Sondertransport.", "Sorgfältig ausgeführt."], text: "An der Schleppleine bewegt die Ferry-Jo beladene Pontons und besondere Objekte wie Schiffssektionen." },
+        brokerage: { nav: "Vermittlung", eyebrow: "Maritime Vermittlung", title: ["Ein Ansprechpartner.", "Mehr maritime Möglichkeiten."], text: "Braucht Ihr Projekt mehr als einen Schlepper? Über unser Netzwerk organisieren wir passende Schlepper, Arbeitsboote und Pontons von zuverlässigen Partnern." },
+        cta: { nav: "Kontakt", eyebrow: "Ihr Projekt", title: ["Ihr Projekt.", "Unsere maritime Lösung."], text: "Sagen Sie uns, was auf dem Wasser passieren soll. Marc denkt mit und organisiert den passenden Einsatz.", primary: "Angebot anfordern", secondary: "Unsere Leistungen" },
+      },
+      partners: { harbourTug: "Partner · Hafenschlepper", workboat: "Partner · Arbeitsboot", cranePontoon: "Partner · Kranponton" },
+      partnerNote: "Das gezeigte zusätzliche Gerät gehört Partnern und ist nicht im Besitz von Maza Shipping.",
+      fallback: "Die 3D-Animation ist auf diesem Gerät nicht verfügbar. Oben: die Ferry-Jo mit einem Ponton.",
+    },
     ship: {
-      hint: "Scrollen Sie einmal um die Ferry-Jo herum",
-      hud: { local: "Ortszeit", vessel: "Schiff", status: "Einsatzbereit" },
-      callouts: [
-        { anchor: "length", label: "Länge", text: "Kompakt genug für enge Werftbecken und Kanäle." },
-        { anchor: "engine", label: "Scania-Hauptmotor", text: "Die Kraft zum Schleppen, Schieben und Eisbrechen." },
-        { anchor: "stern", label: "Pfahlzug", text: "Zugkraft am Schlepphaken achtern." },
-        { anchor: "wheelhouse", label: "Geschwindigkeit", text: "Mit Alphatron-Radar und Furuno-AIS auch bei schlechter Sicht und nachts auf Kurs." },
-      ],
-      final: { title: ["Ferry-Jo.", "Bereit für den Einsatz."], text: "Schleppen, Schieben, Stapelläufe, Eisbrechen und Schiffsbegleitung in den gesamten Niederlanden." },
       fallback: "3D-Ansicht ist auf diesem Gerät nicht verfügbar.",
     },
     work: {

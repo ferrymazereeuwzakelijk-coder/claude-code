@@ -8,6 +8,7 @@
     "start": "next start",
     "lint": "next lint",
     "typecheck": "tsc --noEmit",
+    "check:story": "node --experimental-strip-types --no-warnings scripts/check-story.mts",
     "images:download": "node scripts/download-images.mjs"
   },
   "dependencies": {

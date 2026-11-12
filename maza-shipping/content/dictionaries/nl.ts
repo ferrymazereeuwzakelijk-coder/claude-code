@@ -92,6 +92,7 @@ const nl: Dictionary = {
     dockHunteborgPortrait: "De Ferry-Jo met sleeplijnen aan de boeg van een nieuwbouwschip dat het dok verlaat",
     ferryjoIce: "De Ferry-Jo breekt ijs op een bevroren vaarweg, met de Nederlandse vlag",
     pontoonTow: "De Ferry-Jo sleept een ponton vol materieel door de haven",
+    pushPontoon: "De Ferry-Jo duwt een ponton met een rupskraan over een Nederlandse vaarweg",
   },
 
   home: {
@@ -154,16 +155,25 @@ const nl: Dictionary = {
       title: ["Uw project.", "Onze maritieme oplossing."],
       text: "Op zoek naar een sleepboot, ponton, werkboot of een betrouwbare maritieme partner? Vertel ons wat u nodig heeft.",
     },
+    story: {
+      skip: "Animatie overslaan",
+      hint: "Scroll om de Ferry-Jo te volgen",
+      loading: "3D-scène laden…",
+      illustration: "Illustratieve 3D-weergave",
+      chaptersLabel: "Hoofdstukken",
+      chapters: {
+        intro: { nav: "Ferry-Jo", eyebrow: "Sleepdiensten · Maritieme bemiddeling", title: ["Ferry-Jo.", "Klein in formaat.", "Groot in inzet."], text: "Slepen en duwen, tewaterlatingen, ijsbreken en scheepsbegeleiding vanuit Urk." },
+        push: { nav: "Duwwerk", eyebrow: "Duwwerk", title: ["Duwtransport", "op maat."], text: "De Ferry-Jo duwt pontons en bakken veilig naar hun bestemming, ook in krappe vaarwegen en havens." },
+        transition: { text: "Ponton afgemeerd aan de kade. Op naar de volgende klus." },
+        tow: { nav: "Sleepwerk", eyebrow: "Sleepwerk", title: ["Bijzonder transport.", "Zorgvuldig uitgevoerd."], text: "Aan de sleeplijn verplaatst de Ferry-Jo beladen pontons en bijzondere objecten, zoals scheepssecties." },
+        brokerage: { nav: "Bemiddeling", eyebrow: "Maritieme bemiddeling", title: ["Eén contactpersoon.", "Meer maritieme mogelijkheden."], text: "Vraagt uw project meer dan één sleepboot? Via ons netwerk regelen we passende sleepboten, werkboten en pontons van betrouwbare partners." },
+        cta: { nav: "Contact", eyebrow: "Uw project", title: ["Uw project.", "Onze maritieme oplossing."], text: "Vertel ons wat er op het water moet gebeuren. Marc denkt mee en regelt de juiste inzet.", primary: "Vraag een offerte aan", secondary: "Bekijk onze diensten" },
+      },
+      partners: { harbourTug: "Partner · Havensleepboot", workboat: "Partner · Werkboot", cranePontoon: "Partner · Kraanponton" },
+      partnerNote: "Het getoonde aanvullende materieel is van partners en niet in eigendom van Maza Shipping.",
+      fallback: "De 3D-animatie is niet beschikbaar op dit apparaat. Hierboven ziet u de Ferry-Jo met een ponton.",
+    },
     ship: {
-      hint: "Scroll en loop om de Ferry-Jo heen",
-      hud: { local: "Lokale tijd", vessel: "Schip", status: "Klaar voor de klus" },
-      callouts: [
-        { anchor: "length", label: "Lengte", text: "Compact genoeg voor krappe werfbassins en kanalen." },
-        { anchor: "engine", label: "Scania hoofdmotor", text: "Kracht om te slepen, te duwen en ijs te breken." },
-        { anchor: "stern", label: "Trekkracht", text: "Bollard pull op de sleephaak achterop." },
-        { anchor: "wheelhouse", label: "Snelheid", text: "Met Alphatron-radar en Furuno-AIS ook bij slecht zicht en 's nachts op koers." },
-      ],
-      final: { title: ["Ferry-Jo.", "Klaar voor de klus."], text: "Slepen, duwen, tewaterlatingen, ijsbreken en scheepsbegeleiding in heel Nederland." },
       fallback: "3D-weergave is niet beschikbaar op dit apparaat.",
     },
     work: {

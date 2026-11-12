@@ -61,6 +61,7 @@ export const photos = {
   dockHunteborgPortrait: { key: "dockHunteborgPortrait", src: "/images/dock-hunteborg-portrait.jpg" },
   ferryjoIce: { key: "ferryjoIce", src: "/images/ferryjo-ice.jpg" },
   pontoonTow: { key: "pontoonTow", src: "/video/ferryjo-ponton.jpg" },
+  pushPontoon: { key: "pushPontoon", src: "/images/ferryjo-duwt-ponton.jpg" },
 } satisfies Record<string, Photo>;
 
 export type PhotoKey = keyof typeof photos;

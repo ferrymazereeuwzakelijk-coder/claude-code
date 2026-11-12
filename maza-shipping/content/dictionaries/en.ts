@@ -92,6 +92,7 @@ const en = {
     dockHunteborgPortrait: "The Ferry-Jo with tow lines to the bow of a newbuild ship leaving the dock",
     ferryjoIce: "The Ferry-Jo breaking ice on a frozen waterway, Dutch flag flying",
     pontoonTow: "The Ferry-Jo towing a pontoon loaded with equipment through the harbour",
+    pushPontoon: "The Ferry-Jo pushing a pontoon carrying a crawler excavator along a Dutch waterway",
   } satisfies Record<PhotoKey, string>,
 
   home: {
@@ -154,16 +155,25 @@ const en = {
       title: ["Your project.", "Our maritime solution."],
       text: "Looking for a tugboat, pontoon, workboat or reliable maritime partner? Tell us what you need.",
     },
+    story: {
+      skip: "Skip animation",
+      hint: "Scroll to follow the Ferry-Jo",
+      loading: "Loading 3D scene…",
+      illustration: "Illustrative 3D view",
+      chaptersLabel: "Chapters",
+      chapters: {
+        intro: { nav: "Ferry-Jo", eyebrow: "Tugboat services · Maritime brokerage", title: ["Ferry-Jo.", "Compact in size.", "Big on effort."], text: "Towing and pushing, launch assistance, icebreaking and vessel escort from Urk." },
+        push: { nav: "Pushing", eyebrow: "Pushing", title: ["Pushing transport,", "tailored."], text: "The Ferry-Jo pushes pontoons and barges safely to their destination, including in narrow waterways and harbours." },
+        transition: { text: "Pontoon moored at the quay. On to the next job." },
+        tow: { nav: "Towing", eyebrow: "Towing", title: ["Special transport.", "Carefully executed."], text: "On the towline, the Ferry-Jo moves loaded pontoons and special objects such as ship sections." },
+        brokerage: { nav: "Brokerage", eyebrow: "Maritime brokerage", title: ["One point of contact.", "More maritime options."], text: "Does your project need more than one tug? Through our network we arrange suitable tugs, workboats and pontoons from trusted partners." },
+        cta: { nav: "Contact", eyebrow: "Your project", title: ["Your project.", "Our maritime solution."], text: "Tell us what needs to happen on the water. Marc thinks along and arranges the right resources.", primary: "Request a quote", secondary: "View our services" },
+      },
+      partners: { harbourTug: "Partner · Harbour tug", workboat: "Partner · Workboat", cranePontoon: "Partner · Crane pontoon" },
+      partnerNote: "The additional equipment shown belongs to partners and is not owned by Maza Shipping.",
+      fallback: "The 3D animation is not available on this device. Above: the Ferry-Jo with a pontoon.",
+    },
     ship: {
-      hint: "Scroll to walk around the Ferry-Jo",
-      hud: { local: "Local time", vessel: "Vessel", status: "Ready for work" },
-      callouts: [
-        { anchor: "length", label: "Length", text: "Compact enough for tight shipyard basins and canals." },
-        { anchor: "engine", label: "Scania main engine", text: "The power to tow, push and break ice." },
-        { anchor: "stern", label: "Bollard pull", text: "Pulling power on the towing hook aft." },
-        { anchor: "wheelhouse", label: "Speed", text: "With Alphatron radar and Furuno AIS on course in poor visibility and at night." },
-      ],
-      final: { title: ["Ferry-Jo.", "Ready for work."], text: "Towing, pushing, launches, icebreaking and vessel escort across the Netherlands." },
       fallback: "3D view not available on this device.",
     },
     work: {
