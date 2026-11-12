@@ -16,6 +16,8 @@ OUT.mkdir(parents=True, exist_ok=True)
 
 # name, source file, in (s), length (s), commons title, author, license
 CLIPS = [
+    ("deck-crew", "deck-crew.webm", 0.0, 12.0,
+     "Global Southern Ocean Mooring Recovery close up.webm", "Ocean Observatories Initiative", "Public domain"),
     ("helm-throttle", "navy-tug-ops.webm", 6.6, 3.0,
      "260323-YKS- PACUP- TUG BOAT OPS-HULEN (1001273).webm", "U.S. Navy, AFN Yokosuka (Seaman Apprentice Paul Hulen)", "Public domain"),
     ("tug-vanino", "Vanino_2021_02_23_truzhenik_tug_boat_webm.webm", 18.0, 14.0,
@@ -54,6 +56,23 @@ for name, src, start, length, title, author, lic in CLIPS:
     print("wrote", dst.name)
     url = "https://commons.wikimedia.org/wiki/File:" + title.replace(" ", "_")
     credits.append(f"| `{name}.mp4` | [{title}]({url}) | {author} | {lic} |")
+
+# --- the company's own screen recording: tapping the link and seeing the reaction ---
+rec = ROOT / "assets" / "source" / "rec-company-reactions.mp4"
+if rec.exists():
+    subprocess.run(["ffmpeg", "-v", "error", "-y", "-ss", "7.6", "-t", "5.0", "-i", str(rec), "-an",
+                    "-vf", "fps=30", "-c:v", "libx264", "-crf", "18", "-g", "10", "-pix_fmt", "yuv420p",
+                    "-movflags", "+faststart", str(OUT / "rec-reactions.mp4")], check=True)
+    still = ROOT / "public" / "screens" / "company-reactions.png"
+    subprocess.run(["ffmpeg", "-v", "error", "-y", "-ss", "12", "-i", str(rec), "-frames:v", "1",
+                    "-vf", "scale=1320:2868:flags=lanczos", str(still)], check=True)
+    from PIL import Image, ImageDraw
+    im = Image.open(still).convert("RGB")
+    d = ImageDraw.Draw(im)
+    d.ellipse((443 - 26, 95 - 26, 443 + 26, 95 + 26), fill=(0, 0, 0))  # recording dot
+    d.rectangle((30, 810, 690, 935), fill=(243, 244, 247))  # stale "0 interesse" counter
+    im.save(still)
+    print("wrote rec-reactions.mp4 + company-reactions.png")
 
 credits.append("\nThe U.S. Navy clip is public domain; it is cropped so no insignia show and implies no endorsement.")
 credits.append("\nThe opening, the vessel shot and the backgrounds use only the clips above; all phone content "

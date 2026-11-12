@@ -19,13 +19,16 @@ export const OPENING_SHOTS: Shot[] = [
   {from: 0, to: 17, push: 0.1, clip: {src: 'footage/helm-throttle.mp4', start: 0.45, rate: 0.85, focusX: 0.38, zoom: 1.12, credit}},
   // tug bow-on in an icy harbour — "EEN"
   {from: 17, to: 26, push: 0.05, clip: {src: 'footage/tug-vanino.mp4', start: 8.0, focusX: 0.5, zoom: 1.05, credit}},
-  // inland tanker from above under a storm sky — "MATROOS", "NODIG?"
-  {from: 26, to: 62, push: 0.08, clip: {src: 'footage/tanker-storm.mp4', start: 2.6, rate: 0.9, focusX: 0.66, credit}},
-  // tug towing a barge
-  {from: 62, to: 100, push: 0.07, clip: {src: 'footage/tug-towing.mp4', start: 0.3, focusX: 0.5, credit}},
+  // the deckhand, back to camera, hauling a line — "MATROOS", "NODIG?"
+  {from: 26, to: 64, push: 0.08, clip: {src: 'footage/deck-crew.mp4', start: 0.3, focusX: 0.88, credit}},
+  // inland tanker from above under a storm sky
+  {from: 64, to: 100, push: 0.07, clip: {src: 'footage/tanker-storm.mp4', start: 2.6, rate: 0.9, focusX: 0.66, credit}},
   // tug manoeuvring — camera pushes in, then the phone arrives
   {from: 100, to: 135, push: 0.16, clip: {src: 'footage/tug-vanino.mp4', start: 2.2, focusX: 0.46, zoom: 1.04, credit}},
 ];
+
+/** The deckhand at work, just before we see his phone. */
+export const DECKHAND: Clip = {src: 'footage/deck-crew.mp4', start: 2.2, focusX: 0.86, credit};
 
 export const FOOTAGE: {
   /** 0:24.5–0:26.5 — vessel underway. */

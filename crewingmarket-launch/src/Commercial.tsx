@@ -3,6 +3,7 @@ import {AbsoluteFill, Audio, Sequence, staticFile, useCurrentFrame} from 'remoti
 import {Finish} from './components/Finish';
 import {StepCaptions} from './components/StepCaption';
 import {AppRoute, Intro} from './scenes/Explainers';
+import {CompanyResult, Deckhand} from './scenes/CrewScenes';
 import {TL} from './lib/anim';
 import {Opening} from './scenes/Opening';
 import {WhatsAppScene} from './scenes/WhatsAppScene';
@@ -34,8 +35,14 @@ export const Commercial: React.FC = () => {
       <Sequence name="2b · Via de app" from={S.appRoute.from} durationInFrames={len('appRoute')}>
         <AppRoute />
       </Sequence>
+      <Sequence name="2c · De matroos" from={S.deckhand.from} durationInFrames={len('deckhand')}>
+        <Deckhand />
+      </Sequence>
       <Sequence name="3 · Zzp'er reageert" from={S.freelancer.from} durationInFrames={len('freelancer')}>
         <FreelancerScene />
+      </Sequence>
+      <Sequence name="3b · Bedrijf ziet de reactie" from={S.companyResult.from} durationInFrames={len('companyResult')}>
+        <CompanyResult />
       </Sequence>
       <Sequence name="4 · Match" from={S.match.from} durationInFrames={len('match')}>
         <MatchScene />

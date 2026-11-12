@@ -5,6 +5,7 @@ CC BY / CC BY-SA require attribution: put these lines in the post caption or on 
 
 | Clip | Source (Wikimedia Commons) | Author | License |
 |---|---|---|---|
+| `deck-crew.mp4` | [Global Southern Ocean Mooring Recovery close up.webm](https://commons.wikimedia.org/wiki/File:Global_Southern_Ocean_Mooring_Recovery_close_up.webm) | Ocean Observatories Initiative | Public domain |
 | `helm-throttle.mp4` | [260323-YKS- PACUP- TUG BOAT OPS-HULEN (1001273).webm](https://commons.wikimedia.org/wiki/File:260323-YKS-_PACUP-_TUG_BOAT_OPS-HULEN_(1001273).webm) | U.S. Navy, AFN Yokosuka (Seaman Apprentice Paul Hulen) | Public domain |
 | `tug-vanino.mp4` | [Vanino-2021-02-23-truzhenik-tug-boat.webm](https://commons.wikimedia.org/wiki/File:Vanino-2021-02-23-truzhenik-tug-boat.webm) | I13Robin | CC BY 4.0 |
 | `tanker-storm.mp4` | [Storm on Rhine bridge, Emmerich 112405.webm](https://commons.wikimedia.org/wiki/File:Storm_on_Rhine_bridge,_Emmerich_112405.webm) | Quahadi Añtó | CC BY 4.0 |

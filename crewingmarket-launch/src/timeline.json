@@ -3,37 +3,131 @@
   "fps": 30,
   "width": 1080,
   "height": 1920,
-  "durationInFrames": 1350,
+  "durationInFrames": 1515,
   "bpm": 120,
   "scenes": {
-    "opening": { "from": 0, "to": 135 },
-    "intro": { "from": 135, "to": 225 },
-    "whatsapp": { "from": 225, "to": 720 },
-    "appRoute": { "from": 720, "to": 795 },
-    "freelancer": { "from": 795, "to": 1050 },
-    "match": { "from": 1050, "to": 1170 },
-    "underway": { "from": 1170, "to": 1230 },
-    "reveal": { "from": 1230, "to": 1350 }
+    "opening": {
+      "from": 0,
+      "to": 135
+    },
+    "intro": {
+      "from": 135,
+      "to": 225
+    },
+    "whatsapp": {
+      "from": 225,
+      "to": 720
+    },
+    "appRoute": {
+      "from": 720,
+      "to": 795
+    },
+    "deckhand": {
+      "from": 795,
+      "to": 840
+    },
+    "freelancer": {
+      "from": 840,
+      "to": 1095
+    },
+    "companyResult": {
+      "from": 1095,
+      "to": 1215
+    },
+    "match": {
+      "from": 1215,
+      "to": 1335
+    },
+    "underway": {
+      "from": 1335,
+      "to": 1395
+    },
+    "reveal": {
+      "from": 1395,
+      "to": 1515
+    }
   },
   "copy": {
-    "hook": ["MORGEN", "EEN", "MATROOS", "NODIG?"],
+    "hook": [
+      "MORGEN",
+      "EEN",
+      "MATROOS",
+      "NODIG?"
+    ],
     "typedMessage": "Ik zoek een matroos voor morgen.",
     "messageTime": "16:29",
-    "tagline": ["DE JUISTE MENSEN.", "OP HET JUISTE MOMENT."],
+    "tagline": [
+      "DE JUISTE MENSEN.",
+      "OP HET JUISTE MOMENT."
+    ],
     "launchDate": "13 NOVEMBER 2026",
     "launchLine": "WE GAAN LIVE",
     "url": "www.crewingmarket.com"
   },
   "steps": [
-    { "n": 1, "from": 232, "to": 362, "route": "whatsapp", "title": "Stuur een appje", "sub": "naar CrewingMarket op WhatsApp" },
-    { "n": 2, "from": 362, "to": 437, "route": "whatsapp", "title": "Kies ‘Bemanning’", "sub": "de assistent helpt je verder" },
-    { "n": 3, "from": 437, "to": 588, "route": "whatsapp", "title": "Vul het formulier in", "sub": "functie, datum, locatie, werktijden" },
-    { "n": 4, "from": 588, "to": 714, "route": "whatsapp", "title": "Verstuur", "sub": "je opdracht staat direct online" },
-    { "n": 5, "from": 802, "to": 918, "route": "freelancer", "title": "Zzp’ers zien je opdracht", "sub": "in de CrewingMarket-app" },
-    { "n": 6, "from": 918, "to": 1046, "route": "freelancer", "title": "Ze reageren met één tik", "sub": "op ‘Ik heb interesse’" },
-    { "n": 7, "from": 1054, "to": 1166, "route": "company", "title": "Jij ziet wie er reageert", "sub": "via de link in je WhatsApp" }
+    {
+      "n": 1,
+      "from": 232,
+      "to": 362,
+      "route": "whatsapp",
+      "title": "Stuur een appje",
+      "sub": "naar CrewingMarket op WhatsApp"
+    },
+    {
+      "n": 2,
+      "from": 362,
+      "to": 437,
+      "route": "whatsapp",
+      "title": "Kies ‘Bemanning’",
+      "sub": "de assistent helpt je verder"
+    },
+    {
+      "n": 3,
+      "from": 437,
+      "to": 588,
+      "route": "whatsapp",
+      "title": "Vul het formulier in",
+      "sub": "functie, datum, locatie, werktijden"
+    },
+    {
+      "n": 4,
+      "from": 588,
+      "to": 714,
+      "route": "whatsapp",
+      "title": "Verstuur",
+      "sub": "je opdracht staat direct online"
+    },
+    {
+      "n": 5,
+      "from": 847,
+      "to": 963,
+      "route": "freelancer",
+      "title": "Zzp’ers zien je opdracht",
+      "sub": "in de CrewingMarket-app"
+    },
+    {
+      "n": 6,
+      "from": 963,
+      "to": 1091,
+      "route": "freelancer",
+      "title": "Ze reageren met één tik",
+      "sub": "op ‘Ik heb interesse’"
+    },
+    {
+      "n": 7,
+      "from": 1099,
+      "to": 1211,
+      "route": "company",
+      "title": "Jij ziet wie er reageert",
+      "sub": "tik op de link in je WhatsApp"
+    }
   ],
-  "hookWords": [8, 17, 26, 41],
+  "hookWords": [
+    8,
+    17,
+    26,
+    41
+  ],
   "whatsapp": {
     "phoneIn": 225,
     "focusInput": 262,
@@ -55,41 +149,136 @@
     "out": 706
   },
   "freelancer": {
-    "phoneIn": 795,
-    "tapNaarOpdrachten": 862,
-    "assignments": 866,
-    "tapInteresse": 958,
-    "reacted": 962
+    "phoneIn": 840,
+    "tapNaarOpdrachten": 907,
+    "assignments": 911,
+    "tapInteresse": 1003,
+    "reacted": 1007
   },
   "match": {
-    "impact": 1050,
-    "line1": 1092,
-    "line2": 1108
+    "impact": 1215,
+    "line1": 1257,
+    "line2": 1273
   },
   "reveal": {
-    "logoHit": 1230,
-    "wordmark": 1238,
-    "date": 1272,
-    "live": 1287,
-    "url": 1303
+    "logoHit": 1395,
+    "wordmark": 1403,
+    "date": 1437,
+    "live": 1452,
+    "url": 1468
   },
   "taps": [
-    { "frame": 262, "x": 520, "y": 1756, "phone": "company" },
-    { "frame": 334, "x": 1211, "y": 1756, "phone": "company" },
-    { "frame": 395, "x": 595, "y": 1445, "phone": "company" },
-    { "frame": 462, "x": 562, "y": 2138, "phone": "company" },
-    { "frame": 506, "x": 659, "y": 874, "phone": "company" },
-    { "frame": 600, "x": 659, "y": 2565, "phone": "company" },
-    { "frame": 862, "x": 659, "y": 2147, "phone": "freelancer" },
-    { "frame": 958, "x": 659, "y": 1642, "phone": "freelancer" }
+    {
+      "frame": 262,
+      "x": 520,
+      "y": 1756,
+      "phone": "company"
+    },
+    {
+      "frame": 334,
+      "x": 1211,
+      "y": 1756,
+      "phone": "company"
+    },
+    {
+      "frame": 395,
+      "x": 595,
+      "y": 1445,
+      "phone": "company"
+    },
+    {
+      "frame": 462,
+      "x": 562,
+      "y": 2138,
+      "phone": "company"
+    },
+    {
+      "frame": 506,
+      "x": 659,
+      "y": 874,
+      "phone": "company"
+    },
+    {
+      "frame": 600,
+      "x": 659,
+      "y": 2565,
+      "phone": "company"
+    },
+    {
+      "frame": 907,
+      "x": 659,
+      "y": 2147,
+      "phone": "freelancer"
+    },
+    {
+      "frame": 1003,
+      "x": 659,
+      "y": 1642,
+      "phone": "freelancer"
+    },
+    {
+      "frame": 1134,
+      "x": 500,
+      "y": 2310,
+      "phone": "result"
+    }
   ],
   "sfx": {
-    "whoosh": [128, 218, 464, 602, 712, 788, 1044, 1163, 1223],
-    "receive": [352, 425, 626],
-    "send": [334, 399],
-    "confirm": [962],
-    "impact": [0, 1050, 1230, 1287],
-    "riser": [[990, 1050], [1170, 1230]],
-    "step": [232, 362, 437, 588, 802, 918, 1054]
+    "whoosh": [
+      128,
+      218,
+      464,
+      602,
+      712,
+      788,
+      836,
+      1091,
+      1328,
+      1388
+    ],
+    "receive": [
+      352,
+      425,
+      626,
+      1159
+    ],
+    "send": [
+      334,
+      399
+    ],
+    "confirm": [
+      1007
+    ],
+    "impact": [
+      0,
+      1215,
+      1395,
+      1452
+    ],
+    "riser": [
+      [
+        1155,
+        1215
+      ],
+      [
+        1335,
+        1395
+      ]
+    ],
+    "step": [
+      232,
+      362,
+      437,
+      588,
+      847,
+      963,
+      1099
+    ]
+  },
+  "companyResult": {
+    "recStart": 1095,
+    "tapLink": 1134,
+    "pageOpen": 1140,
+    "reaction": 1159
   }
 }
