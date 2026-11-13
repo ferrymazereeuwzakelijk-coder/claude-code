@@ -33,12 +33,16 @@ def frame(video: Path, t: float) -> np.ndarray:
     return np.frombuffer(raw, np.uint8).reshape(h, w, 3).copy()
 
 
-def save(a: np.ndarray, name: str, top: int):
-    im = Image.fromarray(a[top:])
+SIZES = {}
+
+
+def save(a: np.ndarray, name: str, top: int, bottom: int | None = None):
+    im = Image.fromarray(a[top:bottom])
     if im.width != W:
         im = im.resize((W, round(im.height * W / im.width)), Image.LANCZOS)
         im = im.filter(ImageFilter.UnsharpMask(radius=2, percent=60, threshold=2))
     im.save(OUT / name, optimize=True)
+    SIZES[name] = im.height
     print("wrote", name, im.size)
 
 
@@ -53,14 +57,18 @@ for name, t in [("company-dashboard.png", 0.3), ("company-form.png", 6.45), ("co
 # --- company reactions recording (full resolution)
 rec = SRC / "rec-company-reactions-v2.mp4"
 f = frame(rec, 5.0)
-save(f, "company-reactions.png", top=180)
+save(f, "company-reactions.png", top=180, bottom=2560)  # Safari address bar below
 f = frame(rec, 9.5)
 f[1386:1436, 86:386] = 254   # phone number in the contact card
 f[2756:2806, 86:386] = [242, 241, 243]
-save(f, "company-contact.png", top=180)
+save(f, "company-contact.png", top=180, bottom=2560)
 
 # --- existing clean screenshots (already full resolution, recording dot removed)
-for src, name, top in [("wa-online.png", "whatsapp-online.png", 180), ("wa-form-complete.png", "whatsapp-form.png", 300),
-                       ("app-assignments.png", "freelancer-assignments.png", 180),
-                       ("app-reacted.png", "freelancer-reacted.png", 180)]:
-    save(np.array(Image.open(SCREENS / src).convert("RGB")), name, top=top)
+for src, name, top, bottom in [("wa-online.png", "whatsapp-online.png", 180, None),
+                               ("wa-form-complete.png", "whatsapp-form.png", 300, None),
+                               ("app-assignments.png", "freelancer-assignments.png", 180, 2590),  # Safari bar below
+                               ("app-reacted.png", "freelancer-reacted.png", 180, 2590)]:
+    save(np.array(Image.open(SCREENS / src).convert("RGB")), name, top=top, bottom=bottom)
+
+(ROOT / "src" / "store" / "sizes.json").write_text(__import__("json").dumps(SIZES, indent=2) + "\n")
+print("wrote src/store/sizes.json")

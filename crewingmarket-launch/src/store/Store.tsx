@@ -1,14 +1,15 @@
 import React from 'react';
 import {AbsoluteFill, Audio, Img, OffthreadVideo, Sequence, staticFile, useCurrentFrame} from 'remotion';
-import {Shot, Tap} from '../components/ScreenUI';
+import {ScrollSwap, SentBubble, Shot, Tap, TypingField} from '../components/ScreenUI';
 import {easeIn, easeOut, ramp} from '../lib/anim';
 import P from './preview.json';
+import SIZES from './sizes.json';
 
 /**
  * App Store assets.
  *  - StoreShot: 1320x2868 screenshots (iPhone 6.9"). Text sits above the app screen,
  *    the screen is a clean card underneath: text and UI never overlap.
- *  - StorePreview: 886x1920 app preview video (15–30 s), only screens of the app itself.
+ *  - StorePreview: 886x1920 app preview video (29.8 s): the app and the WhatsApp assistant.
  */
 
 const FONT = 'Inter, sans-serif';
@@ -17,8 +18,8 @@ const GREEN = '#21c063';
 const ORANGE = '#ff8a3d';
 
 export const SHOTS = [
-  {img: 'company-dashboard.png', h: 2065, accent: BLUE, title: 'Maritiem personeel nodig?', sub: 'Vind snel matrozen, schippers en meer'},
-  {img: 'company-form.png', h: 2065, accent: BLUE, title: 'Plaats je opdracht', sub: 'Kies functie, datum en locatie'},
+  {img: 'company-dashboard.png', accent: BLUE, title: 'Maritiem personeel nodig?', sub: 'Vind snel matrozen, schippers en meer'},
+  {img: 'company-form.png', accent: BLUE, title: 'Plaats je opdracht', sub: 'Kies functie, datum en locatie'},
   {img: 'whatsapp-form.png', accent: GREEN, title: 'Ook via WhatsApp', sub: 'Onze assistent zet je opdracht online', dark: true},
   {img: 'company-reactions.png', accent: GREEN, title: 'Zie wie er reageert', sub: 'Alle reacties op één plek'},
   {img: 'company-contact.png', accent: GREEN, title: 'Direct contact', sub: 'Bel of app in één tik'},
@@ -36,9 +37,13 @@ const Backdrop: React.FC<{accent: string}> = ({accent}) => (
 // ─────────────────────────────────────────────────────── screenshots
 export const StoreShot: React.FC<{index: number}> = ({index}) => {
   const s = SHOTS[index];
-  const cardX = 110;
-  const cardW = 1100;
-  const cardTop = 880;
+  // the whole app screen fits inside this box, centred below the headline
+  const boxTop = 880;
+  const boxW = 1100;
+  const boxH = 2868 - boxTop - 120;
+  const h = (SIZES as Record<string, number>)[s.img];
+  const k = Math.min(boxW / 1320, boxH / h);
+  const w = 1320 * k;
   return (
     <AbsoluteFill style={{fontFamily: FONT}}>
       <Backdrop accent={s.accent} />
@@ -54,17 +59,17 @@ export const StoreShot: React.FC<{index: number}> = ({index}) => {
       <div
         style={{
           position: 'absolute',
-          left: cardX,
-          top: cardTop,
-          width: cardW,
-          ...('h' in s && s.h ? {height: (s.h as number) * (cardW / 1320)} : {bottom: -80}),
-          borderRadius: 72,
+          left: (1320 - w) / 2,
+          top: boxTop,
+          width: w,
+          height: h * k,
+          borderRadius: 64,
           overflow: 'hidden',
           background: s.dark ? '#0b0b0b' : '#f4f5f8',
-          boxShadow: '0 40px 120px rgba(0,0,0,0.55), 0 0 0 3px rgba(255,255,255,0.10)',
+          boxShadow: '0 40px 120px rgba(0,0,0,0.55), 0 0 0 3px rgba(255,255,255,0.12)',
         }}
       >
-        <Img src={staticFile(`store/${s.img}`)} style={{width: cardW, display: 'block'}} />
+        <Img src={staticFile(`store/${s.img}`)} style={{width: w, height: h * k, display: 'block'}} />
       </div>
     </AbsoluteFill>
   );
@@ -162,6 +167,49 @@ const Logo: React.FC<{size: number}> = ({size}) => (
   </div>
 );
 
+/** Real WhatsApp screens: type the request, the filled-in form, 'Je opdracht staat online!'. */
+const WhatsAppFlow: React.FC<{f: number}> = ({f}) => {
+  const W = P.whatsapp;
+  const msg = P.copy.typedMessage;
+  const bubble = (top: number, pop = 1) => <SentBubble top={top} text={msg} time={P.copy.messageTime} pop={pop} />;
+  const up = ramp(f, [W.sheetUp, W.sheetUp + 10], [0, 1], easeOut);
+  const down = ramp(f, [W.sheetDown, W.sheetDown + 8], [0, 1], easeIn);
+  const sheet = f < W.sheetDown ? up : 1 - down;
+  return (
+    <>
+      <Shot src="wa-empty.png">
+        {f < W.sheetUp && <TypingField frame={f} text={msg} start={W.typeStart} end={W.typeEnd} sent={W.send} />}
+        {f >= W.send && bubble(738, ramp(f, [W.send, W.send + 8], [0, 1], easeOut))}
+      </Shot>
+      {f >= W.sheetDown && (
+        <ScrollSwap
+          frame={f}
+          start={W.online}
+          dur={10}
+          dy={1119}
+          top={320}
+          bottom={2600}
+          a={{src: 'wa-form-sent.png', children: bubble(504)}}
+          b={{src: 'wa-online.png'}}
+        />
+      )}
+      {sheet > 0 && (
+        <>
+          <div style={{position: 'absolute', inset: 0, background: `rgba(0,0,0,${0.45 * sheet})`}} />
+          <div style={{position: 'absolute', inset: 0, transform: `translateY(${(1 - sheet) * 2640}px)`}}>
+            <Shot src="wa-form-complete.png" style={{clipPath: 'inset(250px 0 0 0)'}} />
+          </div>
+        </>
+      )}
+      {P.taps
+        .filter((t) => t.phone === 'whatsapp')
+        .map((t) => (
+          <Tap key={t.frame} frame={f} at={t.frame} x={t.x} y={t.y} />
+        ))}
+    </>
+  );
+};
+
 export const StorePreview: React.FC = () => {
   const f = useCurrentFrame();
   const A = P.app;
@@ -170,8 +218,6 @@ export const StorePreview: React.FC = () => {
   const toast = ramp(f, [F.reacted, F.reacted + 12], [0, 1], easeOut);
   const intro = ramp(f, [S.intro.from + 2, S.intro.from + 14], [0, 1], easeOut);
   const introOut = ramp(f, [S.intro.to - 8, S.intro.to], [0, 1], easeIn);
-  const wa = ramp(f, [S.whatsapp.from + 2, S.whatsapp.from + 14], [0, 1], easeOut);
-  const waOut = ramp(f, [S.whatsapp.to - 8, S.whatsapp.to], [0, 1], easeIn);
   const end = ramp(f, [S.end.from + 2, S.end.from + 14], [0, 1], easeOut);
   const endQ = ramp(f, [S.end.from + 16, S.end.from + 28], [0, 1], easeOut);
   const accent = f < S.whatsapp.from ? BLUE : f < S.freelancer.from ? GREEN : f < S.contact.from ? ORANGE : GREEN;
@@ -213,34 +259,12 @@ export const StorePreview: React.FC = () => {
         </Card>
       )}
 
-      {/* 2. WhatsApp assistant (text only: previews show the app itself) */}
+      {/* 2. or via the WhatsApp assistant */}
+      <Title f={f} from={S.whatsapp.from} to={S.whatsapp.to} title="Of via WhatsApp" sub="onze assistent zet je opdracht online" accent={GREEN} />
       {f >= S.whatsapp.from && f < S.whatsapp.to && (
-        <AbsoluteFill style={{alignItems: 'center', justifyContent: 'center', textAlign: 'center', opacity: 1 - waOut}}>
-          <div style={{opacity: wa, transform: `translateY(${(1 - wa) * 30}px)`, padding: '0 60px'}}>
-            <svg width={150} height={150} viewBox="0 0 24 24" style={{display: 'block', margin: '0 auto'}}>
-              <path
-                d="M4 4h16a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H9l-5 4v-4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2Z"
-                fill="none"
-                stroke={GREEN}
-                strokeWidth={1.6}
-                strokeLinejoin="round"
-              />
-              <circle cx={8} cy={11} r={1.2} fill={GREEN} />
-              <circle cx={12} cy={11} r={1.2} fill={GREEN} />
-              <circle cx={16} cy={11} r={1.2} fill={GREEN} />
-            </svg>
-            <div style={{fontSize: 80, fontWeight: 900, color: '#fff', lineHeight: 1.06, marginTop: 50}}>
-              Liever via
-              <br />
-              WhatsApp?
-            </div>
-            <div style={{fontSize: 42, fontWeight: 500, color: '#b9c9ef', marginTop: 34, lineHeight: 1.3}}>
-              Onze assistent zet je
-              <br />
-              opdracht ook online.
-            </div>
-          </div>
-        </AbsoluteFill>
+        <Card f={f} from={S.whatsapp.from} to={S.whatsapp.to} top={180} dark>
+          <WhatsAppFlow f={f} />
+        </Card>
       )}
 
       {/* 3. freelancers react */}

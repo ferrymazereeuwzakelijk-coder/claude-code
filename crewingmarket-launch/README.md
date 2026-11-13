@@ -5,8 +5,8 @@ A 70-second vertical (1080×1920, 30 fps, H.264 + AAC) explainer/launch spot mad
 **Rendered video:** `out/crewingmarket-launch.mp4`
 
 ## App Store assets (`out/appstore/`)
-* `app-preview-886x1920.mp4`: App Preview for iPhone 6.9"/6.7" (886×1920, 30 fps, 27 s, H.264 High yuv420p, AAC stereo 256 kbps). It shows only screens of the app itself; the WhatsApp assistant is mentioned in a text card (App Store guideline 2.3.4).
-* `screenshot-1.png` … `screenshot-7.png`: 1320×2868 screenshots (iPhone 6.9"). Text above, app screen as a card below; nothing overlaps.
+* `app-preview-886x1920.mp4`: App Preview for iPhone 6.9"/6.7" (886×1920, 30 fps, 29.8 s, H.264 High yuv420p, AAC stereo 256 kbps). Shows posting in the app, the same request via the WhatsApp assistant, a freelancer reacting and direct contact. Note: App Store guideline 2.3.4 asks previews to show the app itself, so the WhatsApp part may draw questions in review.
+* `screenshot-1.png` … `screenshot-7.png`: 1320×2868 screenshots (iPhone 6.9"). Text above, the complete app screen as a card below; nothing overlaps or is cut off.
 
 ```bash
 python3 scripts/prepare_store_assets.py                    # clean screens -> public/store/

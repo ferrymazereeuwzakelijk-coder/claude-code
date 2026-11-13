@@ -1,33 +1,142 @@
 {
-  "_doc": "App Store app preview (886x1920, 30 fps, 27 s). Only screens of the app itself; WhatsApp is mentioned in text. Music: python3 scripts/make_soundtrack.py src/store/preview.json",
+  "_doc": "App Store app preview (886x1920, 30 fps, 29.8 s). Shows the app and the WhatsApp assistant. Music: python3 scripts/make_soundtrack.py src/store/preview.json",
   "fps": 30,
   "width": 886,
   "height": 1920,
-  "durationInFrames": 810,
+  "durationInFrames": 895,
   "bpm": 120,
   "audioOut": "audio/store-preview.wav",
   "scenes": {
-    "hook": { "from": 0, "to": 75 },
-    "intro": { "from": 0, "to": 75 },
-    "post": { "from": 75, "to": 215 },
-    "whatsapp": { "from": 215, "to": 290 },
-    "freelancer": { "from": 290, "to": 465 },
-    "contact": { "from": 465, "to": 690 },
-    "end": { "from": 690, "to": 810 }
+    "hook": {
+      "from": 0,
+      "to": 75
+    },
+    "intro": {
+      "from": 0,
+      "to": 75
+    },
+    "post": {
+      "from": 75,
+      "to": 215
+    },
+    "whatsapp": {
+      "from": 215,
+      "to": 375
+    },
+    "freelancer": {
+      "from": 375,
+      "to": 550
+    },
+    "contact": {
+      "from": 550,
+      "to": 775
+    },
+    "end": {
+      "from": 775,
+      "to": 895
+    }
   },
-  "app": { "clipStart": 80, "cropTop": 518 },
-  "freelancer": { "reacted": 374 },
-  "contact": { "videoStartFrom": 78, "tapContact": 599 },
+  "app": {
+    "clipStart": 80,
+    "cropTop": 518
+  },
+  "freelancer": {
+    "reacted": 459
+  },
+  "contact": {
+    "videoStartFrom": 78,
+    "tapContact": 684
+  },
   "taps": [
-    { "frame": 104, "x": 660, "y": 1516, "phone": "app" },
-    { "frame": 124, "x": 660, "y": 879, "phone": "app" },
-    { "frame": 141, "x": 660, "y": 2475, "phone": "app" },
-    { "frame": 370, "x": 659, "y": 1642, "phone": "freelancer" },
-    { "frame": 599, "x": 324, "y": 1599, "phone": "contact" }
+    {
+      "frame": 104,
+      "x": 660,
+      "y": 1516,
+      "phone": "app"
+    },
+    {
+      "frame": 124,
+      "x": 660,
+      "y": 879,
+      "phone": "app"
+    },
+    {
+      "frame": 141,
+      "x": 660,
+      "y": 2475,
+      "phone": "app"
+    },
+    {
+      "frame": 256,
+      "x": 1211,
+      "y": 1756,
+      "phone": "whatsapp"
+    },
+    {
+      "frame": 298,
+      "x": 659,
+      "y": 2565,
+      "phone": "whatsapp"
+    },
+    {
+      "frame": 455,
+      "x": 659,
+      "y": 1642,
+      "phone": "freelancer"
+    },
+    {
+      "frame": 684,
+      "x": 324,
+      "y": 1599,
+      "phone": "contact"
+    }
   ],
   "hookWords": [],
-  "whatsapp": { "typeStart": 0, "typeEnd": 0 },
-  "copy": { "typedMessage": "" },
-  "music": { "grooveFrom": 75, "lift": 290, "buildFrom": 630, "impact": 690, "ctaHit": 706 },
-  "sfx": { "whoosh": [71, 211, 286, 461, 686], "receive": [146], "send": [], "confirm": [374, 601], "impact": [], "step": [75, 290, 465] }
+  "whatsapp": {
+    "typeStart": 221,
+    "typeEnd": 252,
+    "send": 256,
+    "sheetUp": 274,
+    "tapVerstuur": 298,
+    "sheetDown": 302,
+    "online": 308
+  },
+  "copy": {
+    "typedMessage": "Ik zoek een matroos voor morgen.",
+    "messageTime": "16:29"
+  },
+  "music": {
+    "grooveFrom": 75,
+    "lift": 375,
+    "buildFrom": 715,
+    "impact": 775,
+    "ctaHit": 791
+  },
+  "sfx": {
+    "whoosh": [
+      71,
+      211,
+      371,
+      546,
+      771
+    ],
+    "receive": [
+      146,
+      308
+    ],
+    "send": [
+      256
+    ],
+    "confirm": [
+      459,
+      686
+    ],
+    "impact": [],
+    "step": [
+      75,
+      215,
+      375,
+      550
+    ]
+  }
 }
