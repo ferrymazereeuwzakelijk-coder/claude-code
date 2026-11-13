@@ -46,9 +46,9 @@ def process(f: np.ndarray, t: float) -> np.ndarray:
     # red recording dot inside the Dynamic Island
     f[24:52, 158:192] = 0
     # phone number next to "WhatsApp Gekoppeld" (dashboard only)
-    row = f[690:716, 226:324]
+    row = f[690:716, 229:324]
     if ((row[..., 1].astype(int) - row[..., 0] > 40)).sum() > 30:
-        f[690:716, 226:324] = 252
+        f[690:716, 229:324] = 252
     rows = banner_rows(f)
     for y in np.nonzero(rows)[0]:
         color = np.array([17, 15, 16] if y < 260 else [244, 245, 248], np.uint8)

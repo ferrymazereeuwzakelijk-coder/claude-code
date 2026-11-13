@@ -4,6 +4,17 @@ A 70-second vertical (1080×1920, 30 fps, H.264 + AAC) explainer/launch spot mad
 
 **Rendered video:** `out/crewingmarket-launch.mp4`
 
+## App Store assets (`out/appstore/`)
+* `app-preview-886x1920.mp4`: App Preview for iPhone 6.9"/6.7" (886×1920, 30 fps, 27 s, H.264 High yuv420p, AAC stereo 256 kbps). It shows only screens of the app itself; the WhatsApp assistant is mentioned in a text card (App Store guideline 2.3.4).
+* `screenshot-1.png` … `screenshot-7.png`: 1320×2868 screenshots (iPhone 6.9"). Text above, app screen as a card below; nothing overlaps.
+
+```bash
+python3 scripts/prepare_store_assets.py                    # clean screens -> public/store/
+python3 scripts/make_soundtrack.py src/store/preview.json  # music for the preview
+npx remotion still src/index.ts AppStoreShot1 out/appstore/screenshot-1.png   # ... AppStoreShot7
+npx remotion render src/index.ts AppStorePreview out/appstore/preview-raw.mp4 --audio-bitrate=256k
+```
+
 ## 35-second launch cut (recommended for social)
 **File:** `out/crewingmarket-launch-35s.mp4` (composition `CrewingMarketLaunch35`, source in `src/short/`, timing in `src/short/timeline.json`). Every cut lands on a beat (120 BPM).
 

@@ -1,0 +1,33 @@
+{
+  "_doc": "App Store app preview (886x1920, 30 fps, 27 s). Only screens of the app itself; WhatsApp is mentioned in text. Music: python3 scripts/make_soundtrack.py src/store/preview.json",
+  "fps": 30,
+  "width": 886,
+  "height": 1920,
+  "durationInFrames": 810,
+  "bpm": 120,
+  "audioOut": "audio/store-preview.wav",
+  "scenes": {
+    "hook": { "from": 0, "to": 75 },
+    "intro": { "from": 0, "to": 75 },
+    "post": { "from": 75, "to": 215 },
+    "whatsapp": { "from": 215, "to": 290 },
+    "freelancer": { "from": 290, "to": 465 },
+    "contact": { "from": 465, "to": 690 },
+    "end": { "from": 690, "to": 810 }
+  },
+  "app": { "clipStart": 80, "cropTop": 518 },
+  "freelancer": { "reacted": 374 },
+  "contact": { "videoStartFrom": 78, "tapContact": 599 },
+  "taps": [
+    { "frame": 104, "x": 660, "y": 1516, "phone": "app" },
+    { "frame": 124, "x": 660, "y": 879, "phone": "app" },
+    { "frame": 141, "x": 660, "y": 2475, "phone": "app" },
+    { "frame": 370, "x": 659, "y": 1642, "phone": "freelancer" },
+    { "frame": 599, "x": 324, "y": 1599, "phone": "contact" }
+  ],
+  "hookWords": [],
+  "whatsapp": { "typeStart": 0, "typeEnd": 0 },
+  "copy": { "typedMessage": "" },
+  "music": { "grooveFrom": 75, "lift": 290, "buildFrom": 630, "impact": 690, "ctaHit": 706 },
+  "sfx": { "whoosh": [71, 211, 286, 461, 686], "receive": [146], "send": [], "confirm": [374, 601], "impact": [], "step": [75, 290, 465] }
+}
