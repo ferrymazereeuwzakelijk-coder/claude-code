@@ -1,0 +1,49 @@
+{
+  "name": "SharkDominion",
+  "tree": {
+    "$className": "DataModel",
+
+    "ReplicatedStorage": {
+      "Shared": {
+        "$path": "src/shared"
+      }
+    },
+
+    "ServerScriptService": {
+      "Server": {
+        "$path": "src/server"
+      }
+    },
+
+    "StarterPlayer": {
+      "$properties": {
+        "EnableMouseLockOption": false,
+        "CameraMaxZoomDistance": 80
+      },
+      "StarterPlayerScripts": {
+        "Client": {
+          "$path": "src/client"
+        }
+      }
+    },
+
+    "Players": {
+      "$properties": {
+        "CharacterAutoLoads": false,
+        "MaxPlayers": 16
+      }
+    },
+
+    "Workspace": {
+      "$properties": {
+        "StreamingEnabled": true
+      }
+    },
+
+    "Lighting": {
+      "$properties": {
+        "Technology": "Future"
+      }
+    }
+  }
+}
