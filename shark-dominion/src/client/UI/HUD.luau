@@ -17,6 +17,7 @@
 local Players = game:GetService("Players")
 local RunService = game:GetService("RunService")
 local TweenService = game:GetService("TweenService")
+local ScriptContext = game:GetService("ScriptContext")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local Shared = ReplicatedStorage.Shared
@@ -37,7 +38,8 @@ local create, label = UIKit.create, UIKit.label
 local HUD = {}
 
 local gui: ScreenGui
-local uiScale: UIScale
+local scalers: { UIScale } = {}
+local clientErrors: { string } = {}
 local refs = {}
 local bars = {}
 local popupQueue = 0
@@ -183,7 +185,7 @@ local function buildCoins(root: Frame)
 		Size = UDim2.new(1, -52, 1, 0),
 		Parent = pill,
 	})
-	refs.coinScale = create("UIScale", { Parent = pill })
+	refs.coinScale = create("UIScale", { Parent = refs.coins })
 
 	refs.hints = label({
 		Name = "Hints",
@@ -248,9 +250,9 @@ local function buildAbility(root: Frame)
 	refs.abilitySlot = slot
 end
 
-local function buildOverlays(root: Frame)
+local function buildOverlays(root: Frame, screen: Frame)
 	-- Damage vignette: four edge gradients
-	local vignette = create("Frame", { Name = "Vignette", BackgroundTransparency = 1, Size = UDim2.fromScale(1, 1), ZIndex = 20, Parent = root })
+	local vignette = create("Frame", { Name = "Vignette", BackgroundTransparency = 1, Size = UDim2.fromScale(1, 1), ZIndex = 20, Parent = screen })
 	local edges = {
 		{ UDim2.fromScale(0, 0), UDim2.fromScale(1, 0.22), 90 },
 		{ UDim2.fromScale(0, 0.78), UDim2.fromScale(1, 0.22), -90 },
@@ -338,7 +340,7 @@ local function buildOverlays(root: Frame)
 		Size = UDim2.fromScale(1, 1),
 		ZIndex = 30,
 		Visible = true,
-		Parent = root,
+		Parent = screen,
 	})
 	refs.overlayTitle = label({
 		Text = "SHARK DOMINION",
@@ -363,6 +365,41 @@ local function buildOverlays(root: Frame)
 		ZIndex = 31,
 		Parent = refs.overlay,
 	})
+end
+
+local function buildErrorLabel(screen: Frame)
+	-- Shows server bootstrap errors and client script errors on screen, so the
+	-- game can be debugged on a phone without the developer console.
+	refs.errorText = label({
+		Name = "Errors",
+		Text = "",
+		FontFace = UIKit.FontRegular,
+		TextSize = 13,
+		TextColor3 = Color3.fromRGB(255, 140, 140),
+		TextWrapped = true,
+		TextYAlignment = Enum.TextYAlignment.Bottom,
+		BackgroundColor3 = Color3.fromRGB(30, 0, 0),
+		BackgroundTransparency = 0.35,
+		AnchorPoint = Vector2.new(0, 1),
+		Position = UDim2.new(0, 12, 1, -12),
+		Size = UDim2.new(0.55, 0, 0, 110),
+		Visible = false,
+		ZIndex = 50,
+		Parent = screen,
+	})
+end
+
+local function updateErrors()
+	local lines = {}
+	local serverError = ReplicatedStorage:GetAttribute("ServerError")
+	if type(serverError) == "string" and serverError ~= "" then
+		table.insert(lines, "SERVER: " .. serverError)
+	end
+	for _, e in clientErrors do
+		table.insert(lines, "CLIENT: " .. e)
+	end
+	refs.errorText.Visible = #lines > 0
+	refs.errorText.Text = table.concat(lines, "\n")
 end
 
 local function buildTargetRing()
@@ -445,9 +482,8 @@ function HUD.showBanner(title: string, subtitle: string?, color: Color3?)
 	banner.TextColor3 = color or C.Gold
 	sub.Text = subtitle or ""
 	banner.TextTransparency, sub.TextTransparency, stroke.Transparency = 0, 0, 0.2
-	local scale = banner:FindFirstChildOfClass("UIScale") or create("UIScale", { Parent = banner })
-	scale.Scale = 1.4
-	TweenService:Create(scale, TweenInfo.new(0.35, Enum.EasingStyle.Back, Enum.EasingDirection.Out), { Scale = 1 }):Play()
+	banner.TextSize = 60
+	TweenService:Create(banner, TweenInfo.new(0.35, Enum.EasingStyle.Back, Enum.EasingDirection.Out), { TextSize = 44 }):Play()
 	task.delay(2.2, function()
 		if banner.Text == title then
 			local info = TweenInfo.new(0.6)
@@ -491,7 +527,10 @@ local function updateScale()
 	if InputController.mode == "Touch" then
 		s *= 1.1
 	end
-	uiScale.Scale = math.clamp(s, 0.55, 1.25)
+	s = math.clamp(s, 0.55, 1.25)
+	for _, scaler in scalers do
+		scaler.Scale = s
+	end
 end
 
 local function updateTarget()
@@ -601,16 +640,23 @@ local function update(dt: number)
 	end
 
 	updateTarget()
+	updateErrors()
 end
 
 function HUD.init()
+	local playerGui = player:WaitForChild("PlayerGui")
+
+	-- HUD widgets sit below the Roblox top bar (IgnoreGuiInset = false) so they
+	-- never overlap the menu / chat buttons. Each widget scales around its own
+	-- anchor point, so corners stay in corners on every screen size.
 	gui = create("ScreenGui", {
 		Name = "SharkHUD",
 		ResetOnSpawn = false,
-		IgnoreGuiInset = true,
+		IgnoreGuiInset = false,
+		ScreenInsets = Enum.ScreenInsets.DeviceSafeInsets,
 		ZIndexBehavior = Enum.ZIndexBehavior.Sibling,
 		DisplayOrder = 1,
-		Parent = player:WaitForChild("PlayerGui"),
+		Parent = playerGui,
 	})
 	local root = create("Frame", {
 		Name = "Root",
@@ -618,22 +664,50 @@ function HUD.init()
 		Size = UDim2.fromScale(1, 1),
 		Parent = gui,
 	})
-	-- Safe-area padding for notches and the Roblox top bar
 	create("UIPadding", {
-		PaddingTop = UDim.new(0, 44),
+		PaddingTop = UDim.new(0, 6),
 		PaddingLeft = UDim.new(0, 8),
 		PaddingRight = UDim.new(0, 8),
 		PaddingBottom = UDim.new(0, 8),
 		Parent = root,
 	})
-	uiScale = create("UIScale", { Parent = root })
+
+	-- Full-screen layers (loading / death overlay, vignette, error log) are never scaled.
+	local screenGui = create("ScreenGui", {
+		Name = "SharkOverlay",
+		ResetOnSpawn = false,
+		IgnoreGuiInset = true,
+		ScreenInsets = Enum.ScreenInsets.None,
+		ZIndexBehavior = Enum.ZIndexBehavior.Sibling,
+		DisplayOrder = 10,
+		Parent = playerGui,
+	})
+	local screen = create("Frame", {
+		Name = "Screen",
+		BackgroundTransparency = 1,
+		Size = UDim2.fromScale(1, 1),
+		Parent = screenGui,
+	})
 
 	buildProfileCard(root)
 	buildMassPill(root)
 	buildCoins(root)
 	buildAbility(root)
-	buildOverlays(root)
+	buildOverlays(root, screen)
+	buildErrorLabel(screen)
 	buildTargetRing()
+
+	for _, widget in root:GetChildren() do
+		if widget:IsA("GuiObject") then
+			table.insert(scalers, create("UIScale", { Parent = widget }))
+		end
+	end
+
+	ScriptContext.Error:Connect(function(message)
+		if #clientErrors < 4 then
+			table.insert(clientErrors, string.sub(tostring(message), 1, 220))
+		end
+	end)
 
 	displayedCoins = attr("Coins", 0)
 	RunService.RenderStepped:Connect(update)

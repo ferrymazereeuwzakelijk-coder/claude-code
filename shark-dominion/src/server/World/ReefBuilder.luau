@@ -41,7 +41,9 @@ local function configureTerrainLook(terrain: Terrain)
 	terrain.WaterReflectance = 0.35
 	terrain.WaterWaveSize = 0.12
 	terrain.WaterWaveSpeed = 9
-	terrain.Decoration = false
+	pcall(function()
+		terrain.Decoration = false -- not settable from scripts in every engine version
+	end)
 
 	terrain:SetMaterialColor(Mat.Sand, Color3.fromRGB(232, 212, 164))
 	terrain:SetMaterialColor(Mat.Limestone, Color3.fromRGB(216, 198, 170))
