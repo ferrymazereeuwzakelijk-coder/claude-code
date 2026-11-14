@@ -68,6 +68,7 @@ shark-dominion/
 2. **Live sync:** run `rojo serve` and, in Studio, open a new **Baseplate** place,
    delete the `Baseplate` part, open the Rojo plugin and click **Connect**.
    **Or build a place file:** run `rojo build -o SharkDominion.rbxlx` and open it in Studio.
+   Without Rojo, `python3 tools/build_place.py` builds the same place file.
 3. Press **Play**. The server generates the reef (a few seconds; the client shows
    "Growing the reef…"), then spawns your shark on the reef plateau.
 4. Check the Output window for `[SelfTest] PASS`, `[ReefBuilder] Terrain ready`,
