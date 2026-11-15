@@ -13,11 +13,15 @@ The architecture and design decisions are in [`docs/ARCHITECTURE.md`](docs/ARCHI
 | Customer intake → AI job → confirmation → publication → matching → quote → acceptance | ✅ Working end to end (web **and** WhatsApp simulator), persisted in Postgres, covered by tests |
 | Auth & roles (customer / contractor / admin), rate limits, audit log | ✅ Working |
 | Contractor onboarding, verification, feed with filters, saved jobs, quotes, messaging | ✅ Working |
+| Job lifecycle: cancel, mark completed, status timeline (web + `AFGEROND` in WhatsApp) | ✅ Working |
+| Reviews (only after completed jobs, one per job, contractor reply once, admin can hide) | ✅ Working (web + WhatsApp) |
+| Public contractor profile with portfolio (max 12 photos) and reviews | ✅ Working |
+| Reports & disputes with admin handling; admin user management (search, block) | ✅ Working |
+| Billing preparation: plans, Stripe Checkout, signature-verified idempotent webhook | ⚙️ Behind `FEATURE_BILLING`; webhook logic tested, Checkout **needs Stripe keys** |
 | Admin: verification, moderation, escalations, abuse signals, matching rules, categories, AI/queue monitoring, audit log | ✅ Working |
 | AI intake with Claude (image analysis, structured output) | ⚙️ Implemented, **needs `ANTHROPIC_API_KEY`**; not yet run against the live API. Without a key the rule-based provider runs (no image analysis, clearly shown in the UI) |
 | WhatsApp Cloud API | ⚙️ Adapter implemented, **needs Meta credentials + approved templates**; fully testable through the local simulator |
 | Supabase Storage driver | ⚙️ Implemented, untested against a live bucket (local disk is the default) |
-| Reviews, portfolio, disputes, billing (Stripe) | ⏳ Not built yet (billing flag reserved) |
 | Photography on the landing page | ⏳ Needs licensed photos; the page currently uses product illustrations |
 
 ## Run locally
@@ -43,7 +47,7 @@ Demo accounts (password `demo-wachtwoord-2026`): `admin@`, `klant@`, `schilder@`
 
 ```bash
 createdb klusmatch_test
-npm test                 # 26 unit + integration tests against a real Postgres database
+npm test                 # 33 unit + integration tests against a real Postgres database
 npm run typecheck
 # Browser E2E (needs a running server and demo data):
 npm run build && npm start &   npm run test:e2e
@@ -56,6 +60,11 @@ The integration tests cover the full vertical slice. Among other things:
 * gas leak → escalation; asbestos → review; category disambiguation without loops
 * webhook signatures, deduplication, consent replay, opt-out/opt-in, account linking via `KOPPEL`,
   the 24h window and templates, and quote acceptance via WhatsApp
+* cancel/complete rules and the timeline, review eligibility, disputes limited to the two parties,
+  portfolio limits, Stripe signature verification and idempotent subscription updates
+
+CI (`.github/workflows/klusmatch-ci.yml`) runs typecheck, tests (with a Postgres service) and the
+production build on every PR that touches `klusmatch/`.
 
 ## Deploy to production
 
@@ -76,8 +85,24 @@ The integration tests cover the full vertical slice. Among other things:
      subscribe to `messages`
    * get the templates in `src/lib/whatsapp/templates.ts` approved (name, language `nl`, parameters)
    * set `WHATSAPP_MODE=cloud_api`
-7. **Storage:** create a private Supabase Storage bucket and set `STORAGE_DRIVER=supabase`,
+7. **Billing (optional):** set `FEATURE_BILLING=true`, `STRIPE_SECRET_KEY`, `STRIPE_PRICE_STARTER`,
+   `STRIPE_PRICE_PRO` and `STRIPE_WEBHOOK_SECRET`; point a Stripe webhook at
+   `https://<domain>/api/stripe/webhook` with `checkout.session.completed`,
+   `customer.subscription.updated` and `customer.subscription.deleted`.
+8. **Storage:** create a private Supabase Storage bucket and set `STORAGE_DRIVER=supabase`,
    `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY` and `SUPABASE_STORAGE_BUCKET`.
+
+## WhatsApp commands
+
+| Customer sends | Effect |
+|---|---|
+| a photo / description | starts or continues the AI intake |
+| `JA` | consent, publish confirmation, or confirm a pending action |
+| `OFFERTES` | list quotes on open jobs |
+| `ACCEPTEER Q7F3K` | accept a quote (asks for `JA` first) |
+| `AFGEROND` | mark the awarded job as done → score 1–5 → short review |
+| `KOPPEL 123456` | link the number to a web account |
+| `NIEUW` / `HELP` / `STOP` / `START` | new request / help / opt out / opt in |
 
 ## Project layout
 

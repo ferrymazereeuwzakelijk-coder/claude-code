@@ -21,6 +21,7 @@ type Page = any;
 const BASE = process.env.E2E_BASE_URL ?? 'http://localhost:3000';
 const SHOTS = process.env.E2E_SCREENSHOTS ?? 'test-results/e2e';
 const DEMO_PW = 'demo-wachtwoord-2026';
+const RUN = Date.now().toString(36); // makes texts unique, the demo database accumulates runs
 mkdirSync(SHOTS, { recursive: true });
 
 const step = (s: string) => console.log(`\n▶ ${s}`);
@@ -104,6 +105,51 @@ try {
   await contractor.getByText('3512 AB').waitFor();
   await shot(contractor, '05-contractor-awarded');
 
+  // ── Lifecycle: completion, review, reply ──
+  step('Customer marks job completed and writes a review');
+  await customer.click('text=Markeer als afgerond');
+  await customer.click('text=Ja, klus is afgerond');
+  await customer.getByText(/Hoe was het werken met/).waitFor();
+  await customer.click('button[aria-label="4 sterren"]');
+  await customer.fill('textarea[aria-label=Review]', `Netjes gewerkt, op tijd en alles opgeruimd achtergelaten (${RUN}).`);
+  await customer.click('text=Plaats review');
+  await customer.getByText('Jouw review').waitFor();
+  await customer.getByText('Review geplaatst').waitFor(); // timeline entry
+  await shot(customer, '10-customer-completed-review');
+
+  step('Contractor replies to the review');
+  await contractor.reload();
+  await contractor.getByText('Review van de klant').waitFor();
+  await contractor.fill('input[aria-label=Reactie]', `Dank je wel, graag tot een volgende keer! (${RUN})`);
+  await contractor.click('button:has-text("Reageer")');
+  await contractor.getByText('Jouw reactie:').waitFor();
+
+  step('Contractor adds a portfolio photo; public profile shows it with the review');
+  await contractor.goto(`${BASE}/vakman/profiel`);
+  await contractor.setInputFiles('#photo', photo);
+  await contractor.fill('input[aria-label=Bijschrift]', `Schutting in Utrecht ${RUN}`);
+  await contractor.click('button:has-text("Toevoegen")');
+  await contractor.getByText('Foto toegevoegd aan je portfolio').waitFor();
+  const profileHref = await contractor.locator('a:has-text("Bekijk openbaar profiel")').getAttribute('href');
+  const visitor = await (await browser.newContext({ viewport: { width: 1360, height: 900 } })).newPage(); // not logged in
+  await visitor.goto(`${BASE}${profileHref}`);
+  await visitor.getByText(`opgeruimd achtergelaten (${RUN})`).waitFor();
+  await visitor.getByText(`graag tot een volgende keer! (${RUN})`).waitFor();
+  await visitor.locator(`img[alt="Schutting in Utrecht ${RUN}"]`).waitFor();
+  const imgOk = await visitor.locator(`img[alt="Schutting in Utrecht ${RUN}"]`).evaluate((i: HTMLImageElement) => i.complete && i.naturalWidth > 0);
+  if (!imgOk) throw new Error('portfolio image did not load for an anonymous visitor');
+  await shot(visitor, '11-public-profile');
+  // Clean up (the demo database is reused between runs) and exercise removal.
+  await contractor.goto(`${BASE}/vakman/profiel`);
+  await contractor.locator('figure', { has: contractor.locator(`img[alt="Schutting in Utrecht ${RUN}"]`) }).locator('button[aria-label="Verwijder foto"]').click({ force: true });
+  await contractor.locator(`img[alt="Schutting in Utrecht ${RUN}"]`).waitFor({ state: 'detached' });
+
+  step('Customer reports a dispute');
+  await customer.click('text=Geschil melden');
+  await customer.fill('textarea[name=body]', 'Er is een plank vergeten te schilderen aan de achterkant.');
+  await customer.click('button[type=submit]:has-text("Geschil melden")');
+  await customer.getByText(/Geschil gemeld/).waitFor();
+
   // ── Admin ──
   step('Admin dashboards');
   const admin = await (await browser.newContext({ viewport: { width: 1360, height: 900 } })).newPage();
@@ -117,6 +163,15 @@ try {
   await admin.getByText('Auditlog').waitFor();
   await admin.getByText('quote.accepted').first().waitFor();
   await shot(admin, '07-admin-system');
+  await admin.goto(`${BASE}/admin/meldingen`);
+  await admin.getByText('Er is een plank vergeten').waitFor();
+  await shot(admin, '12-admin-disputes');
+  await admin.fill('input[aria-label=Notitie]', 'Vakman komt donderdag de plank afmaken.');
+  await admin.click('button:has-text("Opgelost")');
+  await admin.getByText('Geen open meldingen').waitFor();
+  await admin.goto(`${BASE}/admin/gebruikers?q=Eva`);
+  await admin.getByText('Eva Jansen').first().waitFor();
+  await shot(admin, '13-admin-users');
 
   // ── Authorization spot checks ──
   step('Authorization: contractor cannot open the customer page');

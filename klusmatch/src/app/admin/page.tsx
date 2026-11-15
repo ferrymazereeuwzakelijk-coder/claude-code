@@ -124,7 +124,7 @@ export default async function AdminOverview() {
           </ul>
         )}
       </section>
-      <p className="mt-6 text-sm text-navy-400">Zie ook <Link href="/admin/systeem" className="font-medium text-navy-700 underline">integraties & AI-gebruik</Link>.</p>
+      <p className="mt-6 text-sm text-navy-400">Zie ook <Link href="/admin/meldingen" className="font-medium text-navy-700 underline">meldingen & geschillen</Link> en <Link href="/admin/systeem" className="font-medium text-navy-700 underline">integraties & AI-gebruik</Link>.</p>
     </AppShell>
   );
 }

@@ -4,6 +4,7 @@ import { UserFacingError } from '../errors';
 import { parsePostcode } from '../geo';
 import { jobRef } from '../ids';
 import { enqueue } from '../queue';
+import { recordJobEvent } from './lifecycle';
 import { TIMING_LABELS } from '../intake/fields';
 import type { IntakeFacts, JobDraft } from '../intake/types';
 
@@ -51,6 +52,7 @@ export async function publishIntake(tx: Db, intake: IntakeRow, customerId: strin
            on conflict do nothing`;
 
   await tx`update intake_sessions set state = 'published', job_id = ${job.id}, customer_id = ${customerId}, updated_at = now() where id = ${intake.id}`;
+  await recordJobEvent(tx, job.id, 'published', customerId, { status });
   if (status === 'published') await enqueue(tx, 'job.match', { jobId: job.id }, { idempotencyKey: `match:${job.id}` });
   await audit(tx, { actorId: customerId, action: 'job.published', entityType: 'job', entityId: job.id, metadata: { ref: job.ref, status, intakeId: intake.id } });
   return { jobId: job.id, ref: job.ref, status };

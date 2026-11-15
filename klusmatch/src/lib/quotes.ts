@@ -5,6 +5,7 @@ import { ForbiddenError, NotFoundError, UserFacingError } from './errors';
 import { quoteRef } from './ids';
 import { enqueue } from './queue';
 import { rateLimit } from './rate-limit';
+import { recordJobEvent } from './jobs/lifecycle';
 
 export const quoteSchema = z.object({
   jobId: z.string().uuid(),
@@ -47,6 +48,7 @@ export async function submitQuote(contractorId: string, input: z.input<typeof qu
       on conflict (job_id, contractor_id) do nothing
       returning id, ref`;
     if (!rows.length) throw new UserFacingError('Je hebt al een offerte uitgebracht op deze klus.');
+    await recordJobEvent(tx, data.jobId, 'quote_received', contractorId, { amountEur: data.amountEur });
     await enqueue(tx, 'notify.quote_submitted', { quoteId: rows[0].id }, { idempotencyKey: `quote_submitted:${rows[0].id}` });
     await audit(tx, { actorId: contractorId, action: 'quote.submitted', entityType: 'quote', entityId: rows[0].id, metadata: { jobId: data.jobId, amountEur: data.amountEur } });
     return rows[0];
@@ -77,6 +79,7 @@ export async function acceptQuote(customerId: string, quoteId: string, via: 'web
     await tx`update quotes set status = 'accepted', decided_at = now(), updated_at = now() where id = ${q.id}`;
     await tx`update quotes set status = 'declined', decided_at = now(), updated_at = now() where job_id = ${job.id} and id <> ${q.id} and status = 'submitted'`;
     await tx`update jobs set status = 'awarded', accepted_quote_id = ${q.id} where id = ${job.id}`;
+    await recordJobEvent(tx, job.id, 'awarded', customerId, { quoteRef: q.ref, via });
     await enqueue(tx, 'notify.quote_accepted', { quoteId: q.id }, { idempotencyKey: `quote_accepted:${q.id}` });
     await audit(tx, { actorId: customerId, action: 'quote.accepted', entityType: 'quote', entityId: q.id, metadata: { jobId: job.id, via } });
     return { jobId: job.id, alreadyAccepted: false };

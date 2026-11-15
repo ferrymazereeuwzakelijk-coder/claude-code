@@ -9,6 +9,9 @@ import { sql } from '@/lib/db';
 import { contractorEligibility, PRICE_TYPE_LABEL } from '@/lib/quotes';
 import { listThread } from '@/lib/messages';
 import { submitQuoteAction, toggleSaveJobAction } from '@/app/actions/contractor';
+import { Stars, Timeline } from '@/components/lifecycle';
+import { ReplyForm, ReportButton } from '@/components/action-dialogs';
+import { jobTimeline } from '@/lib/jobs/lifecycle';
 
 export default async function ContractorJobPage({ params }: { params: Promise<{ id: string }> }) {
   const user = await requireRole('contractor');
@@ -35,6 +38,11 @@ export default async function ContractorJobPage({ params }: { params: Promise<{ 
     ? await db<{ postcode_full: string | null; contact_phone: string | null; contact_name: string | null }[]>`select postcode_full, contact_phone, contact_name from job_private_details where job_id = ${id}`
     : [];
   const thread = myQuote ? await listThread(db, user, id, user.id) : [];
+  const timeline = myQuote ? await jobTimeline(db, id) : [];
+  const [review] = awardedToMe
+    ? await db<{ id: string; rating: number; body: string; contractor_reply: string | null }[]>`select id, rating, body, contractor_reply from reviews where job_id = ${id} and not hidden`
+    : [];
+  const [jobStatus] = await db<{ status: string }[]>`select status from jobs where id = ${id}`;
 
   return (
     <AppShell user={user}>
@@ -127,6 +135,28 @@ export default async function ContractorJobPage({ params }: { params: Promise<{ 
                 </div>
                 <SubmitButton className="btn-primary w-full py-3" pendingText="Versturen…">Verstuur offerte</SubmitButton>
               </ActionForm>
+            </div>
+          )}
+          {review && (
+            <div className="card p-5">
+              <p className="eyebrow">Review van de klant</p>
+              <div className="mt-2"><Stars rating={review.rating} size="text-lg" /></div>
+              <p className="mt-2 text-sm text-navy-700">{review.body}</p>
+              {review.contractor_reply ? (
+                <p className="mt-3 border-l-2 border-navy-100 pl-3 text-sm text-navy-500"><strong className="text-navy-700">Jouw reactie:</strong> {review.contractor_reply}</p>
+              ) : (
+                <ReplyForm reviewId={review.id} jobId={id} />
+              )}
+              <div className="mt-2 flex justify-end"><ReportButton targetType="review" targetId={review.id} label="Review melden" /></div>
+            </div>
+          )}
+          {myQuote && (
+            <div className="card p-5">
+              <div className="mb-4 flex items-center justify-between">
+                <p className="font-semibold text-navy-900">Voortgang</p>
+                {awardedToMe && ['awarded', 'completed'].includes(jobStatus.status) && <ReportButton kind="dispute" targetType="job" targetId={id} label="Probleem melden" />}
+              </div>
+              <Timeline events={timeline} />
             </div>
           )}
           {myQuote && (

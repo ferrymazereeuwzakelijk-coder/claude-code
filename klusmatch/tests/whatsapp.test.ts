@@ -97,6 +97,21 @@ describe('WhatsApp webhook', () => {
     await send('JA');
     expect(await last()).toContain('is geaccepteerd');
     expect((await sql()`select status from jobs where id = ${job.id}`)[0].status).toBe('awarded');
+
+    // Project management continues in WhatsApp: completion + review.
+    await send('AFGEROND');
+    expect(await last()).toContain('helemaal afgerond');
+    await send('JA');
+    expect(await last()).toMatch(/cijfer van \*1\*/);
+    await send('5');
+    expect(await last()).toContain('hoe het ging');
+    await send('kort');
+    expect(await last()).toContain('te kort');
+    await send('Heel netjes gewerkt en alles opgeruimd achtergelaten.');
+    expect(await last()).toContain('Bedankt voor je review');
+    const [rev] = await sql()`select rating, contractor_id from reviews where job_id = ${job.id}`;
+    expect(rev).toMatchObject({ rating: 5, contractor_id: contractor.id });
+    expect((await sql()`select status from jobs where id = ${job.id}`)[0].status).toBe('completed');
   });
 
   it('honours opt-out and opt-in', async () => {

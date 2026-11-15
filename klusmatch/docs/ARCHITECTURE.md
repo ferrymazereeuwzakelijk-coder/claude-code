@@ -36,7 +36,7 @@
 | Webhook = verify → store → enqueue → 200 | Fast acknowledgement; retries from Meta are idempotent through the message-id primary key; processing is retried with backoff. |
 | Transactional outbox | `enqueue()` runs in the same transaction as the state change, so a published job always gets matched. |
 | Public vs private job data | `jobs` holds only `postcode4`, the region and the description (contact details are scrubbed). `job_private_details` is revealed to the awarded contractor only. |
-| Own session auth instead of Supabase Auth (for now) | Lets the full flow run and be tested offline, and supports phone-only WhatsApp customers. See §7 for how to migrate. |
+| Own session auth instead of Supabase Auth (for now) | Lets the full flow run and be tested offline, and supports phone-only WhatsApp customers. See §8. |
 
 ## 3. Intake state machine
 
@@ -99,13 +99,24 @@ with the CBS/PDOK PC4 dataset for production accuracy.**
   simulator mode in production
 * Audit log for auth, publishing, matching, quotes, verification, moderation, consent and settings
 
-## 7. What's next (recommended order)
+## 7. Lifecycle, trust & billing (migration 0003)
 
-1. Real image storage on Supabase Storage (driver exists, untested against a live bucket).
+* `job_events` is an append-only timeline (published → quote_received → awarded → completed →
+  reviewed, plus cancelled / removed / approved / disputed).
+* Reviews are tied to a **completed** job: one per job, written by its customer about the awarded
+  contractor; the contractor may reply once; admins can hide them through a report.
+* Disputes can only be opened by the two parties of an awarded/completed job. Reports require a
+  relation to the target. A partial unique index blocks duplicate open reports.
+* Portfolio photos are the only media served without login (they appear on public profiles).
+* Billing: `subscriptions` + `stripe_events` (idempotency). The webhook verifies `Stripe-Signature`
+  (HMAC-SHA256, 5-minute tolerance). Everything is behind `FEATURE_BILLING`; plan limits are not
+  enforced yet.
+
+## 8. What's next (recommended order)
+
+1. Live credentials: Claude key, Meta (number + templates), Supabase Storage bucket, Stripe.
 2. PC4 centroid table, plus contractor availability calendars.
-3. Reviews (schema and UI), disputes/reports, portfolio uploads.
-4. Billing: `FEATURE_BILLING` flag and env vars are reserved. Add Stripe Checkout + webhooks and a
-   `subscriptions` table.
-5. Supabase Realtime (or SSE) to replace polling and reloads for messages and quotes.
-6. Optional: move to Supabase Auth. Map `users.id` to `auth.users.id`, keep the role/profile
+3. Enforce plan limits (e.g. quotes/month on Starter) once pricing is decided.
+4. Supabase Realtime (or SSE) to replace polling and reloads for messages and quotes.
+5. Optional: move to Supabase Auth. Map `users.id` to `auth.users.id`, keep the role/profile
    tables, and keep server-side authorization as is.

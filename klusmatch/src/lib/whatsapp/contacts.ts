@@ -10,7 +10,10 @@ export type WaContact = {
 
 export type PendingAction =
   | { type: 'consent'; replayMessageId?: string }
-  | { type: 'accept_quote'; quoteId: string; quoteRef: string };
+  | { type: 'accept_quote'; quoteId: string; quoteRef: string }
+  | { type: 'complete_job'; jobId: string; title: string }
+  | { type: 'review_rating'; jobId: string; company: string }
+  | { type: 'review_text'; jobId: string; rating: number };
 
 export async function upsertContact(db: Db, phone: string, profileName?: string): Promise<WaContact> {
   const [c] = await db<WaContact[]>`

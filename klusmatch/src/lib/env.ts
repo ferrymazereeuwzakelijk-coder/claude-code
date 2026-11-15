@@ -18,6 +18,10 @@ const schema = z.object({
   SUPABASE_SERVICE_ROLE_KEY: z.string().optional(),
   SUPABASE_STORAGE_BUCKET: z.string().default('klusmatch-media'),
   FEATURE_BILLING: z.string().optional().transform((v) => v === 'true'),
+  STRIPE_SECRET_KEY: z.string().optional(),
+  STRIPE_WEBHOOK_SECRET: z.string().optional(),
+  STRIPE_PRICE_STARTER: z.string().optional(),
+  STRIPE_PRICE_PRO: z.string().optional(),
   INLINE_WORKER: z.string().optional().transform((v) => v !== 'false'),
 });
 

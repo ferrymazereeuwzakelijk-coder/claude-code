@@ -6,6 +6,9 @@ import { sql } from '@/lib/db';
 import { listCategories } from '@/lib/categories';
 import { getContractorProfile } from '@/lib/contractors';
 import { saveProfileAction } from '@/app/actions/contractor';
+import { listPortfolio, MAX_PORTFOLIO_ITEMS } from '@/lib/portfolio';
+import { PortfolioManager } from './portfolio-manager';
+import Link from 'next/link';
 
 export const metadata = { title: 'Bedrijfsprofiel' };
 
@@ -20,13 +23,19 @@ export default async function ContractorProfilePage() {
   const user = await requireRole('contractor');
   const [profile, categories] = await Promise.all([getContractorProfile(sql(), user.id), listCategories(sql())]);
   const v = VERIFICATION[profile?.verification ?? 'unsubmitted'];
+  const portfolio = profile ? await listPortfolio(sql(), user.id) : [];
   return (
     <AppShell user={user}>
       <PageHeader
         eyebrow={profile ? 'Bedrijfsprofiel' : 'Stap 1 van 1 · Onboarding'}
         title={profile ? profile.company_name : 'Vertel ons over je bedrijf'}
         description="Klanten zien je bedrijfsnaam, vakgebieden en verificatiestatus. Na controle van je KvK-inschrijving kun je offertes versturen."
-        actions={<Badge tone={v.tone}>{v.label}</Badge>}
+        actions={
+          <>
+            <Badge tone={v.tone}>{v.label}</Badge>
+            {profile && <Link href={`/vakmensen/${user.id}`} className="btn-secondary text-sm">Bekijk openbaar profiel ↗</Link>}
+          </>
+        }
       />
       {profile?.verification === 'rejected' && profile.verification_note && (
         <div className="mb-6"><Notice tone="red" title="Verificatie afgewezen">{profile.verification_note}</Notice></div>
@@ -81,7 +90,13 @@ export default async function ContractorProfilePage() {
           <SubmitButton className="btn-primary w-full py-3" pendingText="Opslaan…">{profile ? 'Wijzigingen opslaan' : 'Profiel indienen ter verificatie'}</SubmitButton>
         </section>
       </ActionForm>
-      {/* FEATURE_BILLING: subscription management is prepared behind a flag (see docs/ARCHITECTURE.md). */}
+      {profile && (
+        <section className="card mt-6 p-6">
+          <h2 className="font-semibold text-navy-900">Portfolio</h2>
+          <p className="mb-5 mt-1 text-sm text-navy-500">Laat klanten zien wat je kunt. Je portfolio staat op je openbare profiel, dat klanten openen vanuit je offerte.</p>
+          <PortfolioManager items={portfolio} categories={categories.filter((c) => profile.categories.includes(c.slug)).map((c) => ({ slug: c.slug, name: c.name }))} max={MAX_PORTFOLIO_ITEMS} />
+        </section>
+      )}
     </AppShell>
   );
 }

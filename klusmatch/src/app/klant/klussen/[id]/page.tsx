@@ -8,6 +8,10 @@ import { PRICE_TYPE_LABEL, quotesForJob } from '@/lib/quotes';
 import { listThread } from '@/lib/messages';
 import { AcceptQuoteButton } from './accept-button';
 import { MessageThread } from '@/components/message-thread';
+import { RatingInline, Stars, Timeline } from '@/components/lifecycle';
+import { CancelJobButton, CompleteJobButton, ReportButton, ReviewForm } from '@/components/action-dialogs';
+import { jobTimeline } from '@/lib/jobs/lifecycle';
+import { ratingsFor } from '@/lib/reviews';
 
 export default async function CustomerJobPage({ params, searchParams }: { params: Promise<{ id: string }>; searchParams: Promise<{ thread?: string }> }) {
   const user = await requireRole('customer');
@@ -25,6 +29,9 @@ export default async function CustomerJobPage({ params, searchParams }: { params
   const activeThread = quotes.find((q) => q.contractor_id === thread) ?? null;
   const threadMessages = activeThread ? await listThread(db, user, id, activeThread.contractor_id) : [];
   const status = JOB_STATUS[job.status];
+  const [timeline, ratings] = await Promise.all([jobTimeline(db, id), ratingsFor(db, quotes.map((q) => q.contractor_id))]);
+  const chosen = quotes.find((q) => q.status === 'accepted') ?? null;
+  const [review] = await db<{ rating: number; body: string; contractor_reply: string | null }[]>`select rating, body, contractor_reply from reviews where job_id = ${id}`;
 
   return (
     <AppShell user={user}>
@@ -110,11 +117,12 @@ export default async function CustomerJobPage({ params, searchParams }: { params
                       </div>
                       <div className="min-w-0 flex-1">
                         <div className="flex flex-wrap items-center gap-2">
-                          <h3 className="font-semibold text-navy-900">{q.company_name}</h3>
+                          <Link href={`/vakmensen/${q.contractor_id}`} className="font-semibold text-navy-900 hover:text-leaf-800 hover:underline">{q.company_name}</Link>
                           {q.verification === 'verified' && <VerifiedBadge />}
                           {accepted && <Badge tone="dark">Gekozen</Badge>}
                           {q.status === 'declined' && <Badge>Afgewezen</Badge>}
                         </div>
+                        <p className="mt-1"><RatingInline avg={ratings.get(q.contractor_id)?.avg} count={ratings.get(q.contractor_id)?.count} /></p>
                         <p className="mt-0.5 text-xs text-navy-400">{km(q.distance_km)} afstand · {q.categories.join(', ')} · {relTime(q.created_at)}</p>
                       </div>
                       <div className="text-right">
@@ -131,6 +139,7 @@ export default async function CustomerJobPage({ params, searchParams }: { params
                     <div className="mt-4 flex flex-wrap gap-2 border-t border-navy-100 pt-4">
                       {job.status === 'published' && q.status === 'submitted' && <AcceptQuoteButton quoteId={q.id} company={q.company_name} amount={eur(q.amount_cents)} />}
                       <Link href={`/klant/klussen/${id}?thread=${q.contractor_id}#bericht`} scroll={false} className="btn-secondary">Stuur bericht</Link>
+                      <span className="ml-auto"><ReportButton targetType="quote" targetId={q.id} label="Meld offerte" /></span>
                     </div>
                   </article>
                 );
@@ -140,6 +149,30 @@ export default async function CustomerJobPage({ params, searchParams }: { params
         </div>
 
         <aside className="space-y-4">
+          {/* Next step for the customer, depending on status */}
+          {job.status === 'awarded' && chosen && (
+            <div className="card space-y-3 p-5">
+              <p className="font-semibold text-navy-900">Is het werk klaar?</p>
+              <p className="text-sm text-navy-500">Markeer de klus als afgerond zodra {chosen.company_name} klaar is. Daarna kun je een review schrijven.</p>
+              <div className="flex flex-wrap items-center gap-2">
+                <CompleteJobButton jobId={id} />
+                <ReportButton kind="dispute" targetType="job" targetId={id} label="Probleem melden" buttonClass="btn-ghost text-sm" />
+              </div>
+            </div>
+          )}
+          {job.status === 'completed' && chosen && !review && <ReviewForm jobId={id} company={chosen.company_name} />}
+          {review && (
+            <div className="card p-5">
+              <p className="eyebrow">Jouw review</p>
+              <div className="mt-2"><Stars rating={review.rating} size="text-lg" /></div>
+              <p className="mt-2 text-sm text-navy-700">{review.body}</p>
+              {review.contractor_reply && <p className="mt-3 border-l-2 border-navy-100 pl-3 text-sm text-navy-500"><strong className="text-navy-700">Reactie:</strong> {review.contractor_reply}</p>}
+            </div>
+          )}
+          {job.status === 'completed' && chosen && (
+            <div className="flex justify-end"><ReportButton kind="dispute" targetType="job" targetId={id} label="Geschil melden" /></div>
+          )}
+
           {activeThread ? (
             <div id="bericht">
               <MessageThread
@@ -150,7 +183,7 @@ export default async function CustomerJobPage({ params, searchParams }: { params
                 messages={threadMessages.map((m) => ({ id: String(m.id), mine: m.sender_id === user.id, body: m.body, at: m.created_at.toISOString(), name: m.sender_name }))}
               />
             </div>
-          ) : (
+          ) : job.status === 'published' && (
             <div className="card p-5 text-sm text-navy-600">
               <p className="font-semibold text-navy-900">Tips bij het kiezen</p>
               <ul className="mt-2 space-y-1.5">
@@ -161,6 +194,13 @@ export default async function CustomerJobPage({ params, searchParams }: { params
               </ul>
             </div>
           )}
+          <div className="card p-5">
+            <div className="mb-4 flex items-center justify-between">
+              <p className="font-semibold text-navy-900">Voortgang</p>
+              {(job.status === 'published' || job.status === 'under_review') && <CancelJobButton jobId={id} />}
+            </div>
+            <Timeline events={timeline} />
+          </div>
         </aside>
       </div>
     </AppShell>

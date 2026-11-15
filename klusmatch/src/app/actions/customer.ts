@@ -54,3 +54,42 @@ export async function sendMessageAction(_: ActionState, form: FormData): Promise
     return asState(e);
   }
 }
+
+import { cancelJob, completeJob } from '@/lib/jobs/lifecycle';
+import { createReview } from '@/lib/reviews';
+
+export async function cancelJobAction(_: ActionState, form: FormData): Promise<ActionState> {
+  const user = await requireRole('customer');
+  const jobId = String(form.get('jobId'));
+  try {
+    await cancelJob(user.id, jobId, { reason: String(form.get('reason') ?? '') });
+    revalidatePath(`/klant/klussen/${jobId}`);
+    return { ok: 'Je klus is geannuleerd.' };
+  } catch (e) {
+    return asState(e);
+  }
+}
+
+export async function completeJobAction(_: ActionState, form: FormData): Promise<ActionState> {
+  const user = await requireRole('customer');
+  const jobId = String(form.get('jobId'));
+  try {
+    await completeJob(user.id, jobId);
+    revalidatePath(`/klant/klussen/${jobId}`);
+    return { ok: 'Fijn dat de klus klaar is!' };
+  } catch (e) {
+    return asState(e);
+  }
+}
+
+export async function createReviewAction(_: ActionState, form: FormData): Promise<ActionState> {
+  const user = await requireRole('customer');
+  const jobId = String(form.get('jobId'));
+  try {
+    await createReview(user.id, jobId, { rating: Number(form.get('rating')), body: String(form.get('body') ?? '') });
+    revalidatePath(`/klant/klussen/${jobId}`);
+    return { ok: 'Bedankt voor je review!' };
+  } catch (e) {
+    return asState(e);
+  }
+}

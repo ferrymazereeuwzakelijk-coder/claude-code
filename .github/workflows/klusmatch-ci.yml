@@ -1,0 +1,63 @@
+# Typecheck, tests (against a real Postgres) and production build for the KlusMatch app.
+# This job does not call Claude, so the Claude hardening rules in CLAUDE.md do not apply.
+name: KlusMatch CI
+
+on:
+  pull_request:
+    paths:
+      - 'klusmatch/**'
+      - '.github/workflows/klusmatch-ci.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'klusmatch/**'
+      - '.github/workflows/klusmatch-ci.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    name: Typecheck, test and build
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    defaults:
+      run:
+        working-directory: klusmatch
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: klusmatch
+          POSTGRES_PASSWORD: klusmatch
+          POSTGRES_DB: klusmatch_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U klusmatch"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      # Throwaway values for an isolated CI database; not secrets.
+      TEST_DATABASE_URL: postgres://klusmatch:klusmatch@localhost:5432/klusmatch_test
+      DATABASE_URL: postgres://klusmatch:klusmatch@localhost:5432/klusmatch_test
+      APP_ENV: test
+      WHATSAPP_APP_SECRET: ci-app-secret-not-real
+      WHATSAPP_VERIFY_TOKEN: ci-verify-token-not-real
+      NEXT_TELEMETRY_DISABLED: '1'
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
+
+      - name: Install dependencies
+        run: node --version && npm ci
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Unit and integration tests
+        run: npm test
+
+      - name: Production build
+        run: npm run build

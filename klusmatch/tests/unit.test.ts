@@ -55,6 +55,8 @@ describe('intake field parsing', () => {
     expect(classifyCategory('de heg moet gesnoeid worden', cats)?.slug).toBe('tuinonderhoud');
     expect(classifyCategory('eternit golfplaten op de schuur', cats)?.slug).toBe('asbest');
     expect(classifyCategory('de schutting moet geschilderd worden', cats)).toMatchObject({ slug: 'schilderwerk' });
+    expect(classifyCategory('de schutting in de tuin moet geschilderd worden', cats)).toMatchObject({ slug: 'schilderwerk' });
+    expect(classifyCategory('mijn tuin moet opgeruimd en het gras gemaaid', cats)?.slug).toBe('tuinonderhoud');
   });
 });
 

@@ -10,6 +10,7 @@ import { audit } from '@/lib/audit';
 import { enqueue } from '@/lib/queue';
 import { notify } from '@/lib/notifications';
 import { drainQueue } from '@/lib/worker';
+import { recordJobEvent } from '@/lib/jobs/lifecycle';
 import type { ActionState } from '@/components/forms';
 
 const kick = () => env().INLINE_WORKER && after(() => drainQueue().catch(console.error));
@@ -42,9 +43,13 @@ export async function moderateJobAction(form: FormData) {
   await db.begin(async (tx) => {
     if (decision === 'approve') {
       const rows = await tx`update jobs set status = 'published', published_at = now() where id = ${id} and status = 'under_review' returning id`;
-      if (rows.length) await enqueue(tx, 'job.match', { jobId: id }, { idempotencyKey: `match:${id}` });
+      if (rows.length) {
+        await recordJobEvent(tx, id, 'approved', admin.id);
+        await enqueue(tx, 'job.match', { jobId: id }, { idempotencyKey: `match:${id}` });
+      }
     } else if (decision === 'remove') {
-      await tx`update jobs set status = 'removed' where id = ${id} and status in ('published', 'under_review')`;
+      const removed = await tx`update jobs set status = 'removed' where id = ${id} and status in ('published', 'under_review') returning id`;
+      if (removed.length) await recordJobEvent(tx, id, 'removed', admin.id, { reason });
       await tx`update quotes set status = 'declined', decided_at = now() where job_id = ${id} and status = 'submitted'`;
     }
     await audit(tx, { actorId: admin.id, action: `job.moderation.${decision}`, entityType: 'job', entityId: id, metadata: { reason } });
@@ -105,4 +110,18 @@ export async function setUserStatusAction(form: FormData) {
   if (status === 'suspended') await sql()`delete from sessions where user_id = ${id}`;
   await audit(sql(), { actorId: admin.id, action: `user.${status}`, entityType: 'user', entityId: id });
   revalidatePath('/admin');
+}
+
+import { resolveReport } from '@/lib/reports';
+
+export async function resolveReportAction(form: FormData) {
+  const admin = await requireRole('admin');
+  const status = String(form.get('status'));
+  if (!['in_progress', 'resolved', 'dismissed'].includes(status)) return;
+  await resolveReport(admin.id, String(form.get('reportId')), {
+    status: status as 'resolved',
+    note: String(form.get('note') ?? ''),
+    hideTarget: form.get('hideTarget') === 'on',
+  });
+  revalidatePath('/admin/meldingen');
 }

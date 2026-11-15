@@ -9,7 +9,8 @@ import type { CategoryOption, FieldKey, IntakeFacts, IntakeProvider, JobDraft, T
 // strong = the kind of work (verbs, trades); weak = objects that several trades work on.
 const CATEGORY_KEYWORDS: Record<string, { strong: RegExp; weak?: RegExp }> = {
   schilderwerk: { strong: /schilder|\bverf|\bverven|\blak(ken)?\b|gelakt|\bbeits|houtrot|bladder/i },
-  tuinonderhoud: { strong: /\btuin|gazon|\bheg\b|\bhaag|snoei|onkruid|\bmaai|verticuter/i, weak: /\bgras|\bboom|\bbomen|struik/i },
+  // 'tuin' alone is a location ("schutting in de tuin schilderen"), not the kind of work.
+  tuinonderhoud: { strong: /tuinonderhoud|hovenier|tuin (aanleggen|onderhouden|opruimen|bijhouden)|gazon|\bheg\b|\bhaag|snoei|onkruid|\bmaai|verticuter/i, weak: /\btuin|\bgras|\bboom|\bbomen|struik/i },
   bestrating: { strong: /bestrating|\bbestraten|klinkers?|straatwerk|\boprit|\bterras\b/i, weak: /\btegels?\b|\bgrind/i },
   loodgieter: { strong: /lekkage|\bkraan|\bafvoer|verstop|\briool|\bsifon|loodgieter/i, weak: /\blekt\b|\blekken\b|\btoilet|\bwc\b|\bleiding/i },
   elektra: { strong: /stopcontact|elektra|groepenkast|bedrading|laadpaal|elektricien/i, weak: /\blamp|verlichting|schakelaar|meterkast/i },

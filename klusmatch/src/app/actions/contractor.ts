@@ -74,3 +74,50 @@ export async function toggleSaveJobAction(form: FormData) {
   revalidatePath('/vakman');
   revalidatePath(`/vakman/klussen/${jobId}`);
 }
+
+import { replyToReview } from '@/lib/reviews';
+import { addPortfolioItem, removePortfolioItem } from '@/lib/portfolio';
+import { createCheckoutSession, type PlanKey } from '@/lib/billing';
+import { redirect } from 'next/navigation';
+
+export async function replyReviewAction(_: ActionState, form: FormData): Promise<ActionState> {
+  const user = await requireRole('contractor');
+  try {
+    await replyToReview(user.id, String(form.get('reviewId')), String(form.get('reply') ?? ''));
+    revalidatePath(`/vakman/klussen/${form.get('jobId')}`);
+    return { ok: 'Reactie geplaatst.' };
+  } catch (e) {
+    return asState(e);
+  }
+}
+
+export async function addPortfolioAction(_: ActionState, form: FormData): Promise<ActionState> {
+  const user = await requireRole('contractor');
+  const file = form.get('photo');
+  if (!(file instanceof File) || file.size === 0) return { error: 'Kies een foto.' };
+  try {
+    await addPortfolioItem(user.id, Buffer.from(await file.arrayBuffer()), { caption: String(form.get('caption') ?? ''), categorySlug: String(form.get('category') ?? '') || null });
+    revalidatePath('/vakman/profiel');
+    return { ok: 'Foto toegevoegd aan je portfolio.' };
+  } catch (e) {
+    return asState(e);
+  }
+}
+
+export async function removePortfolioAction(form: FormData) {
+  const user = await requireRole('contractor');
+  await removePortfolioItem(user.id, String(form.get('itemId')));
+  revalidatePath('/vakman/profiel');
+}
+
+export async function checkoutAction(_: ActionState, form: FormData): Promise<ActionState> {
+  const user = await requireRole('contractor');
+  const plan = form.get('plan') === 'pro' ? 'pro' : ('starter' as PlanKey);
+  let url: string;
+  try {
+    url = await createCheckoutSession(user.id, user.email, plan);
+  } catch (e) {
+    return asState(e);
+  }
+  redirect(url);
+}

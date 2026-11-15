@@ -10,11 +10,16 @@ import { storage } from '@/lib/storage';
 export async function GET(_: Request, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   if (!/^[0-9a-f-]{36}$/i.test(id)) return new NextResponse('Not found', { status: 404 });
+  const db = sql();
+  const [m] = await db<{ storage_key: string; mime_type: string; owner_user_id: string | null; portfolio: boolean }[]>`
+    select storage_key, mime_type, owner_user_id,
+           exists (select 1 from portfolio_items p where p.media_id = media.id and not p.hidden) as portfolio
+    from media where id = ${id}`;
+  if (!m) return new NextResponse('Not found', { status: 404 });
+  // Portfolio photos are deliberately public (they appear on public contractor profiles).
+  if (m.portfolio) return serve(m.storage_key, m.mime_type, 'public, max-age=86400');
   const user = await currentUser();
   if (!user) return new NextResponse('Unauthorized', { status: 401 });
-  const db = sql();
-  const [m] = await db<{ storage_key: string; mime_type: string; owner_user_id: string | null }[]>`select storage_key, mime_type, owner_user_id from media where id = ${id}`;
-  if (!m) return new NextResponse('Not found', { status: 404 });
 
   let allowed = user.role === 'admin' || m.owner_user_id === user.id;
   if (!allowed) {
@@ -32,8 +37,12 @@ export async function GET(_: Request, { params }: { params: Promise<{ id: string
     allowed = r.ok;
   }
   if (!allowed) return new NextResponse('Forbidden', { status: 403 });
-  const data = await storage().get(m.storage_key);
+  return serve(m.storage_key, m.mime_type, 'private, max-age=3600');
+}
+
+async function serve(key: string, mime: string, cache: string) {
+  const data = await storage().get(key);
   return new NextResponse(new Uint8Array(data), {
-    headers: { 'Content-Type': m.mime_type, 'Cache-Control': 'private, max-age=3600', 'Content-Disposition': 'inline', 'X-Content-Type-Options': 'nosniff' },
+    headers: { 'Content-Type': mime, 'Cache-Control': cache, 'Content-Disposition': 'inline', 'X-Content-Type-Options': 'nosniff' },
   });
 }

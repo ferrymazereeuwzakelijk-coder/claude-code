@@ -1,9 +1,12 @@
+import { ZodError } from 'zod';
 import { sql } from '../db';
 import { audit } from '../audit';
 import { UserFacingError } from '../errors';
 import { formatEuro } from '../intake/fields';
 import { createIntake, handleCustomerTurn } from '../intake/engine';
 import { acceptQuote, PRICE_TYPE_LABEL } from '../quotes';
+import { completeJob } from '../jobs/lifecycle';
+import { createReview } from '../reviews';
 import { storeMedia } from '../storage';
 import { rateLimit, RateLimitError } from '../rate-limit';
 import { waTransport } from './client';
@@ -29,6 +32,7 @@ const HELP_TEXT = [
   '• Stuur een foto en beschrijving van je klus om te starten',
   '• *OFFERTES* — bekijk ontvangen offertes',
   '• *ACCEPTEER <code>* — kies een offerte (bijv. ACCEPTEER Q7F3K)',
+  '• *AFGEROND* — meld dat je klus klaar is en geef een review',
   '• *NIEUW* — begin een nieuwe aanvraag',
   '• *KOPPEL <code>* — koppel aan je account op de website',
   '• *STOP* — afmelden',
@@ -130,6 +134,51 @@ async function routeMessage(m: InboundMessage): Promise<'processed' | 'ignored'>
     await setPendingAction(db, contact.id, null); // any other message cancels the pending confirmation
   }
 
+  // ── job completion & review flow ──
+  const pa = contact.pending_action;
+  if (pa?.type === 'complete_job') {
+    await setPendingAction(db, contact.id, null);
+    if (YES.test(text)) {
+      const userId = await ensureCustomerForContact(contact.id);
+      await completeJob(userId, pa.jobId);
+      const [c] = await db<{ company_name: string }[]>`
+        select cp.company_name from jobs j join quotes q on q.id = j.accepted_quote_id join contractor_profiles cp on cp.user_id = q.contractor_id where j.id = ${pa.jobId}`;
+      await setPendingAction(db, contact.id, { type: 'review_rating', jobId: pa.jobId, company: c?.company_name ?? 'de vakman' });
+      await reply(contact.id, `Top, de klus is afgerond! ✓\n\nHoe tevreden ben je over ${c?.company_name ?? 'de vakman'}? Stuur een cijfer van *1* (slecht) tot *5* (uitstekend). Of stuur *OVERSLAAN*.`);
+      return 'processed';
+    }
+    if (NO.test(text)) {
+      await reply(contact.id, 'Oké, de klus staat nog open.');
+      return 'processed';
+    }
+  }
+  if (pa?.type === 'review_rating') {
+    const n = text.match(/^\s*([1-5])\s*$/);
+    if (n) {
+      await setPendingAction(db, contact.id, { type: 'review_text', jobId: pa.jobId, rating: Number(n[1]) });
+      await reply(contact.id, `${'★'.repeat(Number(n[1]))} Dank je! Wil je in een paar zinnen vertellen hoe het ging? Je review komt met alleen je voornaam op het profiel van ${pa.company}.`);
+      return 'processed';
+    }
+    await setPendingAction(db, contact.id, null);
+    if (/^\s*overslaan\s*$/i.test(text)) {
+      await reply(contact.id, 'Prima. Je kunt later altijd nog een review schrijven op de website.');
+      return 'processed';
+    }
+  }
+  if (pa?.type === 'review_text') {
+    await setPendingAction(db, contact.id, null);
+    const userId = await ensureCustomerForContact(contact.id);
+    try {
+      await createReview(userId, pa.jobId, { rating: pa.rating, body: text });
+      await reply(contact.id, 'Bedankt voor je review! Daarmee help je andere klanten een goede vakman te kiezen. 🙏');
+    } catch (err) {
+      if (!(err instanceof UserFacingError) && !(err instanceof ZodError)) throw err;
+      await setPendingAction(db, contact.id, pa);
+      await reply(contact.id, 'Je toelichting is te kort. Schrijf minimaal een paar woorden over hoe het ging.');
+    }
+    return 'processed';
+  }
+
   // ── commands ──
   const cmd = text.toUpperCase();
   if (cmd === 'HELP' || cmd === 'MENU') {
@@ -156,6 +205,18 @@ async function routeMessage(m: InboundMessage): Promise<'processed' | 'ignored'>
   const accept = cmd.match(/^ACCEPTEER\s+(Q[A-Z0-9]{5})$/);
   if (accept) {
     await startQuoteAcceptance(contact, accept[1]);
+    return 'processed';
+  }
+  if (cmd === 'AFGEROND') {
+    const [job] = contact.user_id
+      ? await db<{ id: string; title: string }[]>`select id, title from jobs where customer_id = ${contact.user_id} and status = 'awarded' order by published_at desc limit 1`
+      : [];
+    if (!job) {
+      await reply(contact.id, 'Ik vind geen lopende klus met een gekozen vakman. Stuur OFFERTES voor een overzicht.');
+      return 'processed';
+    }
+    await setPendingAction(db, contact.id, { type: 'complete_job', jobId: job.id, title: job.title });
+    await reply(contact.id, `Is de klus "${job.title}" helemaal afgerond? Antwoord *JA* of *NEE*.`);
     return 'processed';
   }
   if (cmd === 'NIEUW') {

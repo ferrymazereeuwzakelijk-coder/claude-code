@@ -6,6 +6,7 @@ import type { SessionUser } from '@/lib/auth/session';
 import { logoutAction } from '@/app/actions/auth';
 import { Logo } from './ui';
 import { NavLink } from './nav-link';
+import { billingEnabled } from '@/lib/billing';
 
 const NAV: Record<SessionUser['role'], { href: string; label: string }[]> = {
   customer: [
@@ -22,7 +23,9 @@ const NAV: Record<SessionUser['role'], { href: string; label: string }[]> = {
   admin: [
     { href: '/admin', label: 'Overzicht' },
     { href: '/admin/vakmensen', label: 'Vakmensen' },
+    { href: '/admin/gebruikers', label: 'Gebruikers' },
     { href: '/admin/klussen', label: 'Moderatie' },
+    { href: '/admin/meldingen', label: 'Meldingen' },
     { href: '/admin/systeem', label: 'Systeem' },
   ],
 };
@@ -31,6 +34,9 @@ const ROLE_LABEL = { customer: 'Klant', contractor: 'Vakman', admin: 'Beheer' };
 
 export async function AppShell({ user, children }: { user: SessionUser; children: ReactNode }) {
   const unread = await unreadCount(sql(), user.id);
+  const nav = NAV[user.role].concat(user.role === 'contractor' && billingEnabled() ? [{ href: '/vakman/abonnement', label: 'Abonnement' }] : []);
+  const [{ n: openReports }] = user.role === 'admin' ? await sql()<{ n: number }[]>`select count(*)::int as n from reports where status = 'open'` : [{ n: 0 }];
+  const badgeFor = (href: string) => (href === '/meldingen' ? unread : href === '/admin/meldingen' ? openReports : 0);
   const initials = user.fullName.split(/\s+/).map((p) => p[0]).slice(0, 2).join('').toUpperCase();
   return (
     <div className="min-h-screen bg-sand-50">
@@ -39,8 +45,8 @@ export async function AppShell({ user, children }: { user: SessionUser; children
           <Logo />
           <span className="hidden rounded-md bg-navy-50 px-2 py-0.5 text-[11px] font-semibold uppercase tracking-wider text-navy-500 sm:inline">{ROLE_LABEL[user.role]}</span>
           <nav className="ml-2 hidden items-center gap-1 md:flex" aria-label="Hoofdmenu">
-            {NAV[user.role].map((n) => (
-              <NavLink key={n.href} href={n.href} badge={n.href === '/meldingen' ? unread : 0}>
+            {nav.map((n) => (
+              <NavLink key={n.href} href={n.href} badge={badgeFor(n.href)}>
                 {n.label}
               </NavLink>
             ))}
@@ -61,8 +67,8 @@ export async function AppShell({ user, children }: { user: SessionUser; children
           </div>
         </div>
         <nav className="flex gap-1 overflow-x-auto border-t border-navy-100/70 px-3 py-2 md:hidden" aria-label="Hoofdmenu mobiel">
-          {NAV[user.role].map((n) => (
-            <NavLink key={n.href} href={n.href} badge={n.href === '/meldingen' ? unread : 0}>
+          {nav.map((n) => (
+            <NavLink key={n.href} href={n.href} badge={badgeFor(n.href)}>
               {n.label}
             </NavLink>
           ))}
