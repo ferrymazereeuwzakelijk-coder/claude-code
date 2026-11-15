@@ -6,7 +6,7 @@ import { listCategories } from '../categories';
 import { parsePostcode } from '../geo';
 import { storage } from '../storage';
 import { publishIntake } from '../jobs/publish';
-import { formatEuro, isCancel, isConfirmation, missingFields, parseBudget, QUESTIONS, TIMING_LABELS } from './fields';
+import { categoryMenu, formatEuro, isCancel, isConfirmation, missingFields, parseBudget, QUESTIONS, TIMING_LABELS } from './fields';
 import { maxSafety, screenMessage, type SafetyResult } from './safety';
 import { AnthropicProvider } from './providers/anthropic';
 import { buildTemplateDraft, RulesProvider } from './providers/rules';
@@ -258,6 +258,13 @@ export async function handleCustomerTurn(intakeId: string, input: { text: string
     analysis = (await provider.analyzeTurn({ history, facts: intake.facts, pendingField: intake.pending_field, missingFields: missingBefore, message: text, images: [], categories })).analysis;
   }
 
+  // Numbered category menu answer (provider-independent).
+  const menuPick = intake.pending_field === 'category' ? text.match(/^\s*(\d{1,2})\s*[.)]?\s*$/) : null;
+  if (menuPick) {
+    const picked = categories[Number(menuPick[1]) - 1];
+    if (picked) analysis.updates.category = { value: picked.slug, source: 'customer' };
+  }
+
   safety = maxSafety(safety, analysis.safety);
   if (safety.level === 'danger') {
     return finish('escalated', `${safety.advice}\n\nWe plaatsen deze aanvraag niet automatisch. Een medewerker van KlusMatch bekijkt hem.`, {
@@ -301,7 +308,9 @@ export async function handleCustomerTurn(intakeId: string, input: { text: string
   }
 
   const field = missing[0];
-  const question = analysis.nextQuestion?.field === field ? analysis.nextQuestion.text : QUESTIONS[field];
+  // Never ask the same category question twice in the same words: fall back to a numbered menu.
+  const askedBefore = intake.pending_field === field && field === 'category';
+  const question = askedBefore ? categoryMenu(categories) : analysis.nextQuestion?.field === field ? analysis.nextQuestion.text : QUESTIONS[field];
   return finish('collecting', [...notes, question].join('\n\n'), {
     facts,
     pending_field: field,

@@ -11,7 +11,7 @@ const CATEGORY_KEYWORDS: Record<string, { strong: RegExp; weak?: RegExp }> = {
   schilderwerk: { strong: /schilder|\bverf|\bverven|\blak(ken)?\b|gelakt|\bbeits|houtrot|bladder/i },
   tuinonderhoud: { strong: /\btuin|gazon|\bheg\b|\bhaag|snoei|onkruid|\bmaai|verticuter/i, weak: /\bgras|\bboom|\bbomen|struik/i },
   bestrating: { strong: /bestrating|\bbestraten|klinkers?|straatwerk|\boprit|\bterras\b/i, weak: /\btegels?\b|\bgrind/i },
-  loodgieter: { strong: /lekkage|\blekt\b|\bkraan|\bafvoer|verstop|\briool|\bsifon|loodgieter/i, weak: /\btoilet|\bwc\b|\bleiding/i },
+  loodgieter: { strong: /lekkage|\bkraan|\bafvoer|verstop|\briool|\bsifon|loodgieter/i, weak: /\blekt\b|\blekken\b|\btoilet|\bwc\b|\bleiding/i },
   elektra: { strong: /stopcontact|elektra|groepenkast|bedrading|laadpaal|elektricien/i, weak: /\blamp|verlichting|schakelaar|meterkast/i },
   dakwerk: { strong: /dakpan|dakgoot|bitumen|dakbedekking|dakdekker|loodslab/i, weak: /\bdak\b|\bgoot\b|schoorsteen/i },
   timmerwerk: { strong: /timmer|laminaat|vlonder|kast op maat|\bmonteren\b/i, weak: /schutting|\bdeur|kozijn|\bvloer|\btrap\b/i },
@@ -22,7 +22,7 @@ const CATEGORY_KEYWORDS: Record<string, { strong: RegExp; weak?: RegExp }> = {
   asbest: { strong: /asbest|eternit/i },
 };
 
-export function classifyCategory(text: string, categories: CategoryOption[]): { slug: string; confidence: number } | null {
+export function classifyCategory(text: string, categories: CategoryOption[]): { slug: string; confidence: number; runnerUp?: string } | null {
   const active = new Set(categories.map((c) => c.slug));
   // Customer typed a category name directly.
   const byName = categories.find((c) => text.toLowerCase().includes(c.name.toLowerCase()));
@@ -36,7 +36,7 @@ export function classifyCategory(text: string, categories: CategoryOption[]): { 
   if (scored.some((s) => s.slug === 'asbest')) return { slug: 'asbest', confidence: 0.8 };
   const [top, second] = scored;
   if (!second) return { slug: top.slug, confidence: top.score >= 2 ? 0.75 : 0.55 };
-  return { slug: top.slug, confidence: top.score > second.score ? 0.65 : 0.4 };
+  return { slug: top.slug, confidence: top.score > second.score ? 0.65 : 0.4, runnerUp: second.slug };
 }
 
 const SCOPE_RE = /(\d+(?:[.,]\d+)?)\s*(m2|m²|vierkante meter|meter|m1|strekkende meter|kamers?|ramen|deuren|kozijnen|bomen|radiatoren|stuks?)/i;
@@ -61,8 +61,10 @@ export class RulesProvider implements IntakeProvider {
       if (budget !== undefined) updates.budget = { value: budget, source: 'customer' };
     }
 
+    // A direct answer to the scope question keeps the customer's own wording; otherwise extract a quantity.
     const scope = message.match(SCOPE_RE);
-    if (scope) updates.scope = { value: scope[0], source: 'customer' };
+    if (pendingField === 'scope' && !updates.postcode) updates.scope = { value: message.trim(), source: 'customer' };
+    else if (scope) updates.scope = { value: scope[0], source: 'customer' };
 
     if (pendingField === 'category' || !facts.category || facts.category.source === 'ai_inferred') {
       const cat = classifyCategory(message, categories);
@@ -83,12 +85,20 @@ export class RulesProvider implements IntakeProvider {
       updates.problem = { value: message.trim(), source: 'customer' };
     }
 
+    // Ambiguous between two trades: ask the customer to choose instead of guessing.
+    let nextQuestion: TurnAnalysis['nextQuestion'] = null;
+    const guess = updates.category ? null : classifyCategory(message, categories);
+    if (!facts.category && guess?.runnerUp && guess.confidence < 0.6) {
+      const name = (slug: string) => categories.find((c) => c.slug === slug)?.name ?? slug;
+      nextQuestion = { field: 'category', text: `Gaat het om ${name(guess.slug).toLowerCase()} of ${name(guess.runnerUp).toLowerCase()}? Of iets anders?` };
+    }
+
     const analysis: TurnAnalysis = {
       updates,
       categoryConfidence,
       imageObservations: null,
       safety: { level: 'none', reason: null },
-      nextQuestion: null,
+      nextQuestion,
       wantsCancel: false,
     };
     return { analysis, usage: { model: null, inputTokens: null, outputTokens: null } };
@@ -103,8 +113,7 @@ export function buildTemplateDraft(facts: IntakeFacts, categories: CategoryOptio
   const cat = categories.find((c) => c.slug === facts.category?.value);
   const catName = cat?.name ?? 'Klus';
   const problem = facts.problem?.value ?? '';
-  const firstSentence = problem.split(/[.!?\n]/)[0].trim();
-  const title = `${catName}: ${firstSentence.length > 6 ? firstSentence.slice(0, 70) : 'klus'} — ${region}`.replace(/\s+/g, ' ');
+  const title = `${catName}: ${shortTitle(problem)} — ${region}`.replace(/\s+/g, ' ');
   const pc4 = parsePostcode(facts.postcode?.value ?? '')?.postcode4 ?? '';
   const budget = facts.budget?.value;
   const lines = [
@@ -119,6 +128,18 @@ export function buildTemplateDraft(facts: IntakeFacts, categories: CategoryOptio
   if (facts.imageObservations) lines.push('', `Op basis van de foto's (AI-inschatting, niet gecontroleerd): ${facts.imageObservations.value}`);
   lines.push('', 'Maten en hoeveelheden zijn schattingen van de klant. Controleer ter plaatse voordat je een definitieve prijs afgeeft.');
   return { title, description: lines.join('\n'), assumptions: assumptionsFor(facts, categories) };
+}
+
+/** First clause of the customer's description, cut on a word boundary. */
+export function shortTitle(problem: string): string {
+  let t = problem.split(/[.!?\n]/)[0].trim();
+  if (t.length > 60) {
+    const clause = t.split(/[,;:]/)[0].trim();
+    if (clause.length >= 15) t = clause;
+  }
+  if (t.length > 60) t = t.slice(0, 60).replace(/\s+\S*$/, '') + '…';
+  if (t.length < 4) return 'klus';
+  return t.charAt(0).toLowerCase() + t.slice(1);
 }
 
 export function assumptionsFor(facts: IntakeFacts, categories: CategoryOption[]): string[] {

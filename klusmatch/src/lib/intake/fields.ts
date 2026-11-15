@@ -19,6 +19,11 @@ export const QUESTIONS: Record<FieldKey, string> = {
   budget: 'Heb je een maximaal budget in gedachten? Noem een bedrag in euro’s, of zeg "geen idee".',
 };
 
+/** Deterministic fallback when the customer could not answer the category question in words. */
+export function categoryMenu(categories: { name: string }[]) {
+  return ['Kies het soort klus door het nummer te sturen:', ...categories.map((c, i) => `${i + 1}. ${c.name}`)].join('\n');
+}
+
 export function missingFields(facts: IntakeFacts): FieldKey[] {
   return REQUIRED_FIELDS.filter((f) => facts[f] === undefined);
 }

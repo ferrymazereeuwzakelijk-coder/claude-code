@@ -54,6 +54,7 @@ describe('intake field parsing', () => {
   it('classifies categories by keyword', () => {
     expect(classifyCategory('de heg moet gesnoeid worden', cats)?.slug).toBe('tuinonderhoud');
     expect(classifyCategory('eternit golfplaten op de schuur', cats)?.slug).toBe('asbest');
+    expect(classifyCategory('de schutting moet geschilderd worden', cats)).toMatchObject({ slug: 'schilderwerk' });
   });
 });
 

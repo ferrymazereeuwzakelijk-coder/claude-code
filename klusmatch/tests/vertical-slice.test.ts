@@ -18,6 +18,7 @@ async function webIntakeToDraft(customerId: string) {
   r = await handleCustomerTurn(intakeId, { text: '3512 AB' }, resolve);
   expect(r.facts.postcode?.value).toBe('3512 AB');
   r = await handleCustomerTurn(intakeId, { text: 'ongeveer 15 meter lang, 1,8 meter hoog' }, resolve);
+  expect(r.facts.scope?.value).toBe('ongeveer 15 meter lang, 1,8 meter hoog');
   r = await handleCustomerTurn(intakeId, { text: 'binnen een maand' }, resolve);
   r = await handleCustomerTurn(intakeId, { text: '€ 900' }, resolve);
   return { intakeId, r, resolve };
@@ -119,6 +120,18 @@ describe('vertical slice: intake → publish → match → quote → accept', ()
     expect(res.published?.status).toBe('under_review');
     await drainQueue();
     expect((await sql()`select count(*)::int as n from job_matches`)[0].n).toBe(0);
+  });
+
+  it('disambiguates categories and never loops on the same question', async () => {
+    const customer = await makeCustomer();
+    const intakeId = await createIntake(sql(), { channel: 'web', customerId: customer.id });
+    const opts = { resolveCustomerId: async () => customer.id };
+    let r = await handleCustomerTurn(intakeId, { text: 'Er is iets kapot bij de achterdeur, kan iemand komen kijken?' }, opts);
+    expect(r.facts.category).toBeUndefined();
+    r = await handleCustomerTurn(intakeId, { text: 'weet ik niet precies' }, opts);
+    expect(r.reply).toMatch(/^Kies het soort klus door het nummer/m);
+    r = await handleCustomerTurn(intakeId, { text: '1' }, opts); // first category in sort order
+    expect(r.facts.category).toEqual({ value: 'schilderwerk', source: 'customer' });
   });
 
   it('caps daily notifications per contractor', async () => {

@@ -12,7 +12,8 @@
     "db:seed:demo": "tsx scripts/seed-demo.ts",
     "worker": "tsx scripts/worker.ts",
     "test": "vitest run",
-    "test:e2e": "tsx scripts/e2e-smoke.ts"
+    "test:e2e": "tsx scripts/e2e-smoke.ts",
+    "admin:create": "tsx scripts/create-admin.ts"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^1.8.0",
@@ -32,5 +33,6 @@
     "tsx": "^4.23.15",
     "typescript": "^5.9.3",
     "vitest": "^3.2.7"
-  }
+  },
+  "type": "module"
 }
