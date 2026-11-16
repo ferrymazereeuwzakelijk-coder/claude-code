@@ -10,8 +10,12 @@ const globalForDb = globalThis as unknown as { __klusmatchSql?: Sql };
 
 export function sql(): Sql {
   if (!globalForDb.__klusmatchSql) {
-    globalForDb.__klusmatchSql = postgres(env().DATABASE_URL, {
-      max: Number(process.env.DB_POOL_MAX ?? 10),
+    const url = env().DATABASE_URL;
+    // Supabase's transaction pooler (port 6543 / pgbouncer) does not support prepared statements.
+    const pooled = /:6543\//.test(url) || /pgbouncer=true/.test(url) || process.env.DB_PREPARE === 'false';
+    globalForDb.__klusmatchSql = postgres(url, {
+      prepare: !pooled,
+      max: Number(process.env.DB_POOL_MAX ?? (pooled ? 3 : 10)),
       idle_timeout: 20,
       transform: { undefined: null },
       onnotice: () => {},

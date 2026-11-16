@@ -66,6 +66,14 @@ The integration tests cover the full vertical slice. Among other things:
 CI (`.github/workflows/klusmatch-ci.yml`) runs typecheck, tests (with a Postgres service) and the
 production build on every PR that touches `klusmatch/`.
 
+## Online test version
+
+Step-by-step guide (in Dutch) for a password-protected test deployment on Supabase + Vercel, with a
+ready-made schema and a separate demo-data file: [`deploy/README.md`](deploy/README.md).
+Set `DEMO_BASIC_AUTH=user:password` to put the whole site behind HTTP Basic auth (webhooks stay open).
+`deploy/*.sql` are generated from `db/migrations` + `scripts/seed-demo.ts`; regenerate them after
+adding a migration.
+
 ## Deploy to production
 
 1. **Database:** create a Supabase project and run
