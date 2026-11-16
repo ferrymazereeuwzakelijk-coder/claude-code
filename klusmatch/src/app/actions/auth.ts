@@ -38,8 +38,9 @@ export async function registerAction(_: ActionState, form: FormData): Promise<Ac
   const ip = clientIp(await headers());
   try {
     await rateLimit(sql(), `register:${ip ?? 'unknown'}`, 10, 3600);
-    const user = await registerUser(
-      sql(),
+    // One transaction: the account and its audit entry are created together or not at all.
+    const user = await sql().begin((tx) => registerUser(
+      tx,
       {
         fullName: String(form.get('fullName') ?? ''),
         email: String(form.get('email') ?? ''),
@@ -47,7 +48,7 @@ export async function registerAction(_: ActionState, form: FormData): Promise<Ac
         role: form.get('role') === 'contractor' ? 'contractor' : 'customer',
       },
       ip,
-    );
+    ));
     await startSession(user.id);
     redirect(user.role === 'contractor' ? '/vakman/profiel' : '/klant/nieuw');
   } catch (e) {

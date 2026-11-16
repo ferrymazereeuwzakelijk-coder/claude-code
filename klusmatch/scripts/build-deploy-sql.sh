@@ -39,7 +39,16 @@ SQL
   pg_dump "$BASE/$TMPDB" --data-only --column-inserts --no-owner --no-privileges \
     --exclude-table-data=schema_migrations --exclude-table-data=categories --exclude-table-data=matching_rules \
     --exclude-table-data=background_jobs --exclude-table-data=rate_limits --exclude-table-data=sessions 2>/dev/null \
-    | grep -vE '^(SET |SELECT pg_catalog|--|$|\\(un)?restrict )' # psql-only meta-commands break SQL editors
+    | grep -vE '^(SET |SELECT pg_catalog\.set_config|--|$|\\(un)?restrict )' # keep setval(); drop psql-only meta-commands
   echo "commit;"
 } > deploy/02-demo-data.sql
+# Self-check: load both files into a fresh database and insert into every serial table.
+CHECKDB=klusmatch_check_$$
+psql -q "$BASE/postgres" -c "create database $CHECKDB"
+trap 'psql -q "$BASE/postgres" -c "drop database if exists $TMPDB" >/dev/null; psql -q "$BASE/postgres" -c "drop database if exists $CHECKDB" >/dev/null' EXIT
+psql -q -v ON_ERROR_STOP=1 "$BASE/$CHECKDB" -f deploy/01-schema.sql >/dev/null
+psql -q -v ON_ERROR_STOP=1 "$BASE/$CHECKDB" -f deploy/02-demo-data.sql >/dev/null
+psql -q -v ON_ERROR_STOP=1 "$BASE/$CHECKDB" -c "insert into audit_log (action, entity_type) values ('deploy.check', 'system')" \
+  -c "insert into job_events (job_id, kind) select id, 'published' from jobs limit 1" >/dev/null
+echo "self-check passed (fresh load + new inserts)"
 wc -l deploy/01-schema.sql deploy/02-demo-data.sql

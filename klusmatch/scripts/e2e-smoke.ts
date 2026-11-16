@@ -28,6 +28,12 @@ const step = (s: string) => console.log(`\n▶ ${s}`);
 const shot = (p: Page, name: string) => p.screenshot({ path: path.join(SHOTS, `${name}.png`), fullPage: true });
 
 const browser = await chromium.launch();
+// Optional HTTP Basic auth for protected test deployments (DEMO_BASIC_AUTH on the server).
+if (process.env.E2E_HTTP_USER) {
+  const creds = { username: process.env.E2E_HTTP_USER, password: process.env.E2E_HTTP_PASSWORD ?? '' };
+  const newContext = browser.newContext.bind(browser);
+  browser.newContext = (opts: Record<string, unknown> = {}) => newContext({ ...opts, httpCredentials: creds });
+}
 const openPages: Page[] = [];
 try {
   // A real PNG to upload: render a small "fence" and screenshot it.
@@ -136,7 +142,16 @@ try {
   await visitor.getByText(`opgeruimd achtergelaten (${RUN})`).waitFor();
   await visitor.getByText(`graag tot een volgende keer! (${RUN})`).waitFor();
   await visitor.locator(`img[alt="Schutting in Utrecht ${RUN}"]`).waitFor();
-  const imgOk = await visitor.locator(`img[alt="Schutting in Utrecht ${RUN}"]`).evaluate((i: HTMLImageElement) => i.complete && i.naturalWidth > 0);
+  const portfolioImg = visitor.locator(`img[alt="Schutting in Utrecht ${RUN}"]`);
+  await portfolioImg.scrollIntoViewIfNeeded(); // images are lazy-loaded
+  const imgOk = await portfolioImg.evaluate(
+    (i: HTMLImageElement) =>
+      new Promise<boolean>((resolve) => {
+        if (i.complete) return resolve(i.naturalWidth > 0);
+        i.addEventListener('load', () => resolve(i.naturalWidth > 0), { once: true });
+        i.addEventListener('error', () => resolve(false), { once: true });
+      }),
+  );
   if (!imgOk) throw new Error('portfolio image did not load for an anonymous visitor');
   await shot(visitor, '11-public-profile');
   // Clean up (the demo database is reused between runs) and exercise removal.
