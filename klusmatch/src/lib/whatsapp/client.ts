@@ -77,6 +77,20 @@ class SimulatorTransport implements WhatsAppTransport {
 }
 
 let transport: WhatsAppTransport | undefined;
+const simulator = new SimulatorTransport();
+
+/** Transport for a conversation: simulated conversations never leave the simulator. */
+export function transportFor(simulated: boolean): WhatsAppTransport {
+  return simulated ? simulator : waTransport();
+}
+
+/** Simulator-generated ids (signed server-side by the simulator route). */
+export const isSimulatedMessageId = (id: string) => id.startsWith('wamid.sim.');
+
+export function resetTransport() {
+  transport = undefined;
+}
+
 export function waTransport(): WhatsAppTransport {
   if (transport) return transport;
   const e = env();

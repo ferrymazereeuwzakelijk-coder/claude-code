@@ -6,6 +6,7 @@ import { audit } from '../audit';
 export type WaContact = {
   id: string; phone_e164: string; profile_name: string | null; user_id: string | null;
   consent: 'unknown' | 'pending' | 'granted' | 'opted_out'; pending_action: PendingAction | null; last_inbound_at: Date | null;
+  simulated: boolean;
 };
 
 export type PendingAction =
@@ -15,9 +16,10 @@ export type PendingAction =
   | { type: 'review_rating'; jobId: string; company: string }
   | { type: 'review_text'; jobId: string; rating: number };
 
-export async function upsertContact(db: Db, phone: string, profileName?: string): Promise<WaContact> {
+export async function upsertContact(db: Db, phone: string, profileName?: string, simulated = false): Promise<WaContact> {
+  // `simulated` is only set when the contact is created; a real number never turns into a simulated one.
   const [c] = await db<WaContact[]>`
-    insert into wa_contacts (phone_e164, profile_name, last_inbound_at) values (${phone}, ${profileName ?? null}, now())
+    insert into wa_contacts (phone_e164, profile_name, last_inbound_at, simulated) values (${phone}, ${profileName ?? null}, now(), ${simulated})
     on conflict (phone_e164) do update set last_inbound_at = now(), profile_name = coalesce(excluded.profile_name, wa_contacts.profile_name)
     returning *`;
   return c;

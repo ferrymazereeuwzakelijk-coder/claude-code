@@ -40,7 +40,10 @@ export async function POST(req: Request) {
       await sql()`insert into wa_simulator_media (id, storage_key, mime_type) values (${imageId}, ${key}, ${mimeType})`;
     }
     if (!text && !imageId) throw new UserFacingError('Typ een bericht of kies een foto.');
-    const waMessageId = String(form.get('replayId') || `wamid.sim.${randomUUID()}`);
+    const replayId = String(form.get('replayId') ?? '');
+    // Only simulator ids may be replayed; they mark the conversation as simulated (never sent to Meta).
+    if (replayId && !/^wamid\.sim\.[0-9a-f-]{36}$/.test(replayId)) throw new UserFacingError('Ongeldig bericht-id.');
+    const waMessageId = replayId || `wamid.sim.${randomUUID()}`;
     const body = JSON.stringify(buildInboundPayload({ from: phone, name, id: waMessageId, text, imageId, mimeType }));
     const result = await ingestWebhook(body, signPayload(body, env().WHATSAPP_APP_SECRET));
     kickWorker();

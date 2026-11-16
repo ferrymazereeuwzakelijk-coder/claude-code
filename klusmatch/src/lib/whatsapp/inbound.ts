@@ -9,7 +9,7 @@ import { completeJob } from '../jobs/lifecycle';
 import { createReview } from '../reviews';
 import { storeMedia } from '../storage';
 import { rateLimit, RateLimitError } from '../rate-limit';
-import { waTransport } from './client';
+import { isSimulatedMessageId, transportFor } from './client';
 import { ensureCustomerForContact, redeemLinkCode, setPendingAction, upsertContact, type WaContact } from './contacts';
 import { queueWhatsApp } from './outbound';
 import { messageText, toE164, type InboundMessage } from './payload';
@@ -58,7 +58,7 @@ async function reply(contactId: string, text: string, allowOptedOut = false) {
 
 async function routeMessage(m: InboundMessage): Promise<'processed' | 'ignored'> {
   const db = sql();
-  const contact = await upsertContact(db, toE164(m.from), m.profileName);
+  const contact = await upsertContact(db, toE164(m.from), m.profileName, isSimulatedMessageId(m.id));
   const text = messageText(m);
 
   // ── opt-out / opt-in always first ──
@@ -234,7 +234,7 @@ async function intakeTurn(contact: WaContact, m: InboundMessage) {
   const mediaIds: string[] = [];
   const media = m.image ?? m.video;
   if (media) {
-    const data = await waTransport().downloadMedia(media.id);
+    const data = await transportFor(contact.simulated).downloadMedia(media.id);
     try {
       const stored = await storeMedia(db, data, { waContactId: contact.id, userId: contact.user_id });
       mediaIds.push(stored.id);
