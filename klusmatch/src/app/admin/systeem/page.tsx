@@ -44,10 +44,10 @@ export default async function AdminSystem() {
       <PageHeader eyebrow="Beheer" title="Systeem, AI & integraties" />
       <div className="mb-6 flex flex-wrap gap-2 text-xs">
         <Badge tone={e.ANTHROPIC_API_KEY || e.AI_PROVIDER === 'anthropic' ? 'green' : 'amber'}>AI: {e.ANTHROPIC_API_KEY || e.AI_PROVIDER === 'anthropic' ? `Claude (${e.AI_MODEL})` : 'regelgebaseerd — geen API-sleutel'}</Badge>
-        <Badge tone={e.WHATSAPP_MODE === 'cloud_api' ? 'green' : 'amber'}>WhatsApp: {e.WHATSAPP_MODE === 'cloud_api' ? 'Cloud API' : 'simulator'}</Badge>
+        <Badge tone={e.WHATSAPP_MODE === 'cloud_api' ? 'green' : 'amber'}>WhatsApp: {{ cloud_api: 'Cloud API', simulator: 'simulator', disabled: 'uit' }[e.WHATSAPP_MODE]}</Badge>
         <Badge tone="neutral">Opslag: {e.STORAGE_DRIVER}</Badge>
         <Badge tone="neutral">Billing: {e.FEATURE_BILLING ? 'aan' : 'uit (feature flag)'}</Badge>
-        <Badge tone="neutral">Worker: {e.INLINE_WORKER ? 'inline (dev)' : 'los proces'}</Badge>
+        <Badge tone="neutral">Worker: {e.INLINE_WORKER ? 'na elk verzoek' : 'los proces'}</Badge>
       </div>
 
       <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
