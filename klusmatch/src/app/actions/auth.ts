@@ -68,3 +68,31 @@ export async function logoutAction() {
   await endSession();
   redirect('/');
 }
+
+export async function changePasswordAction(_: ActionState, form: FormData): Promise<ActionState> {
+  const { requireRole } = await import('@/lib/auth/guards');
+  const { hashPassword, verifyPassword } = await import('@/lib/auth/password');
+  const { cookies } = await import('next/headers');
+  const { hashToken, SESSION_COOKIE } = await import('@/lib/auth/session');
+  const user = await requireRole();
+  const current = String(form.get('current') ?? '');
+  const next = String(form.get('next') ?? '');
+  if (next.length < 10 || next.length > 200) return { error: 'Nieuw wachtwoord moet minimaal 10 tekens hebben.' };
+  const db = sql();
+  try {
+    await rateLimit(db, `pwchange:${user.id}`, 10, 3600);
+  } catch (e) {
+    if (e instanceof RateLimitError) return { error: e.message };
+    throw e;
+  }
+  const [row] = await db<{ password_hash: string | null }[]>`select password_hash from users where id = ${user.id}`;
+  if (!(await verifyPassword(current, row?.password_hash ?? null))) return { error: 'Je huidige wachtwoord klopt niet.' };
+  const token = (await cookies()).get(SESSION_COOKIE)?.value ?? '';
+  await db.begin(async (tx) => {
+    await tx`update users set password_hash = ${await hashPassword(next)} where id = ${user.id}`;
+    // Sign out every other session (e.g. a lost phone), keep the current one.
+    await tx`delete from sessions where user_id = ${user.id} and token_hash <> ${hashToken(token)}`;
+    await audit(tx, { actorId: user.id, action: 'auth.password_changed', entityType: 'user', entityId: user.id });
+  });
+  return { ok: 'Je wachtwoord is gewijzigd.' };
+}

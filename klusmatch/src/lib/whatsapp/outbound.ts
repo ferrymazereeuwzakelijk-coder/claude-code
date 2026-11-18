@@ -2,6 +2,7 @@ import type { Db } from '../db';
 import { sql } from '../db';
 import { enqueue } from '../queue';
 import { transportFor } from './client';
+import { isWhatsAppEnabled } from '../env';
 import { renderTemplate, type TemplateName } from './templates';
 
 const SERVICE_WINDOW_MS = 24 * 3600 * 1000;
@@ -18,9 +19,10 @@ export async function queueWhatsApp(
   db: Db,
   contactId: string,
   msg: { text: string; template?: { name: TemplateName; params: string[] }; allowOptedOut?: boolean },
-): Promise<'queued' | 'skipped_opted_out' | 'skipped_no_template'> {
+): Promise<'queued' | 'skipped_opted_out' | 'skipped_no_template' | 'skipped_disabled'> {
   const [c] = await db<Contact[]>`select id, phone_e164, consent, last_inbound_at, simulated from wa_contacts where id = ${contactId}`;
   if (!c) throw new Error('Unknown WhatsApp contact');
+  if (!c.simulated && !isWhatsAppEnabled()) return 'skipped_disabled';
   if (c.consent === 'opted_out' && !msg.allowOptedOut) return 'skipped_opted_out';
   const inWindow = !!c.last_inbound_at && Date.now() - new Date(c.last_inbound_at).getTime() < SERVICE_WINDOW_MS;
   let kind: 'text' | 'template' = 'text';

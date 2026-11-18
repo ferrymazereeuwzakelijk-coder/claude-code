@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { currentUser } from '@/lib/auth/session';
 import { homeFor } from '@/lib/auth/guards';
 import { Logo } from '@/components/ui';
+import { SiteFooter } from '@/components/site-footer';
 
 const STEPS = [
   { n: '01', t: 'Stuur een foto', d: 'Via WhatsApp of de website. Vertel in je eigen woorden wat er moet gebeuren.' },
@@ -182,13 +183,7 @@ export default async function Home() {
         </div>
       </section>
 
-      <footer className="border-t border-navy-100 bg-white">
-        <div className="mx-auto flex max-w-6xl flex-col gap-4 px-6 py-10 text-sm text-navy-400 sm:flex-row sm:items-center">
-          <Logo />
-          <p className="sm:ml-6">Klussen in huis en tuin, slim geregeld.</p>
-          <p className="sm:ml-auto">© {new Date().getFullYear()} KlusMatch</p>
-        </div>
-      </footer>
+      <SiteFooter />
     </div>
   );
 }

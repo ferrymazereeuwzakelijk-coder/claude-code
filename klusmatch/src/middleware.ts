@@ -1,6 +1,6 @@
 import { NextResponse, type NextRequest } from 'next/server';
 
-const PROTECTED = ['/klant', '/vakman', '/admin', '/meldingen'];
+const PROTECTED = ['/klant', '/vakman', '/admin', '/meldingen', '/account'];
 // Machine-to-machine endpoints have their own signature checks and must stay reachable.
 const OPEN_PATHS = ['/api/whatsapp/webhook', '/api/stripe/webhook'];
 

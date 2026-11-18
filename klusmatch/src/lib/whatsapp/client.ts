@@ -97,6 +97,8 @@ export function waTransport(): WhatsAppTransport {
   if (e.WHATSAPP_MODE === 'cloud_api') {
     if (!e.WHATSAPP_ACCESS_TOKEN || !e.WHATSAPP_PHONE_NUMBER_ID) throw new Error('WHATSAPP_MODE=cloud_api requires WHATSAPP_ACCESS_TOKEN and WHATSAPP_PHONE_NUMBER_ID');
     transport = new CloudApiTransport(e.WHATSAPP_ACCESS_TOKEN, e.WHATSAPP_PHONE_NUMBER_ID, e.WHATSAPP_GRAPH_VERSION);
+  } else if (e.WHATSAPP_MODE === 'disabled') {
+    throw new Error('WhatsApp is disabled (WHATSAPP_MODE=disabled)');
   } else {
     transport = new SimulatorTransport();
   }

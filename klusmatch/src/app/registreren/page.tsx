@@ -66,7 +66,7 @@ export default async function RegisterPage({ searchParams }: { searchParams: Pro
           <p className="mt-1.5 text-xs text-navy-400">Minimaal 10 tekens.</p>
         </div>
         <SubmitButton className="btn-primary w-full py-3" pendingText="Account aanmaken…">Account aanmaken</SubmitButton>
-        <p className="text-xs text-navy-400">Door je aan te melden ga je akkoord met de voorwaarden en het privacybeleid.</p>
+        <p className="text-xs text-navy-400">Door je aan te melden ga je akkoord met de <Link href="/voorwaarden" className="underline" target="_blank">algemene voorwaarden</Link> en de <Link href="/privacy" className="underline" target="_blank">privacyverklaring</Link>.</p>
       </ActionForm>
     </AuthLayout>
   );

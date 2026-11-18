@@ -7,7 +7,7 @@ const schema = z.object({
   ANTHROPIC_API_KEY: z.string().optional(),
   AI_MODEL: z.string().default('claude-opus-5-5'),
   AI_PROVIDER: z.enum(['auto', 'anthropic', 'rules']).default('auto'),
-  WHATSAPP_MODE: z.enum(['simulator', 'cloud_api']).default('simulator'),
+  WHATSAPP_MODE: z.enum(['simulator', 'cloud_api', 'disabled']).default('simulator'),
   WHATSAPP_APP_SECRET: z.string().min(8),
   WHATSAPP_VERIFY_TOKEN: z.string().min(8),
   WHATSAPP_ACCESS_TOKEN: z.string().optional(),
@@ -51,6 +51,10 @@ export function env(): Env {
 
 export function isSimulatorEnabled(): boolean {
   return env().APP_ENV !== 'production';
+}
+
+export function isWhatsAppEnabled(): boolean {
+  return env().WHATSAPP_MODE !== 'disabled';
 }
 
 export function resetEnvCache() {

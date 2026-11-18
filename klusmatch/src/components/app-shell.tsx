@@ -57,7 +57,7 @@ export async function AppShell({ user, children }: { user: SessionUser; children
               <p className="text-sm font-medium leading-tight text-navy-900">{user.fullName}</p>
               <p className="text-xs leading-tight text-navy-400">{user.email ?? user.phone}</p>
             </div>
-            <span className="grid h-9 w-9 place-items-center rounded-full bg-gradient-to-br from-navy-800 to-navy-600 text-xs font-bold text-white">{initials}</span>
+            <Link href="/account" title="Mijn account" aria-label="Mijn account" className="grid h-9 w-9 place-items-center rounded-full bg-gradient-to-br from-navy-800 to-navy-600 text-xs font-bold text-white transition hover:ring-4 hover:ring-navy-100">{initials}</Link>
             <form action={logoutAction}>
               <button className="btn-ghost px-2.5" title="Uitloggen" aria-label="Uitloggen">
                 <svg viewBox="0 0 24 24" className="h-[18px] w-[18px]" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden>
@@ -77,7 +77,8 @@ export async function AppShell({ user, children }: { user: SessionUser; children
       </header>
       <main className="mx-auto max-w-6xl px-4 py-8 sm:px-6 sm:py-10">{children}</main>
       <footer className="mx-auto max-w-6xl px-4 pb-10 text-xs text-navy-400 sm:px-6">
-        <Link href="/" className="hover:text-navy-600">KlusMatch</Link> · Persoonsgegevens worden nooit openbaar getoond.
+        <Link href="/" className="hover:text-navy-600">KlusMatch</Link> · Persoonsgegevens worden nooit openbaar getoond. ·{' '}
+        <Link href="/voorwaarden" className="hover:text-navy-600">Voorwaarden</Link> · <Link href="/privacy" className="hover:text-navy-600">Privacy</Link>
       </footer>
     </div>
   );
