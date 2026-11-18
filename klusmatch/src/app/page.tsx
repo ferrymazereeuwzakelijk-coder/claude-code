@@ -5,7 +5,8 @@ import { Logo } from '@/components/ui';
 import { SiteFooter } from '@/components/site-footer';
 import { isWhatsAppEnabled } from '@/lib/env';
 import Image from 'next/image';
-import { img, tradeImage } from '@/lib/images';
+import { img, tradeImage, tradeImageAlt } from '@/lib/images';
+import { BeforeAfter } from '@/components/before-after';
 
 const STEPS = [
   { n: '01', t: 'Stuur een foto', d: 'Via WhatsApp of de website. Vertel in je eigen woorden wat er moet gebeuren.', image: 'steps/stap-1-foto.jpg' },
@@ -14,9 +15,17 @@ const STEPS = [
 ];
 
 // Launch region: trade cards link to the Utrecht landing pages.
-const POPULAR: [string, string][] = [
-  ['schilderwerk', 'Schilder'], ['tuinonderhoud', 'Hovenier'], ['loodgieter', 'Loodgieter'], ['bestrating', 'Stratenmaker'],
-  ['dakwerk', 'Dakdekker'], ['elektra', 'Elektricien'], ['timmerwerk', 'Timmerman'], ['badkamer', 'Badkamer'],
+// [slug, label, use the alternative photo] — the mix shows the range of people who do this work.
+const POPULAR: [string, string, boolean][] = [
+  ['schilderwerk', 'Schilder', true], ['tuinonderhoud', 'Hovenier', true], ['loodgieter', 'Loodgieter', false], ['bestrating', 'Stratenmaker', false],
+  ['dakwerk', 'Dakdekker', false], ['elektra', 'Elektricien', true], ['timmerwerk', 'Timmerman', true], ['badkamer', 'Badkamer', false],
+];
+
+const EXAMPLES = [
+  { key: 'schutting', label: 'Schutting beitsen' },
+  { key: 'tuin', label: 'Tuinonderhoud' },
+  { key: 'kozijn', label: 'Kozijn schilderen' },
+  { key: 'badkamer', label: 'Badkamer renoveren' },
 ];
 
 export default async function Home() {
@@ -99,8 +108,8 @@ export default async function Home() {
           <Link href="/registreren" className="text-sm font-semibold text-leaf-700 hover:underline">Zie je jouw klus niet? Plaats hem gewoon →</Link>
         </div>
         <div className="mt-10 grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-4">
-          {POPULAR.map(([slug, label]) => {
-            const photo = tradeImage(slug);
+          {POPULAR.map(([slug, label, alt]) => {
+            const photo = alt ? tradeImageAlt(slug) : tradeImage(slug);
             return (
               <Link key={slug} href={`/klus/${slug}/utrecht`} className="group relative overflow-hidden rounded-2xl bg-navy-900 shadow-card">
                 {photo && <Image {...photo} sizes="(min-width: 768px) 25vw, 50vw" className="aspect-[4/3] w-full object-cover opacity-90 transition duration-500 group-hover:scale-105 group-hover:opacity-100" />}
@@ -108,6 +117,21 @@ export default async function Home() {
               </Link>
             );
           })}
+        </div>
+      </section>
+
+      {/* Before / after */}
+      <section className="mx-auto max-w-6xl px-6 pt-24">
+        <div className="grid items-center gap-10 lg:grid-cols-[0.8fr_1.2fr]">
+          <div>
+            <p className="eyebrow">Van foto naar resultaat</p>
+            <h2 className="mt-3 text-3xl font-bold text-navy-900 sm:text-4xl">Stuur een foto van hoe het nu is.</h2>
+            <p className="mt-5 text-lg leading-relaxed text-navy-500">
+              Vakmensen zien precies wat er moet gebeuren, dus je krijgt offertes die kloppen — zonder dat er eerst iemand langs hoeft om te kijken.
+            </p>
+            <Link href={user?.role === 'customer' ? '/klant/nieuw' : '/registreren'} className="btn-primary mt-8 px-6 py-3.5">Stuur je foto</Link>
+          </div>
+          <BeforeAfter examples={EXAMPLES.map((e) => ({ ...e, before: img(`voorbeeld/${e.key}-voor.jpg`), after: img(`voorbeeld/${e.key}-na.jpg`) }))} />
         </div>
       </section>
 

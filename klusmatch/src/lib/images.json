@@ -88,5 +88,95 @@
   "alt": "Specialisten in beschermende pakken verwijderen golfplaten van een schuur.",
   "width": 1536,
   "height": 1024
+ },
+ "trades-alt/schilderwerk-2.jpg": {
+  "alt": "Een vrouwelijke schilder schildert de voordeur van een bakstenen rijtjeshuis.",
+  "width": 1536,
+  "height": 1024
+ },
+ "trades-alt/elektra-2.jpg": {
+  "alt": "Een vrouwelijke elektricien monteert een plafondlamp op een trapje.",
+  "width": 1536,
+  "height": 1024
+ },
+ "trades-alt/tuinonderhoud-2.jpg": {
+  "alt": "Een jonge hovenier legt graszoden in een achtertuin.",
+  "width": 1536,
+  "height": 1024
+ },
+ "trades-alt/loodgieter-2.jpg": {
+  "alt": "Een ervaren loodgieter geeft uitleg aan een bewoner in de badkamer.",
+  "width": 1536,
+  "height": 1024
+ },
+ "trades-alt/timmerwerk-2.jpg": {
+  "alt": "Een vrouwelijke timmerman bevestigt planken aan een houten schutting.",
+  "width": 1536,
+  "height": 1024
+ },
+ "trades-alt/badkamer-2.jpg": {
+  "alt": "Een tegelzetter plaatst grote wandtegels met een waterpas.",
+  "width": 1536,
+  "height": 1024
+ },
+ "voorbeeld/schutting-voor.jpg": {
+  "alt": "Een verweerde houten schutting met afbladderende verf.",
+  "width": 1536,
+  "height": 1024
+ },
+ "voorbeeld/schutting-na.jpg": {
+  "alt": "Dezelfde schutting is opnieuw donkerbruin gebeitst.",
+  "width": 1536,
+  "height": 1024
+ },
+ "voorbeeld/tuin-voor.jpg": {
+  "alt": "Een kleine achtertuin met hoog gras en overwoekerde planten.",
+  "width": 1536,
+  "height": 1024
+ },
+ "voorbeeld/tuin-na.jpg": {
+  "alt": "Een verzorgde achtertuin met gemaaid gras en gesnoeide haag.",
+  "width": 1536,
+  "height": 1024
+ },
+ "voorbeeld/badkamer-voor.jpg": {
+  "alt": "Een verouderde badkamer met beige wandtegels en een ligbad.",
+  "width": 1536,
+  "height": 1024
+ },
+ "voorbeeld/badkamer-na.jpg": {
+  "alt": "Een moderne badkamer met lichte tegels en een inloopdouche.",
+  "width": 1536,
+  "height": 1024
+ },
+ "voorbeeld/kozijn-voor.jpg": {
+  "alt": "Een houten raamkozijn met afgebladderde witte verf.",
+  "width": 1536,
+  "height": 1024
+ },
+ "voorbeeld/kozijn-na.jpg": {
+  "alt": "Hetzelfde raamkozijn is opnieuw strak wit geschilderd.",
+  "width": 1536,
+  "height": 1024
+ },
+ "ads/klant-vierkant.jpg": {
+  "alt": "Een bewoner fotografeert een vochtplek op het plafond.",
+  "width": 1024,
+  "height": 1024
+ },
+ "ads/vakman-vierkant.jpg": {
+  "alt": "Een vakman bekijkt lachend zijn telefoon in een bedrijfsbus.",
+  "width": 1024,
+  "height": 1024
+ },
+ "ads/klant-staand.jpg": {
+  "alt": "Een bewoner fotografeert een beschadigde schutting in de tuin.",
+  "width": 1024,
+  "height": 1536
+ },
+ "ads/vakman-staand.jpg": {
+  "alt": "Een dakdekker bekijkt zijn telefoon tijdens een pauze op de steiger.",
+  "width": 1024,
+  "height": 1536
  }
 }

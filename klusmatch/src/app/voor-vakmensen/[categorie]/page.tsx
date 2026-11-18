@@ -8,7 +8,7 @@ import { CITIES, TRADE } from '@/lib/seo';
 import { Badge, Logo, eur, relTime } from '@/components/ui';
 import { SiteFooter } from '@/components/site-footer';
 import Image from 'next/image';
-import { tradeImage } from '@/lib/images';
+import { tradeImageAlt as tradeImage } from '@/lib/images';
 
 export const revalidate = 600;
 

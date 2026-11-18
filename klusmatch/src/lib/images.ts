@@ -18,3 +18,8 @@ export function img(file: string): SiteImage {
 export function tradeImage(slug: string): SiteImage | null {
   return m[`trades/${slug}.jpg`] ? img(`trades/${slug}.jpg`) : null;
 }
+
+/** Alternative photo for a trade (more variety in who is shown), falling back to the default. */
+export function tradeImageAlt(slug: string): SiteImage | null {
+  return m[`trades-alt/${slug}-2.jpg`] ? img(`trades-alt/${slug}-2.jpg`) : tradeImage(slug);
+}
