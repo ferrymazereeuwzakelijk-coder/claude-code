@@ -89,13 +89,13 @@ export async function acceptQuote(customerId: string, quoteId: string, via: 'web
 export type QuoteView = {
   id: string; ref: string; amount_cents: number; price_type: 'fixed' | 'estimate' | 'hourly'; message: string; earliest_start: Date | null;
   status: string; created_at: Date; contractor_id: string; company_name: string; verification: string; distance_km: number;
-  categories: string[];
+  categories: string[]; founding_member_no: number | null;
 };
 
 export async function quotesForJob(db: Db, jobId: string): Promise<QuoteView[]> {
   return db<QuoteView[]>`
     select q.id, q.ref, q.amount_cents, q.price_type, q.message, q.earliest_start, q.status, q.created_at,
-           cp.user_id as contractor_id, cp.company_name, cp.verification,
+           cp.user_id as contractor_id, cp.company_name, cp.verification, cp.founding_member_no,
            round(km_distance(cp.base_lat, cp.base_lng, j.lat, j.lng)::numeric, 0)::float as distance_km,
            array(select c.name_nl from contractor_categories cc join categories c on c.slug = cc.category_slug where cc.contractor_id = cp.user_id) as categories
     from quotes q

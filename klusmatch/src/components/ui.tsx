@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import type { ReactNode } from 'react';
 
-export function Logo({ className = '' }: { className?: string }) {
+export function Logo({ className = '', light = false }: { className?: string; light?: boolean }) {
   return (
     <Link href="/" className={`group inline-flex items-center gap-2 ${className}`} aria-label="KlusMatch home">
       <span className="relative grid h-8 w-8 place-items-center rounded-[10px] bg-navy-900 text-white shadow-sm transition group-hover:rotate-[-4deg]">
@@ -10,8 +10,8 @@ export function Logo({ className = '' }: { className?: string }) {
           <path d="m8.5 14.5 2.5 2.5 4.5-5" className="text-leaf-400" stroke="#34D399" />
         </svg>
       </span>
-      <span className="font-display text-[17px] font-extrabold tracking-tight text-navy-900">
-        Klus<span className="text-leaf-600">Match</span>
+      <span className={`font-display text-[17px] font-extrabold tracking-tight ${light ? 'text-white' : 'text-navy-900'}`}>
+        Klus<span className={light ? 'text-leaf-400' : 'text-leaf-600'}>Match</span>
       </span>
     </Link>
   );

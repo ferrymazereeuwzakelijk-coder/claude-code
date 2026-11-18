@@ -7,6 +7,9 @@ import { sql } from '@/lib/db';
 import { contractorFeed, getContractorProfile, type FeedFilters } from '@/lib/contractors';
 import { listCategories } from '@/lib/categories';
 import { toggleSaveJobAction } from '@/app/actions/contractor';
+import { ShareCard } from '@/components/share-card';
+import { referralLink, referralStats, whatsappShareLink } from '@/lib/growth';
+import { listPortfolio } from '@/lib/portfolio';
 
 export const metadata = { title: 'Klussen' };
 
@@ -32,6 +35,15 @@ export default async function ContractorFeedPage({ searchParams }: { searchParam
            count(*) filter (where created_at > now() - interval '7 days')::int as this_week
     from quotes where contractor_id = ${user.id}`;
   const mine = categories.filter((c) => profile.categories.includes(c.slug));
+  const [refStats, portfolio] = await Promise.all([referralStats(db, user.id), listPortfolio(db, user.id)]);
+  const checklist = [
+    { done: true, label: 'Bedrijfsprofiel ingevuld', href: '/vakman/profiel' },
+    { done: profile.verification === 'verified', label: 'KvK geverifieerd', href: '/vakman/profiel' },
+    { done: profile.description.trim().length >= 40, label: 'Beschrijving van je bedrijf (vergroot je kans)', href: '/vakman/profiel' },
+    { done: portfolio.length >= 3, label: `Minstens 3 portfoliofoto’s (${portfolio.length}/3)`, href: '/vakman/profiel' },
+    { done: profile.whatsapp_alerts, label: 'Klussen direct via WhatsApp', href: '/vakman/profiel#whatsapp' },
+  ];
+  const todo = checklist.filter((c) => !c.done);
   const q = (patch: Partial<SP>) => {
     const p = new URLSearchParams(Object.entries({ ...sp, ...patch }).filter(([, v]) => v) as [string, string][]);
     return `/vakman${p.toString() ? `?${p}` : ''}`;
@@ -50,6 +62,29 @@ export default async function ContractorFeedPage({ searchParams }: { searchParam
           </Notice>
         </div>
       )}
+
+      <div className="mb-6 grid gap-4 lg:grid-cols-2">
+        {todo.length > 0 && (
+          <div className="card p-5">
+            <div className="flex items-center justify-between">
+              <p className="font-semibold text-navy-900">Maak je profiel sterker</p>
+              <span className="text-sm text-navy-400">{checklist.length - todo.length}/{checklist.length}</span>
+            </div>
+            <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-navy-50"><div className="h-1.5 rounded-full bg-leaf-500" style={{ width: `${((checklist.length - todo.length) / checklist.length) * 100}%` }} /></div>
+            <ul className="mt-4 space-y-2 text-sm">
+              {checklist.map((c) => (
+                <li key={c.label} className="flex items-center gap-2.5">
+                  <span className={`grid h-5 w-5 shrink-0 place-items-center rounded-full text-[11px] ${c.done ? 'bg-leaf-500 text-white' : 'border border-navy-200 text-transparent'}`}>✓</span>
+                  {c.done ? <span className="text-navy-400 line-through">{c.label}</span> : <Link href={c.href} className="text-navy-800 hover:text-leaf-700 hover:underline">{c.label}</Link>}
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+        {profile.referral_code && (
+          <ShareCard link={referralLink(profile.referral_code)} whatsappHref={whatsappShareLink(profile.referral_code)} signedUp={refStats.signed_up} verified={refStats.verified} foundingNo={profile.founding_member_no} />
+        )}
+      </div>
 
       <div className="mb-6 grid grid-cols-3 gap-3">
         <Stat label="Beschikbaar" value={jobs.length} hint="klussen in je feed" />

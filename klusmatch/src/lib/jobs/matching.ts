@@ -1,6 +1,9 @@
 import type { Db } from '../db';
 import { notify } from '../notifications';
 import { audit } from '../audit';
+import { env } from '../env';
+import { formatEuro } from '../intake/fields';
+import { queueWhatsApp } from '../whatsapp/outbound';
 
 export type MatchingRules = { max_contractors_per_job: number; max_new_job_notifications_per_day: number; require_verified: boolean };
 
@@ -57,9 +60,26 @@ export async function matchJob(db: Db, jobId: string) {
         link: `/vakman/klussen/${job.id}`,
         dedupeKey: `new_job:${job.id}:${c.user_id}`,
       });
+      await whatsappAlert(db, c.user_id, job, Math.round(c.distance_km));
       notified++;
     }
   }
   await audit(db, { action: 'job.matched', entityType: 'job', entityId: job.id, metadata: { candidates: candidates.length, notified } });
   return { matched: candidates.length, notified };
+}
+
+/** Sends a WhatsApp alert to contractors who opted in on their profile (template outside the 24h window). */
+async function whatsappAlert(db: Db, contractorId: string, job: { id: string; title: string; region_name: string; budget_max_cents?: number | null }, km: number) {
+  const [c] = await db<{ id: string }[]>`
+    select w.id from wa_contacts w join contractor_profiles cp on cp.user_id = w.user_id
+    where w.user_id = ${contractorId} and cp.whatsapp_alerts and w.consent = 'granted' and not w.simulated limit 1`;
+  if (!c) return;
+  const [j] = await db<{ category: string; budget_max_cents: number | null }[]>`
+    select cat.name_nl as category, j.budget_max_cents from jobs j join categories cat on cat.slug = j.category_slug where j.id = ${job.id}`;
+  const link = `${env().APP_BASE_URL}/vakman/klussen/${job.id}`;
+  const budget = j?.budget_max_cents ? `budget tot ${formatEuro(j.budget_max_cents / 100)}` : 'budget in overleg';
+  await queueWhatsApp(db, c.id, {
+    text: `🔨 Nieuwe klus op ${km} km: *${job.title}*\n${j?.category ?? ''} · ${job.region_name} · ${budget}\n\nBekijk de foto's en stuur een offerte: ${link}\n\nStuur STOP om deze meldingen uit te zetten.`,
+    template: { name: 'klusmatch_new_job', params: [j?.category ?? 'klus', job.region_name, budget, link] },
+  });
 }

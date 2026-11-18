@@ -2,15 +2,17 @@ import Link from 'next/link';
 import { AuthLayout } from '@/components/auth-layout';
 import { ActionForm, SubmitButton } from '@/components/forms';
 import { registerAction } from '@/app/actions/auth';
+import { foundingStats } from '@/lib/growth';
 
 export const metadata = { title: 'Account aanmaken' };
 
-export default async function RegisterPage({ searchParams }: { searchParams: Promise<{ rol?: string; uitnodiging?: string }> }) {
-  const { rol, uitnodiging } = await searchParams;
+export default async function RegisterPage({ searchParams }: { searchParams: Promise<{ rol?: string; uitnodiging?: string; ref?: string }> }) {
+  const { rol, uitnodiging, ref } = await searchParams;
   const contractor = rol === 'vakman';
+  const founding = contractor ? await foundingStats() : null;
   return (
     <AuthLayout
-      title={contractor ? 'Word KlusMatch-vakman' : 'Maak je account aan'}
+      title={contractor ? 'Stap 1 van 2 — je account' : 'Maak je account aan'}
       subtitle={
         <>
           Heb je al een account?{' '}
@@ -35,8 +37,12 @@ export default async function RegisterPage({ searchParams }: { searchParams: Pro
         </div>
       }
     >
+      {founding && founding.left > 0 && (
+        <p className="mb-5 rounded-xl bg-amber-50 px-4 py-3 text-sm text-amber-900">★ Nog <strong>{founding.left}</strong> van de {founding.limit} founding-member-plekken. Daarna: je bedrijfsgegevens (1 minuut).</p>
+      )}
       <ActionForm action={registerAction} className="space-y-4">
         {uitnodiging && <input type="hidden" name="invite" value={uitnodiging.slice(0, 12)} />}
+        {ref && <input type="hidden" name="ref" value={ref.slice(0, 12)} />}
         <fieldset>
           <legend className="label">Ik ben een</legend>
           <div className="grid grid-cols-2 gap-2">

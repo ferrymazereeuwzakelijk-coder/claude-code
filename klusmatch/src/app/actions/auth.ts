@@ -11,6 +11,7 @@ import { rateLimit, RateLimitError } from '@/lib/rate-limit';
 import { UserFacingError } from '@/lib/errors';
 import { audit } from '@/lib/audit';
 import { claimInvite } from '@/lib/outreach';
+import { recordReferral } from '@/lib/growth';
 import type { ActionState } from '@/components/forms';
 
 export async function loginAction(_: ActionState, form: FormData): Promise<ActionState> {
@@ -53,6 +54,7 @@ export async function registerAction(_: ActionState, form: FormData): Promise<Ac
       ip,
       );
       if (u.role === 'contractor') await claimInvite(tx, invite, u.id);
+      await recordReferral(tx, String(form.get('ref') ?? '').toUpperCase(), u.id);
       return u;
     });
     await startSession(user.id);

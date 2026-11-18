@@ -9,6 +9,11 @@ export const TEMPLATES = {
     category: 'UTILITY',
     body: 'Je hebt een nieuwe offerte ontvangen voor je klus {{1}}: {{2}} van {{3}}. Antwoord OFFERTES om alle offertes te bekijken.',
   },
+  klusmatch_new_job: {
+    language: 'nl',
+    category: 'UTILITY',
+    body: 'Nieuwe klus bij jou in de buurt: {{1}} in {{2}} ({{3}}). Bekijk de foto’s en stuur een offerte: {{4}}. Stuur STOP om deze meldingen uit te zetten.',
+  },
   klusmatch_quote_accepted_contractor: {
     language: 'nl',
     category: 'UTILITY',

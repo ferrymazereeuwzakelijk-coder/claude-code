@@ -1,5 +1,6 @@
 import { ZodError } from 'zod';
 import { sql } from '../db';
+import { env } from '../env';
 import { audit } from '../audit';
 import { UserFacingError } from '../errors';
 import { formatEuro } from '../intake/fields';
@@ -64,6 +65,7 @@ async function routeMessage(m: InboundMessage): Promise<'processed' | 'ignored'>
   // ── opt-out / opt-in always first ──
   if (OPT_OUT.test(text)) {
     await db`update wa_contacts set consent = 'opted_out', opted_out_at = now(), pending_action = null where id = ${contact.id}`;
+    if (contact.user_id) await db`update contractor_profiles set whatsapp_alerts = false where user_id = ${contact.user_id}`;
     await audit(db, { action: 'whatsapp.opted_out', entityType: 'wa_contact', entityId: contact.id });
     await reply(contact.id, 'Je bent afgemeld en ontvangt geen berichten meer van KlusMatch. Stuur START om je weer aan te melden.', true);
     return 'processed';
@@ -74,6 +76,15 @@ async function routeMessage(m: InboundMessage): Promise<'processed' | 'ignored'>
     await audit(db, { action: 'whatsapp.opted_in', entityType: 'wa_contact', entityId: contact.id });
     await reply(contact.id, 'Welkom terug! Stuur een foto en een korte beschrijving van je klus om te beginnen.');
     return 'processed';
+  }
+
+  // Numbers registered by contractors (for job alerts) are never treated as customer intake.
+  if (contact.user_id) {
+    const [owner] = await db<{ role: string }[]>`select role from users where id = ${contact.user_id}`;
+    if (owner && owner.role !== 'customer') {
+      await reply(contact.id, `Dit nummer ontvangt klusmeldingen van KlusMatch. Bekijk klussen en stuur offertes via ${env().APP_BASE_URL}/vakman. Stuur STOP om de meldingen uit te zetten.`);
+      return 'processed';
+    }
   }
 
   try {

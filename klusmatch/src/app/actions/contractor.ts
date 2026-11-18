@@ -30,6 +30,8 @@ export async function saveProfileAction(_: ActionState, form: FormData): Promise
       serviceRadiusKm: Number(form.get('serviceRadiusKm') ?? 25),
       categories: form.getAll('categories').map(String),
       available: form.get('available') === 'on',
+      whatsappAlerts: form.get('whatsappAlerts') === 'on',
+      whatsappNumber: String(form.get('whatsappNumber') ?? ''),
     });
     revalidatePath('/vakman');
     return { ok: 'Profiel opgeslagen.' };

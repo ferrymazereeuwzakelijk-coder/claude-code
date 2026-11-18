@@ -24,7 +24,7 @@ export default async function Home() {
           <Logo />
           <nav className="hidden items-center gap-6 text-sm font-medium text-navy-600 md:flex">
             <a href="#hoe-het-werkt" className="hover:text-navy-900">Hoe het werkt</a>
-            <a href="#vakmensen" className="hover:text-navy-900">Voor vakmensen</a>
+            <Link href="/voor-vakmensen" className="hover:text-navy-900">Voor vakmensen</Link>
             <a href="#vertrouwen" className="hover:text-navy-900">Vertrouwen</a>
           </nav>
           <div className="ml-auto flex items-center gap-2">
@@ -57,7 +57,7 @@ export default async function Home() {
             </p>
             <div className="mt-9 flex flex-col gap-3 sm:flex-row">
               <Link href={user?.role === 'customer' ? '/klant/nieuw' : '/registreren'} className="btn-primary px-6 py-3.5 text-base">Plaats je klus gratis</Link>
-              <Link href="/registreren?rol=vakman" className="btn-secondary px-6 py-3.5 text-base">Ik ben vakman</Link>
+              <Link href="/voor-vakmensen" className="btn-secondary px-6 py-3.5 text-base">Ik ben vakman</Link>
             </div>
             <p className="mt-5 text-sm text-navy-400">Geen verplichtingen · Je adres blijft privé tot jij een offerte kiest</p>
           </div>
@@ -148,7 +148,7 @@ export default async function Home() {
             <p className="mt-5 text-lg leading-relaxed text-navy-500">
               Geen vage aanvragen. Elke klus is door de klant bevestigd, heeft een duidelijke omschrijving, foto’s en een budget-indicatie. Je ontvangt alleen klussen binnen jouw vakgebied en straal — en nooit een overvolle inbox.
             </p>
-            <Link href="/registreren?rol=vakman" className="btn-dark mt-8 px-6 py-3">Meld je bedrijf aan</Link>
+            <Link href="/voor-vakmensen" className="btn-dark mt-8 px-6 py-3">Meld je bedrijf aan</Link>
           </div>
           <ul className="grid gap-3 sm:grid-cols-2">
             {[

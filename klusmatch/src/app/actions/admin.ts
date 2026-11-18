@@ -11,6 +11,7 @@ import { enqueue } from '@/lib/queue';
 import { notify } from '@/lib/notifications';
 import { drainQueue } from '@/lib/worker';
 import { recordJobEvent } from '@/lib/jobs/lifecycle';
+import { assignFoundingNumber } from '@/lib/growth';
 import type { ActionState } from '@/components/forms';
 
 const kick = () => env().INLINE_WORKER && after(() => drainQueue().catch(console.error));
@@ -24,9 +25,10 @@ export async function verifyContractorAction(form: FormData) {
   await db`update contractor_profiles set verification = ${decision}, verification_note = ${note},
            verified_at = ${decision === 'verified' ? new Date() : null}, verified_by = ${admin.id}, updated_at = now()
            where user_id = ${id}`;
+  const founding = decision === 'verified' ? await assignFoundingNumber(db, id) : null;
   await notify(db, id, {
     kind: 'verification',
-    title: decision === 'verified' ? 'Je bedrijf is geverifieerd ✓' : 'Verificatie afgewezen',
+    title: decision === 'verified' ? (founding ? `Geverifieerd ✓ — je bent Founding Member #${founding}` : 'Je bedrijf is geverifieerd ✓') : 'Verificatie afgewezen',
     body: decision === 'verified' ? 'Je kunt nu offertes versturen en ontvangt meldingen van nieuwe klussen.' : note ?? 'Controleer je bedrijfsgegevens.',
     link: decision === 'verified' ? '/vakman' : '/vakman/profiel',
   });

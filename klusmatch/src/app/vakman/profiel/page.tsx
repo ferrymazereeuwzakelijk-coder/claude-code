@@ -9,6 +9,7 @@ import { saveProfileAction } from '@/app/actions/contractor';
 import { listPortfolio, MAX_PORTFOLIO_ITEMS } from '@/lib/portfolio';
 import { PortfolioManager } from './portfolio-manager';
 import Link from 'next/link';
+import { isWhatsAppEnabled } from '@/lib/env';
 
 export const metadata = { title: 'Bedrijfsprofiel' };
 
@@ -27,7 +28,7 @@ export default async function ContractorProfilePage() {
   return (
     <AppShell user={user}>
       <PageHeader
-        eyebrow={profile ? 'Bedrijfsprofiel' : 'Stap 1 van 1 · Onboarding'}
+        eyebrow={profile ? 'Bedrijfsprofiel' : 'Stap 2 van 2 · nog 1 minuut'}
         title={profile ? profile.company_name : 'Vertel ons over je bedrijf'}
         description="Klanten zien je bedrijfsnaam, vakgebieden en verificatiestatus. Na controle van je KvK-inschrijving kun je offertes versturen."
         actions={
@@ -87,6 +88,13 @@ export default async function ContractorProfilePage() {
             <input type="checkbox" name="available" defaultChecked={profile?.available ?? true} className="accent-leaf-600" />
             Ik ben beschikbaar voor nieuwe klussen
           </label>
+          <div id="whatsapp" className="rounded-xl border border-[#25D366]/40 bg-[#E7F8EE]/60 p-4">
+            <label className="flex items-start gap-2.5 text-sm text-navy-800">
+              <input type="checkbox" name="whatsappAlerts" defaultChecked={profile?.whatsapp_alerts ?? false} className="mt-0.5 accent-leaf-600" />
+              <span><strong>Stuur nieuwe klussen naar mijn WhatsApp</strong><br /><span className="text-xs text-navy-500">Direct een bericht als er een klus in jouw vak en regio binnenkomt. Uitzetten kan altijd met STOP of hier.{!isWhatsAppEnabled() && ' Wordt actief zodra KlusMatch-WhatsApp live gaat.'}</span></span>
+            </label>
+            <input name="whatsappNumber" className="input mt-3" inputMode="tel" placeholder="06 12345678" defaultValue={profile?.alert_phone?.replace('+31', '0') ?? ''} aria-label="WhatsApp-nummer" />
+          </div>
           <SubmitButton className="btn-primary w-full py-3" pendingText="Opslaan…">{profile ? 'Wijzigingen opslaan' : 'Profiel indienen ter verificatie'}</SubmitButton>
         </section>
       </ActionForm>

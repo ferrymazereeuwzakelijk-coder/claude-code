@@ -119,6 +119,7 @@ export default async function CustomerJobPage({ params, searchParams }: { params
                         <div className="flex flex-wrap items-center gap-2">
                           <Link href={`/vakmensen/${q.contractor_id}`} className="font-semibold text-navy-900 hover:text-leaf-800 hover:underline">{q.company_name}</Link>
                           {q.verification === 'verified' && <VerifiedBadge />}
+                          {q.founding_member_no && <Badge tone="amber">★ Founding #{q.founding_member_no}</Badge>}
                           {accepted && <Badge tone="dark">Gekozen</Badge>}
                           {q.status === 'declined' && <Badge>Afgewezen</Badge>}
                         </div>

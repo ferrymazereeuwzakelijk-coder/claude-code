@@ -10,12 +10,12 @@ import { listPortfolio } from '@/lib/portfolio';
 import { parsePostcode } from '@/lib/geo';
 import { ratingsFor, reviewsForContractor } from '@/lib/reviews';
 
-type Profile = { user_id: string; company_name: string; description: string; base_postcode: string; service_radius_km: number; verification: string; created_at: Date; categories: string[]; completed: number };
+type Profile = { founding_member_no: number | null; user_id: string; company_name: string; description: string; base_postcode: string; service_radius_km: number; verification: string; created_at: Date; categories: string[]; completed: number };
 
 async function load(id: string) {
   if (!/^[0-9a-f-]{36}$/i.test(id)) return null;
   const [p] = await sql()<Profile[]>`
-    select cp.user_id, cp.company_name, cp.description, cp.base_postcode, cp.service_radius_km, cp.verification, cp.created_at,
+    select cp.founding_member_no, cp.user_id, cp.company_name, cp.description, cp.base_postcode, cp.service_radius_km, cp.verification, cp.created_at,
            array(select c.name_nl from contractor_categories cc join categories c on c.slug = cc.category_slug where cc.contractor_id = cp.user_id order by c.sort_order) as categories,
            (select count(*)::int from quotes q join jobs j on j.id = q.job_id where q.contractor_id = cp.user_id and q.status = 'accepted' and j.status = 'completed') as completed
     from contractor_profiles cp join users u on u.id = cp.user_id
@@ -60,6 +60,7 @@ export default async function ContractorProfile({ params }: { params: Promise<{ 
               <div className="flex flex-wrap items-center gap-2">
                 <h1 className="text-2xl font-bold text-navy-900">{profile.company_name}</h1>
                 {profile.verification === 'verified' && <VerifiedBadge />}
+                {profile.founding_member_no && <Badge tone="amber">★ Founding Member #{profile.founding_member_no}</Badge>}
               </div>
               <p className="mt-1 text-sm text-navy-500">Werkt binnen {profile.service_radius_km} km van {region} · actief sinds {new Date(profile.created_at).toLocaleDateString('nl-NL', { month: 'long', year: 'numeric' })}</p>
               <div className="mt-3 flex flex-wrap gap-1.5">{profile.categories.map((c) => <Badge key={c}>{c}</Badge>)}</div>
