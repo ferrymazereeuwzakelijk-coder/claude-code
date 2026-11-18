@@ -9,6 +9,8 @@ import { listCategories } from '@/lib/categories';
 import { Badge, Logo, eur, relTime } from '@/components/ui';
 import { SiteFooter } from '@/components/site-footer';
 import { isWhatsAppEnabled } from '@/lib/env';
+import Image from 'next/image';
+import { img } from '@/lib/images';
 
 export const metadata: Metadata = {
   title: 'Voor vakmensen — gratis klussen in jouw regio',
@@ -52,8 +54,10 @@ export default async function ForContractors({ searchParams }: { searchParams: P
       </header>
 
       {/* Hero */}
-      <section className="relative bg-navy-900 pb-20 pt-32 text-white sm:pt-40">
-        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(50%_60%_at_85%_10%,rgba(16,185,129,0.32),transparent_70%),radial-gradient(40%_50%_at_0%_100%,rgba(74,102,144,0.45),transparent_70%)]" />
+      <section className="relative overflow-hidden bg-navy-900 pb-20 pt-32 text-white sm:pt-40">
+        <Image src={img('hero/hero-vakman.jpg').src} alt="" fill priority sizes="100vw" className="object-cover object-right opacity-60" />
+        <div className="pointer-events-none absolute inset-0 bg-gradient-to-r from-navy-950 via-navy-900/90 to-navy-900/30" />
+        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(50%_60%_at_85%_10%,rgba(16,185,129,0.25),transparent_70%)]" />
         <div className="relative mx-auto grid max-w-6xl items-center gap-12 px-6 lg:grid-cols-[1.15fr_0.85fr]">
           <div className="animate-fade-up">
             {founding.left > 0 && (

@@ -7,6 +7,8 @@ import { CITIES, cityBySlug, TRADE } from '@/lib/seo';
 import { isWhatsAppEnabled } from '@/lib/env';
 import { Logo } from '@/components/ui';
 import { SiteFooter } from '@/components/site-footer';
+import Image from 'next/image';
+import { tradeImage } from '@/lib/images';
 
 export const revalidate = 3600;
 
@@ -63,6 +65,11 @@ export default async function CityTradePage({ params }: { params: Promise<{ cate
           {pros > 0 && <span className="text-sm text-navy-500"><strong className="text-navy-900">{pros}</strong> geverifieerde {pro}{pros === 1 ? '' : 's'} werkzaam in {city.name} en omgeving</span>}
         </div>
 
+        {tradeImage(categorie) && (
+          <div className="mt-12 overflow-hidden rounded-3xl shadow-lift">
+            <Image {...tradeImage(categorie)!} priority sizes="(min-width: 1024px) 1024px, 100vw" className="aspect-[21/9] w-full object-cover" />
+          </div>
+        )}
         {trade && (
           <section className="mt-14 grid gap-8 md:grid-cols-2">
             <div className="card p-6">

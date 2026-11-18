@@ -1,5 +1,7 @@
 import type { ReactNode } from 'react';
+import Image from 'next/image';
 import { Logo } from './ui';
+import { img } from '@/lib/images';
 
 export function AuthLayout({ title, subtitle, children, aside }: { title: string; subtitle: ReactNode; children: ReactNode; aside?: ReactNode }) {
   return (
@@ -13,8 +15,8 @@ export function AuthLayout({ title, subtitle, children, aside }: { title: string
         </div>
       </div>
       <aside className="relative hidden overflow-hidden bg-navy-900 lg:block">
-        <div className="absolute inset-0 bg-[radial-gradient(60%_50%_at_70%_20%,rgba(16,185,129,0.28),transparent_70%),radial-gradient(50%_60%_at_10%_90%,rgba(74,102,144,0.5),transparent_70%)]" />
-        <div className="absolute inset-0 opacity-[0.07] [background-image:linear-gradient(rgba(255,255,255,.8)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,.8)_1px,transparent_1px)] [background-size:44px_44px]" />
+        <Image src={img('hero/auth-aside.jpg').src} alt="" fill sizes="50vw" className="object-cover" />
+        <div className="absolute inset-0 bg-gradient-to-t from-navy-950 via-navy-900/60 to-navy-900/10" />
         <div className="relative flex h-full flex-col justify-end p-14 text-white">{aside}</div>
       </aside>
     </div>

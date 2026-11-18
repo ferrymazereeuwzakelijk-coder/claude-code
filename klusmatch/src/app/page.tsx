@@ -4,14 +4,20 @@ import { homeFor } from '@/lib/auth/guards';
 import { Logo } from '@/components/ui';
 import { SiteFooter } from '@/components/site-footer';
 import { isWhatsAppEnabled } from '@/lib/env';
+import Image from 'next/image';
+import { img, tradeImage } from '@/lib/images';
 
 const STEPS = [
-  { n: '01', t: 'Stuur een foto', d: 'Via WhatsApp of de website. Vertel in je eigen woorden wat er moet gebeuren.' },
-  { n: '02', t: 'AI maakt de opdracht', d: 'Een paar korte vragen, daarna een heldere omschrijving. Jij controleert en bevestigt.' },
-  { n: '03', t: 'Vergelijk offertes', d: 'Geverifieerde vakmensen uit je regio reageren. Jij kiest — ook gewoon in WhatsApp.' },
+  { n: '01', t: 'Stuur een foto', d: 'Via WhatsApp of de website. Vertel in je eigen woorden wat er moet gebeuren.', image: 'steps/stap-1-foto.jpg' },
+  { n: '02', t: 'AI maakt de opdracht', d: 'Een paar korte vragen, daarna een heldere omschrijving. Jij controleert en bevestigt.', image: 'steps/stap-2-controleren.jpg' },
+  { n: '03', t: 'Vergelijk offertes', d: 'Geverifieerde vakmensen uit je regio reageren. Jij kiest — ook gewoon in WhatsApp.', image: 'steps/stap-3-vakman.jpg' },
 ];
 
-const CATEGORIES = ['Schilderwerk', 'Tuinonderhoud', 'Bestrating', 'Loodgieter', 'Dakwerk', 'Elektra', 'Timmerwerk', 'Badkamer', 'CV & verwarming', 'Stukadoor'];
+// Launch region: trade cards link to the Utrecht landing pages.
+const POPULAR: [string, string][] = [
+  ['schilderwerk', 'Schilder'], ['tuinonderhoud', 'Hovenier'], ['loodgieter', 'Loodgieter'], ['bestrating', 'Stratenmaker'],
+  ['dakwerk', 'Dakdekker'], ['elektra', 'Elektricien'], ['timmerwerk', 'Timmerman'], ['badkamer', 'Badkamer'],
+];
 
 export default async function Home() {
   const user = await currentUser();
@@ -62,40 +68,46 @@ export default async function Home() {
             <p className="mt-5 text-sm text-navy-400">Geen verplichtingen · Je adres blijft privé tot jij een offerte kiest</p>
           </div>
 
-          {/* Product visual (illustrative) */}
-          <div className="relative mx-auto w-full max-w-sm animate-fade-up [animation-delay:120ms]" aria-hidden>
-            <div className="absolute -left-10 top-16 hidden w-52 rotate-[-4deg] rounded-2xl border border-navy-100 bg-white p-4 shadow-lift sm:block">
+          {/* Photo with illustrative product overlays */}
+          <div className="relative mx-auto w-full max-w-lg animate-fade-up [animation-delay:120ms]">
+            <div className="overflow-hidden rounded-[2rem] shadow-lift">
+              <Image {...img('hero/hero-klant.jpg')} priority sizes="(min-width: 1024px) 512px, 100vw" className="aspect-[4/5] w-full object-cover sm:aspect-[5/4]" />
+            </div>
+            {wa && (
+              <div className="absolute -left-4 top-6 max-w-[230px] rounded-2xl rounded-tl-sm bg-[#DCF8C6] px-3.5 py-2.5 text-sm text-navy-900 shadow-lift sm:-left-10" aria-hidden>
+                Schutting moet geschilderd worden 📷
+                <span className="mt-0.5 block text-right text-[10px] text-navy-400">via WhatsApp ✓✓</span>
+              </div>
+            )}
+            <div className="absolute -bottom-6 -right-2 w-56 rotate-[2deg] rounded-2xl border border-navy-100 bg-white p-4 shadow-lift sm:-right-8" aria-hidden>
               <p className="text-[10px] font-semibold uppercase tracking-wider text-leaf-700">Nieuwe offerte</p>
-              <p className="mt-1 text-sm font-semibold text-navy-900">Schildersbedrijf</p>
+              <p className="mt-1 text-sm font-semibold text-navy-900">Schildersbedrijf · 4 km</p>
               <p className="font-display text-2xl font-bold text-navy-900">€ 850</p>
-              <p className="text-xs text-navy-400">Vaste prijs · 12 km</p>
+              <p className="text-xs text-navy-400">Vaste prijs · kan volgende week starten</p>
             </div>
-            <div className="overflow-hidden rounded-[2.2rem] border-[9px] border-navy-900 bg-navy-900 shadow-lift">
-              <div className="flex items-center gap-2.5 bg-[#075E54] px-4 py-3 text-white">
-                <span className="grid h-8 w-8 place-items-center rounded-full bg-white text-[10px] font-black text-navy-900">KM</span>
-                <div><p className="text-sm font-semibold">KlusMatch</p><p className="text-[10px] text-white/70">online</p></div>
-              </div>
-              <div className="space-y-2 bg-[#ECE5DD] p-3 text-[12.5px] leading-snug">
-                <div className="ml-auto w-fit max-w-[80%] rounded-lg rounded-tr-none bg-[#DCF8C6] p-1.5 shadow-sm">
-                  <div className="h-28 w-44 rounded-md bg-[linear-gradient(135deg,#8B6B4A_0%,#A98863_40%,#7A5C3D_41%,#9C7B57_100%)]" />
-                  <p className="px-1 pt-1 text-navy-900">Schutting moet geschilderd worden</p>
-                </div>
-                <div className="w-fit max-w-[85%] rounded-lg rounded-tl-none bg-white px-2.5 py-1.5 text-navy-900 shadow-sm">Ik zie een houten schutting met afbladderende verf. Hoe lang is hij ongeveer?</div>
-                <div className="ml-auto w-fit rounded-lg rounded-tr-none bg-[#DCF8C6] px-2.5 py-1.5 text-navy-900 shadow-sm">Zo’n 15 meter</div>
-                <div className="w-fit max-w-[85%] rounded-lg rounded-tl-none bg-white px-2.5 py-1.5 text-navy-900 shadow-sm">Top! Wat is je postcode? Je adres blijft privé 🔒</div>
-                <div className="ml-auto w-fit rounded-lg rounded-tr-none bg-[#DCF8C6] px-2.5 py-1.5 text-navy-900 shadow-sm">3512 AB</div>
-                <div className="w-fit max-w-[85%] rounded-lg rounded-tl-none bg-white px-2.5 py-1.5 text-navy-900 shadow-sm">Hier is je klusomschrijving. Klopt alles? Antwoord <b>JA</b> om te plaatsen.</div>
-              </div>
-            </div>
-            <p className="mt-3 text-center text-xs text-navy-400">{wa ? 'Illustratie van de WhatsApp-flow' : 'Illustratie — WhatsApp komt binnenkort'}</p>
           </div>
         </div>
       </section>
 
-      {/* Categories marquee */}
-      <section className="border-y border-navy-100 bg-white py-6">
-        <div className="mx-auto flex max-w-6xl flex-wrap justify-center gap-x-8 gap-y-2 px-6 text-sm font-medium text-navy-400">
-          {CATEGORIES.map((c) => <span key={c}>{c}</span>)}
+      {/* Popular jobs */}
+      <section className="mx-auto max-w-6xl px-6 pt-24">
+        <div className="flex flex-wrap items-end justify-between gap-3">
+          <div>
+            <p className="eyebrow">Populaire klussen</p>
+            <h2 className="mt-3 text-3xl font-bold text-navy-900 sm:text-4xl">Waar kunnen we je mee helpen?</h2>
+          </div>
+          <Link href="/registreren" className="text-sm font-semibold text-leaf-700 hover:underline">Zie je jouw klus niet? Plaats hem gewoon →</Link>
+        </div>
+        <div className="mt-10 grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-4">
+          {POPULAR.map(([slug, label]) => {
+            const photo = tradeImage(slug);
+            return (
+              <Link key={slug} href={`/klus/${slug}/utrecht`} className="group relative overflow-hidden rounded-2xl bg-navy-900 shadow-card">
+                {photo && <Image {...photo} sizes="(min-width: 768px) 25vw, 50vw" className="aspect-[4/3] w-full object-cover opacity-90 transition duration-500 group-hover:scale-105 group-hover:opacity-100" />}
+                <span className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-navy-950/85 to-transparent px-4 pb-3 pt-10 font-semibold text-white">{label}</span>
+              </Link>
+            );
+          })}
         </div>
       </section>
 
@@ -105,10 +117,13 @@ export default async function Home() {
         <h2 className="mt-3 max-w-2xl text-3xl font-bold text-navy-900 sm:text-4xl">Van foto naar vakman, zonder formulieren.</h2>
         <div className="mt-12 grid gap-5 md:grid-cols-3">
           {STEPS.map((s) => ({ ...s, d: wa ? s.d : s.d.replace('Via WhatsApp of de website.', 'Via de website (WhatsApp volgt binnenkort).') })).map((s) => (
-            <div key={s.n} className="card group p-7 transition hover:-translate-y-1 hover:shadow-lift">
+            <div key={s.n} className="card group overflow-hidden transition hover:-translate-y-1 hover:shadow-lift">
+              <Image {...img(s.image)} sizes="(min-width: 768px) 33vw, 100vw" className="aspect-[16/10] w-full object-cover" />
+              <div className="p-7">
               <span className="font-display text-sm font-bold text-leaf-600">{s.n}</span>
               <h3 className="mt-4 text-xl font-bold text-navy-900">{s.t}</h3>
               <p className="mt-2 leading-relaxed text-navy-500">{s.d}</p>
+              </div>
             </div>
           ))}
         </div>
@@ -141,7 +156,7 @@ export default async function Home() {
 
       {/* Contractors */}
       <section id="vakmensen" className="mx-auto max-w-6xl px-6 py-24">
-        <div className="grid gap-12 lg:grid-cols-2">
+        <div className="grid items-center gap-12 lg:grid-cols-2">
           <div>
             <p className="eyebrow">Voor vakmensen</p>
             <h2 className="mt-3 text-3xl font-bold text-navy-900 sm:text-4xl">Echte klussen, in jouw werkgebied.</h2>
@@ -150,19 +165,16 @@ export default async function Home() {
             </p>
             <Link href="/voor-vakmensen" className="btn-dark mt-8 px-6 py-3">Meld je bedrijf aan</Link>
           </div>
-          <ul className="grid gap-3 sm:grid-cols-2">
-            {[
-              ['Slimme matching', 'Op vakgebied, afstand, beschikbaarheid en verificatie.'],
-              ['Rustige meldingen', 'Een dagelijks maximum voorkomt spam.'],
-              ['Filters & bewaren', 'Filter op afstand en budget, bewaar klussen voor later.'],
-              ['Direct contact', 'Na acceptatie krijg je meteen de gegevens van de klant.'],
-            ].map(([t, d]) => (
-              <li key={t} className="card p-5">
-                <p className="font-semibold text-navy-900">{t}</p>
-                <p className="mt-1 text-sm text-navy-500">{d}</p>
-              </li>
-            ))}
-          </ul>
+          <div className="relative">
+            <div className="overflow-hidden rounded-[2rem] shadow-lift">
+              <Image {...img('hero/hero-vakman.jpg')} sizes="(min-width: 1024px) 560px, 100vw" className="aspect-[4/3] w-full object-cover" />
+            </div>
+            <ul className="absolute -bottom-6 left-4 right-4 grid gap-1.5 rounded-2xl bg-white p-4 text-sm shadow-lift sm:left-auto sm:w-72">
+              {['Klussen met foto’s en budget', 'Alleen jouw vak en werkgebied', 'Max. aantal vakmensen per klus', 'Gratis tijdens de lancering'].map((t) => (
+                <li key={t} className="flex items-center gap-2 text-navy-700"><span className="text-leaf-600">✓</span>{t}</li>
+              ))}
+            </ul>
+          </div>
         </div>
       </section>
 

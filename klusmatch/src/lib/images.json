@@ -1,0 +1,92 @@
+{
+ "hero/hero-klant.jpg": {
+  "alt": "Bewoner fotografeert een verweerde houten schutting in de achtertuin.",
+  "width": 1536,
+  "height": 1024
+ },
+ "hero/hero-vakman.jpg": {
+  "alt": "Schilder bekijkt zijn telefoon naast een witte werkbus.",
+  "width": 1536,
+  "height": 1024
+ },
+ "hero/auth-aside.jpg": {
+  "alt": "Schilder schildert een raamkozijn van een bakstenen woning.",
+  "width": 1024,
+  "height": 1536
+ },
+ "steps/stap-1-foto.jpg": {
+  "alt": "Bewoner fotografeert een lekkende keukenkraan met een telefoon.",
+  "width": 1024,
+  "height": 1024
+ },
+ "steps/stap-2-controleren.jpg": {
+  "alt": "Vrouw bekijkt haar telefoon op de bank in de woonkamer.",
+  "width": 1024,
+  "height": 1024
+ },
+ "steps/stap-3-vakman.jpg": {
+  "alt": "Vakman en bewoner geven elkaar een hand bij de voordeur.",
+  "width": 1024,
+  "height": 1024
+ },
+ "trades/schilderwerk.jpg": {
+  "alt": "Schilder schildert de kozijnen van een bakstenen rijtjeshuis.",
+  "width": 1536,
+  "height": 1024
+ },
+ "trades/tuinonderhoud.jpg": {
+  "alt": "Hovenier snoeit een groene heg in een voortuin.",
+  "width": 1536,
+  "height": 1024
+ },
+ "trades/bestrating.jpg": {
+  "alt": "Stratenmaker legt grijze terrastegels op een zandbed.",
+  "width": 1536,
+  "height": 1024
+ },
+ "trades/loodgieter.jpg": {
+  "alt": "Loodgieter repareert leidingen onder een keukengootsteen.",
+  "width": 1536,
+  "height": 1024
+ },
+ "trades/elektra.jpg": {
+  "alt": "Elektricien werkt aan de groepenkast van een woning.",
+  "width": 1536,
+  "height": 1024
+ },
+ "trades/dakwerk.jpg": {
+  "alt": "Dakdekker vervangt dakpannen met een veiligheidsharnas.",
+  "width": 1536,
+  "height": 1024
+ },
+ "trades/timmerwerk.jpg": {
+  "alt": "Timmerman meet een binnendeur met een rolmaat.",
+  "width": 1536,
+  "height": 1024
+ },
+ "trades/stukadoor.jpg": {
+  "alt": "Stukadoor maakt een pas gestucte muur glad.",
+  "width": 1536,
+  "height": 1024
+ },
+ "trades/badkamer.jpg": {
+  "alt": "Tegelzetter werkt aan een betegelde inloopdouche.",
+  "width": 1536,
+  "height": 1024
+ },
+ "trades/cv_installatie.jpg": {
+  "alt": "Installateur onderhoudt een cv-ketel in een bijkeuken.",
+  "width": 1536,
+  "height": 1024
+ },
+ "trades/schoonmaak.jpg": {
+  "alt": "Glazenwasser reinigt een groot raam met een wisser.",
+  "width": 1536,
+  "height": 1024
+ },
+ "trades/asbest.jpg": {
+  "alt": "Specialisten in beschermende pakken verwijderen golfplaten van een schuur.",
+  "width": 1536,
+  "height": 1024
+ }
+}

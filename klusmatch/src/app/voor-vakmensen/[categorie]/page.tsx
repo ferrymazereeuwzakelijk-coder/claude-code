@@ -7,6 +7,8 @@ import { foundingStats, openJobsTeaser } from '@/lib/growth';
 import { CITIES, TRADE } from '@/lib/seo';
 import { Badge, Logo, eur, relTime } from '@/components/ui';
 import { SiteFooter } from '@/components/site-footer';
+import Image from 'next/image';
+import { tradeImage } from '@/lib/images';
 
 export const revalidate = 600;
 
@@ -55,6 +57,11 @@ export default async function TradeForPros({ params, searchParams }: { params: P
           {founding.left > 0 && <span className="text-sm text-amber-700">★ Nog {founding.left} founding-member-plekken</span>}
         </div>
 
+        {tradeImage(categorie) && (
+          <div className="mt-10 overflow-hidden rounded-3xl shadow-lift">
+            <Image {...tradeImage(categorie)!} priority sizes="(min-width: 1024px) 1024px, 100vw" className="aspect-[21/9] w-full object-cover" />
+          </div>
+        )}
         {trade && (
           <section className="mt-12">
             <h2 className="text-lg font-bold text-navy-900">Typische klussen die je kunt verwachten</h2>
