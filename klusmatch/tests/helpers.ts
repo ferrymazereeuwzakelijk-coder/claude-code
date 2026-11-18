@@ -9,7 +9,7 @@ export async function resetDb() {
       wa_outbound_messages, wa_simulator_media, account_link_codes, media, intake_sessions, intake_messages,
       jobs, job_private_details, job_media, job_matches, saved_jobs, quotes, job_messages, notifications,
       background_jobs, audit_log, ai_usage, rate_limits, job_events, reviews, portfolio_items, reports,
-      subscriptions, stripe_events restart identity cascade;
+      subscriptions, stripe_events, outreach_leads, outreach_suppressions restart identity cascade;
     insert into matching_rules default values on conflict (id) do nothing;
     update matching_rules set max_contractors_per_job = 12, max_new_job_notifications_per_day = 15, require_verified = true;
   `);

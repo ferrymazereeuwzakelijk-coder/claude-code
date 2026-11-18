@@ -26,6 +26,7 @@ const NAV: Record<SessionUser['role'], { href: string; label: string }[]> = {
     { href: '/admin/gebruikers', label: 'Gebruikers' },
     { href: '/admin/klussen', label: 'Moderatie' },
     { href: '/admin/meldingen', label: 'Meldingen' },
+    { href: '/admin/outreach', label: 'Outreach' },
     { href: '/admin/systeem', label: 'Systeem' },
   ],
 };

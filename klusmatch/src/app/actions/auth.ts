@@ -10,6 +10,7 @@ import { homeFor } from '@/lib/auth/guards';
 import { rateLimit, RateLimitError } from '@/lib/rate-limit';
 import { UserFacingError } from '@/lib/errors';
 import { audit } from '@/lib/audit';
+import { claimInvite } from '@/lib/outreach';
 import type { ActionState } from '@/components/forms';
 
 export async function loginAction(_: ActionState, form: FormData): Promise<ActionState> {
@@ -39,7 +40,9 @@ export async function registerAction(_: ActionState, form: FormData): Promise<Ac
   try {
     await rateLimit(sql(), `register:${ip ?? 'unknown'}`, 10, 3600);
     // One transaction: the account and its audit entry are created together or not at all.
-    const user = await sql().begin((tx) => registerUser(
+    const invite = String(form.get('invite') ?? '').toUpperCase();
+    const user = await sql().begin(async (tx) => {
+      const u = await registerUser(
       tx,
       {
         fullName: String(form.get('fullName') ?? ''),
@@ -48,7 +51,10 @@ export async function registerAction(_: ActionState, form: FormData): Promise<Ac
         role: form.get('role') === 'contractor' ? 'contractor' : 'customer',
       },
       ip,
-    ));
+      );
+      if (u.role === 'contractor') await claimInvite(tx, invite, u.id);
+      return u;
+    });
     await startSession(user.id);
     redirect(user.role === 'contractor' ? '/vakman/profiel' : '/klant/nieuw');
   } catch (e) {

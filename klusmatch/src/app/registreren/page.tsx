@@ -5,8 +5,8 @@ import { registerAction } from '@/app/actions/auth';
 
 export const metadata = { title: 'Account aanmaken' };
 
-export default async function RegisterPage({ searchParams }: { searchParams: Promise<{ rol?: string }> }) {
-  const { rol } = await searchParams;
+export default async function RegisterPage({ searchParams }: { searchParams: Promise<{ rol?: string; uitnodiging?: string }> }) {
+  const { rol, uitnodiging } = await searchParams;
   const contractor = rol === 'vakman';
   return (
     <AuthLayout
@@ -36,6 +36,7 @@ export default async function RegisterPage({ searchParams }: { searchParams: Pro
       }
     >
       <ActionForm action={registerAction} className="space-y-4">
+        {uitnodiging && <input type="hidden" name="invite" value={uitnodiging.slice(0, 12)} />}
         <fieldset>
           <legend className="label">Ik ben een</legend>
           <div className="grid grid-cols-2 gap-2">

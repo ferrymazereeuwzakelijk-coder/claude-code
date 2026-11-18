@@ -7,6 +7,7 @@ import { createReport, resolveReport } from '@/lib/reports';
 import { addPortfolioItem, MAX_PORTFOLIO_ITEMS } from '@/lib/portfolio';
 import { handleStripeEvent, verifyStripeSignature } from '@/lib/billing';
 import type { SessionUser } from '@/lib/auth/session';
+import { claimInvite } from '@/lib/outreach';
 import { makeContractor, makeCustomer, makeJobWithQuote, resetDb } from './helpers';
 
 afterAll(() => closeDb());
@@ -106,5 +107,26 @@ describe('billing (Stripe webhook)', () => {
     expect((await sql()`select plan, status from subscriptions where contractor_id = ${c.id}`)[0]).toMatchObject({ plan: 'pro', status: 'active' });
     await handleStripeEvent({ id: 'evt_b', type: 'customer.subscription.deleted', data: { object: { id: 'sub_1', status: 'canceled' } } });
     expect((await sql()`select status from subscriptions where contractor_id = ${c.id}`)[0].status).toBe('canceled');
+  });
+});
+
+describe('outreach invite links', () => {
+  it('marks the lead as signed up when a contractor registers with its code, once', async () => {
+    await sql()`insert into outreach_leads (company_name, legal_form, email, source_url, invite_code)
+                values ('Test Schilders', 'B.V.', 'info@test-schilders.nl', 'https://example.test', 'ABC123XY')`;
+    const c = await makeContractor({ postcode: '3581', categories: ['schilderwerk'] });
+    await claimInvite(sql(), 'ABC123XY', c.id);
+    await claimInvite(sql(), 'ABC123XY', c.id); // idempotent
+    await claimInvite(sql(), "x' or 1=1 --", c.id); // invalid codes are ignored
+    const [l] = await sql()`select status, signed_up_user_id from outreach_leads`;
+    expect(l).toMatchObject({ status: 'signed_up', signed_up_user_id: c.id });
+  });
+
+  it('never re-activates an opted-out lead', async () => {
+    await sql()`insert into outreach_leads (company_name, legal_form, email, source_url, invite_code, status)
+                values ('Weg B.V.', 'B.V.', 'info@weg.nl', 'https://example.test', 'OPTOUT12', 'opted_out')`;
+    const c = await makeContractor({ postcode: '3581', categories: ['schilderwerk'] });
+    await claimInvite(sql(), 'OPTOUT12', c.id);
+    expect((await sql()`select status from outreach_leads`)[0].status).toBe('opted_out');
   });
 });
