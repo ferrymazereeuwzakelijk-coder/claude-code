@@ -3,6 +3,7 @@ import { currentUser } from '@/lib/auth/session';
 import { homeFor } from '@/lib/auth/guards';
 import { Logo } from '@/components/ui';
 import { SiteFooter } from '@/components/site-footer';
+import { isWhatsAppEnabled } from '@/lib/env';
 
 const STEPS = [
   { n: '01', t: 'Stuur een foto', d: 'Via WhatsApp of de website. Vertel in je eigen woorden wat er moet gebeuren.' },
@@ -14,6 +15,8 @@ const CATEGORIES = ['Schilderwerk', 'Tuinonderhoud', 'Bestrating', 'Loodgieter',
 
 export default async function Home() {
   const user = await currentUser();
+  // Never promise WhatsApp before the real number is connected.
+  const wa = isWhatsAppEnabled();
   return (
     <div className="overflow-x-hidden">
       <header className="absolute inset-x-0 top-0 z-20">
@@ -43,11 +46,11 @@ export default async function Home() {
         <div className="relative mx-auto grid max-w-6xl items-center gap-14 px-6 lg:grid-cols-[1.1fr_0.9fr]">
           <div className="animate-fade-up">
             <span className="inline-flex items-center gap-2 rounded-full border border-leaf-200 bg-white px-3 py-1 text-xs font-semibold text-leaf-800 shadow-sm">
-              <span className="h-1.5 w-1.5 rounded-full bg-leaf-500" /> Nieuw: klussen regelen via WhatsApp
+              <span className="h-1.5 w-1.5 rounded-full bg-leaf-500" /> {wa ? 'Nieuw: klussen regelen via WhatsApp' : 'Binnenkort: klussen regelen via WhatsApp'}
             </span>
             <h1 className="mt-6 text-[42px] font-extrabold leading-[1.05] text-navy-900 sm:text-6xl">
               Je klus geregeld.<br />
-              <span className="bg-gradient-to-r from-leaf-600 to-leaf-500 bg-clip-text text-transparent">Gewoon via WhatsApp.</span>
+              <span className="bg-gradient-to-r from-leaf-600 to-leaf-500 bg-clip-text text-transparent">{wa ? 'Gewoon via WhatsApp.' : 'Zonder gedoe.'}</span>
             </h1>
             <p className="mt-6 max-w-xl text-lg leading-relaxed text-navy-500">
               Stuur een foto van wat er moet gebeuren. Onze assistent stelt een paar slimme vragen, schrijft een duidelijke opdracht en zet hem — na jouw akkoord — uit bij geverifieerde vakmensen bij jou in de buurt.
@@ -84,7 +87,7 @@ export default async function Home() {
                 <div className="w-fit max-w-[85%] rounded-lg rounded-tl-none bg-white px-2.5 py-1.5 text-navy-900 shadow-sm">Hier is je klusomschrijving. Klopt alles? Antwoord <b>JA</b> om te plaatsen.</div>
               </div>
             </div>
-            <p className="mt-3 text-center text-xs text-navy-400">Illustratie van de WhatsApp-flow</p>
+            <p className="mt-3 text-center text-xs text-navy-400">{wa ? 'Illustratie van de WhatsApp-flow' : 'Illustratie — WhatsApp komt binnenkort'}</p>
           </div>
         </div>
       </section>
@@ -101,7 +104,7 @@ export default async function Home() {
         <p className="eyebrow">Hoe het werkt</p>
         <h2 className="mt-3 max-w-2xl text-3xl font-bold text-navy-900 sm:text-4xl">Van foto naar vakman, zonder formulieren.</h2>
         <div className="mt-12 grid gap-5 md:grid-cols-3">
-          {STEPS.map((s) => (
+          {STEPS.map((s) => ({ ...s, d: wa ? s.d : s.d.replace('Via WhatsApp of de website.', 'Via de website (WhatsApp volgt binnenkort).') })).map((s) => (
             <div key={s.n} className="card group p-7 transition hover:-translate-y-1 hover:shadow-lift">
               <span className="font-display text-sm font-bold text-leaf-600">{s.n}</span>
               <h3 className="mt-4 text-xl font-bold text-navy-900">{s.t}</h3>
