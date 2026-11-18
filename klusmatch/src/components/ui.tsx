@@ -4,7 +4,7 @@ import type { ReactNode } from 'react';
 export function Logo({ className = '', light = false }: { className?: string; light?: boolean }) {
   return (
     <Link href="/" className={`group inline-flex items-center gap-2 ${className}`} aria-label="KlusMatch home">
-      <span className="relative grid h-8 w-8 place-items-center rounded-[10px] bg-navy-900 text-white shadow-sm transition group-hover:rotate-[-4deg]">
+      <span className={`relative grid h-8 w-8 place-items-center rounded-[10px] text-white shadow-sm transition group-hover:rotate-[-4deg] ${light ? 'bg-white/10 ring-1 ring-white/20' : 'bg-navy-900'}`}>
         <svg viewBox="0 0 24 24" className="h-4.5 h-[18px] w-[18px]" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
           <path d="M4 11.5 12 5l8 6.5" />
           <path d="m8.5 14.5 2.5 2.5 4.5-5" className="text-leaf-400" stroke="#34D399" />
