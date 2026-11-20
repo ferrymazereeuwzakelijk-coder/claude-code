@@ -562,11 +562,12 @@ const End: React.FC = () => {
             left: 0,
             right: 0,
             top: 1310,
-            fontSize: 34,
-            fontWeight: 700,
-            letterSpacing: '0.24em',
-            color: '#9db8ff',
+            fontSize: 44,
+            fontWeight: 800,
+            letterSpacing: '0.3em',
+            color: '#21c063',
             opacity: live,
+            transform: `scale(${0.9 + 0.1 * live})`,
           }}
         >
           {T.copy.live}
