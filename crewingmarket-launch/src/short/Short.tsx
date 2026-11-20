@@ -4,7 +4,7 @@ import {Footage} from '../components/Footage';
 import {Finish} from '../components/Finish';
 import {Phone} from '../components/Phone';
 import {Highlight, ScrollSwap, SentBubble, Shot, Tap, TypingField} from '../components/ScreenUI';
-import {Routes, Step, StepCaptions} from '../components/StepCaption';
+
 import {camera, CamKey, cameraSpeed, easeIn, easeInOut, easeOut, fadeIn, ramp, shake} from '../lib/anim';
 import T from './timeline.json';
 
@@ -21,12 +21,6 @@ const ORANGE = '#ff8a3d';
 const S = T.scenes;
 const credit = 'see CREDITS.md';
 
-const ROUTES: Routes = {
-  whatsapp: {label: 'MANIER 1 · WHATSAPP', color: GREEN, ink: '#06210f'},
-  app: {label: 'MANIER 2 · DE APP', color: BLUE, ink: '#fff'},
-  freelancer: {label: 'DE ZZP’ER', color: ORANGE, ink: '#2a1200'},
-  company: {label: 'JIJ ALS BEDRIJF', color: GREEN, ink: '#06210f'},
-};
 
 const whipBlur = (f: number, keys: CamKey[]) => Math.min(26, Math.max(0, cameraSpeed(f, keys) - 140) * 0.1);
 
@@ -40,6 +34,61 @@ const PhoneBackdrop: React.FC<{t: number; src: string; start: number; tint: stri
   </>
 );
 
+// ────────────────────────────────────────────── captions (brand style)
+type Cap = {route: string; from: number; to: number; title: string; sub: string; label: string};
+const CAP_COLOR: Record<string, string> = {whatsapp: GREEN, app: BLUE, freelancer: ORANGE, company: GREEN};
+
+/** Centered headline above the phone: accent bar, label, title, sub. Same system as the App Store screenshots. */
+const Captions: React.FC<{frame: number}> = ({frame}) => {
+  const caps = T.steps as unknown as Cap[];
+  const active = caps.filter((c) => frame >= c.from - 2 && frame < c.to + 7);
+  const band = Math.max(0, ...active.map((c) => ramp(frame, [c.from - 2, c.from + 6], [0, 1]) * (1 - ramp(frame, [c.to, c.to + 7], [0, 1]))));
+  return (
+    <AbsoluteFill style={{pointerEvents: 'none', fontFamily: FONT}}>
+      <AbsoluteFill
+        style={{
+          height: 560,
+          background: 'linear-gradient(180deg, rgba(3,8,18,0.96) 0%, rgba(3,8,18,0.9) 55%, rgba(3,8,18,0) 100%)',
+          opacity: band,
+        }}
+      />
+      {active.map((c) => {
+        const idx = caps.indexOf(c);
+        const prev = caps[idx - 1];
+        const next = caps[idx + 1];
+        const pin = ramp(frame, [c.from - 2, c.from + 8], [0, 1], easeOut);
+        const pout = ramp(frame, [c.to, c.to + 7], [0, 1], easeIn);
+        // the label stays put when the next caption keeps the same label
+        const keepIn = prev && prev.label === c.label && prev.to === c.from;
+        const keepOut = next && next.label === c.label && next.from === c.to;
+        const labelOp = (keepIn ? 1 : pin) * (keepOut ? 1 : 1 - pout);
+        const color = CAP_COLOR[c.route];
+        return (
+          <div key={idx} style={{position: 'absolute', left: 60, right: 60, top: 118, textAlign: 'center'}}>
+            <div style={{opacity: keepOut && frame >= c.to ? 0 : labelOp}}>
+              <div style={{width: 72, height: 8, borderRadius: 4, background: color, margin: '0 auto 22px'}} />
+              <div style={{fontSize: 30, fontWeight: 800, letterSpacing: '0.2em', color}}>{c.label}</div>
+            </div>
+            <div
+              style={{
+                marginTop: 18,
+                opacity: pin * (1 - pout),
+                transform: `translateY(${(1 - pin) * 26 - pout * 14}px)`,
+                filter: `blur(${(1 - pin) * 6}px)`,
+              }}
+            >
+              <div style={{fontSize: 74, fontWeight: 900, color: '#fff', lineHeight: 1.04, letterSpacing: '-0.02em'}}>
+                {c.title}
+              </div>
+              <div style={{fontSize: 38, fontWeight: 500, color: '#b9c9ef', marginTop: 12}}>{c.sub}</div>
+            </div>
+          </div>
+        );
+      })}
+    </AbsoluteFill>
+  );
+};
+
 // ─────────────────────────────────────────────────────────────── 0–3s HOOK
 const HOOK_SHOTS = [
   {from: 0, to: 20, push: 0.1, clip: {src: 'footage/helm-throttle.mp4', start: 0.45, rate: 0.85, focusX: 0.38, zoom: 1.12, credit}},
@@ -50,7 +99,7 @@ const HOOK_SHOTS = [
 const Hook: React.FC = () => {
   const f = useCurrentFrame();
   const sh = shake(f, [0, ...T.hookWords], 10);
-  const flash = ramp(f, [0, 10], [1, 0], easeOut);
+  const flash = ramp(f, [0, 6], [0.55, 0], easeOut);
   const end = S.hook.to;
   return (
     <AbsoluteFill style={{background: '#000', overflow: 'hidden'}}>
@@ -67,7 +116,8 @@ const Hook: React.FC = () => {
       <AbsoluteFill style={{padding: '0 76px', paddingTop: 330}}>
         {T.copy.hook.map((w, i) => {
           const a = T.hookWords[i];
-          const p = ramp(f, [a, a + 6], [0, 1], easeOut);
+          // the first word is fully visible on frame 0, so the post thumbnail is never empty
+          const p = a === 0 ? 1 : ramp(f, [a, a + 6], [0, 1], easeOut);
           const out = ramp(f, [end - 16 + i, end - 4 + i], [0, 1], easeIn);
           const key = i === 2;
           return (
@@ -471,7 +521,7 @@ const End: React.FC = () => {
       <AbsoluteFill
         style={{background: 'radial-gradient(ellipse 85% 60% at 50% 42%, rgba(15,34,66,0.55) 0%, rgba(2,6,13,0.94) 100%)'}}
       />
-      <AbsoluteFill style={{transform: `translate(${sh.x}px, ${sh.y}px)`, fontFamily: FONT, textAlign: 'center'}}>
+      <AbsoluteFill style={{transform: `translate(${sh.x}px, ${sh.y}px) scale(${1 + 0.035 * ramp(f, [from, to], [0, 1], (x) => x)})`, fontFamily: FONT, textAlign: 'center'}}>
         <div
           style={{
             position: 'absolute',
@@ -608,7 +658,7 @@ export const ShortCommercial: React.FC = () => {
       <Sequence name="8 · CTA" from={S.end.from} durationInFrames={len('end')}>
         <End />
       </Sequence>
-      <StepCaptions frame={frame} steps={T.steps as Step[]} routes={ROUTES} showProgress={false} />
+      <Captions frame={frame} />
       <Finish frame={frame} />
       <Audio src={staticFile(T.audioOut)} />
     </AbsoluteFill>

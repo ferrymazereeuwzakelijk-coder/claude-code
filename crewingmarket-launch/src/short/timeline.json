@@ -41,10 +41,10 @@
     }
   },
   "hookWords": [
-    4,
-    12,
-    20,
-    32
+    0,
+    10,
+    19,
+    31
   ],
   "copy": {
     "hook": [
@@ -105,27 +105,30 @@
       "group": "ways",
       "route": "whatsapp",
       "from": 200,
-      "to": 342,
+      "to": 338,
       "title": "Stuur je aanvraag",
-      "sub": "via WhatsApp"
+      "sub": "via WhatsApp",
+      "label": "MANIER 1 · WHATSAPP"
     },
     {
       "n": 2,
       "group": "ways",
       "route": "app",
       "from": 350,
-      "to": 477,
+      "to": 474,
       "title": "Of plaats je opdracht",
-      "sub": "direct in de app"
+      "sub": "direct in de app",
+      "label": "MANIER 2 · DE APP"
     },
     {
       "n": 1,
       "group": "after",
       "route": "freelancer",
       "from": 530,
-      "to": 687,
+      "to": 684,
       "title": "Zzp’ers reageren",
-      "sub": "met één tik op ‘Ik heb interesse’"
+      "sub": "met één tik op ‘Ik heb interesse’",
+      "label": "DE ZZP’ER"
     },
     {
       "n": 2,
@@ -134,16 +137,18 @@
       "from": 694,
       "to": 757,
       "title": "Je krijgt direct een appje",
-      "sub": "zodra iemand reageert"
+      "sub": "zodra iemand reageert",
+      "label": "JIJ ALS BEDRIJF"
     },
     {
       "n": 3,
       "group": "after",
       "route": "company",
       "from": 757,
-      "to": 851,
+      "to": 845,
       "title": "Neem direct contact op",
-      "sub": "bellen of WhatsApp, met één tik"
+      "sub": "bellen of WhatsApp, met één tik",
+      "label": "JIJ ALS BEDRIJF"
     }
   ],
   "taps": [
