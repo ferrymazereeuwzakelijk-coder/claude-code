@@ -25,13 +25,68 @@ const credit = 'see CREDITS.md';
 const whipBlur = (f: number, keys: CamKey[]) => Math.min(26, Math.max(0, cameraSpeed(f, keys) - 140) * 0.1);
 
 /** Dark, blurred maritime footage behind the phones. */
-const PhoneBackdrop: React.FC<{t: number; src: string; start: number; tint: string}> = ({t, src, start, tint}) => (
-  <>
-    <AbsoluteFill style={{filter: 'blur(22px) brightness(0.8)', transform: 'scale(1.12)'}}>
-      <Footage clip={{src, start, focusX: 0.55, credit}} t={t} length={150} push={0.05} grade="night" />
-    </AbsoluteFill>
-    <AbsoluteFill style={{background: `radial-gradient(circle at 50% 58%, ${tint} 0%, rgba(0,0,0,0) 60%)`}} />
-  </>
+/** Clean dark studio set behind the phones: deep navy, a soft light in the accent colour, faint water. */
+const PhoneBackdrop: React.FC<{t: number; src: string; start: number; tint: string}> = ({t, src, start, tint}) => {
+  const breathe = 0.85 + 0.15 * Math.sin(t / 22);
+  const sweep = ((t * 9) % 2600) - 800;
+  return (
+    <>
+      <AbsoluteFill style={{background: 'radial-gradient(ellipse 120% 90% at 50% 40%, #0d1d3a 0%, #061024 45%, #02050c 100%)'}} />
+      <AbsoluteFill style={{opacity: 0.16, filter: 'blur(26px)', transform: 'scale(1.15)'}}>
+        <Footage clip={{src, start, focusX: 0.55, credit}} t={t} length={150} push={0.05} grade="night" />
+      </AbsoluteFill>
+      <AbsoluteFill
+        style={{
+          background: `radial-gradient(circle at 50% 60%, ${tint} 0%, rgba(0,0,0,0) 46%)`,
+          opacity: breathe,
+          transform: 'scale(1.25)',
+        }}
+      />
+      {/* floor glow under the device */}
+      <div
+        style={{
+          position: 'absolute',
+          left: 140,
+          right: 140,
+          bottom: 40,
+          height: 220,
+          borderRadius: '50%',
+          background: `radial-gradient(ellipse at center, ${tint} 0%, rgba(0,0,0,0) 70%)`,
+          opacity: 0.8,
+          filter: 'blur(30px)',
+        }}
+      />
+      {/* slow diagonal light streak */}
+      <div
+        style={{
+          position: 'absolute',
+          top: -400,
+          left: sweep,
+          width: 260,
+          height: 2800,
+          transform: 'rotate(18deg)',
+          background: 'linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(160,190,255,0.06) 50%, rgba(255,255,255,0) 100%)',
+        }}
+      />
+    </>
+  );
+};
+
+/** Words slide up out of a mask, one after another. */
+const WordReveal: React.FC<{text: string; p: (i: number) => number; style?: React.CSSProperties}> = ({text, p, style}) => (
+  <div style={style}>
+    {text.split(' ').map((w, i, arr) => {
+      const k = p(i);
+      return (
+        <span key={i} style={{display: 'inline-block', overflow: 'hidden', verticalAlign: 'top', paddingBottom: '0.08em'}}>
+          <span style={{display: 'inline-block', transform: `translateY(${(1 - k) * 110}%)`, opacity: Math.min(1, k * 1.5)}}>
+            {w}
+            {i < arr.length - 1 ? '\u00a0' : ''}
+          </span>
+        </span>
+      );
+    })}
+  </div>
 );
 
 // ────────────────────────────────────────────── captions (brand style)
@@ -73,13 +128,14 @@ const Captions: React.FC<{frame: number}> = ({frame}) => {
               style={{
                 marginTop: 18,
                 opacity: pin * (1 - pout),
-                transform: `translateY(${(1 - pin) * 26 - pout * 14}px)`,
-                filter: `blur(${(1 - pin) * 6}px)`,
+                transform: `translateY(${-pout * 14}px)`,
               }}
             >
-              <div style={{fontSize: 74, fontWeight: 900, color: '#fff', lineHeight: 1.04, letterSpacing: '-0.02em'}}>
-                {c.title}
-              </div>
+              <WordReveal
+                text={c.title}
+                p={(i) => ramp(frame, [c.from + i * 2, c.from + i * 2 + 9], [0, 1], easeOut)}
+                style={{fontSize: 70, fontWeight: 900, color: '#fff', lineHeight: 1.04, letterSpacing: '-0.02em', whiteSpace: 'nowrap'}}
+              />
               <div style={{fontSize: 38, fontWeight: 500, color: '#b9c9ef', marginTop: 12}}>{c.sub}</div>
             </div>
           </div>
@@ -162,88 +218,90 @@ const Hook: React.FC = () => {
 };
 
 // ─────────────────────────────────────────────────────── 3–6.5s SOLUTION
+const HERO = [
+  {src: 'wa-online.png', tx: -330, ty: 420, ry: 26, rz: -6, delay: 6},
+  {src: 'company-reactions.png', tx: 330, ty: 420, ry: -26, rz: 6, delay: 10},
+  {src: 'app-assignments.png', tx: 0, ty: 350, ry: 0, rz: 0, delay: 2},
+];
+
 const Solution: React.FC = () => {
   const {from, to} = S.solution;
   const f = useCurrentFrame() + from;
+  const t = f - from;
   const logo = ramp(f, [from, from + 12], [0, 1], easeOut);
-  const head = ramp(f, [from + 10, from + 22], [0, 1], easeOut);
-  const roles = (i: number) => ramp(f, [from + 30 + i * 5, from + 40 + i * 5], [0, 1], easeOut);
+  const roles = (i: number) => ramp(f, [from + 26 + i * 4, from + 36 + i * 4], [0, 1], easeOut);
   const out = ramp(f, [to - 8, to], [0, 1], easeIn);
   return (
     <AbsoluteFill style={{background: '#02060d', overflow: 'hidden'}}>
-      <AbsoluteFill style={{opacity: 0.55}}>
-        <Footage
-          clip={{src: 'footage/tug-vanino.mp4', start: 2.2, focusX: 0.46, zoom: 1.04, credit}}
-          t={f - from}
-          length={to - from}
-          push={0.08}
-          grade="night"
-        />
-      </AbsoluteFill>
-      <AbsoluteFill
-        style={{background: 'radial-gradient(ellipse 85% 60% at 50% 45%, rgba(8,20,39,0.55) 0%, rgba(2,6,13,0.92) 100%)'}}
-      />
-      <AbsoluteFill
-        style={{
-          alignItems: 'center',
-          justifyContent: 'center',
-          fontFamily: FONT,
-          textAlign: 'center',
-          opacity: 1 - out,
-          transform: `scale(${1 + out * 0.06})`,
-        }}
-      >
-        <div
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: 22,
-            opacity: logo,
-            transform: `translateY(${(1 - logo) * 24}px) scale(${0.92 + 0.08 * logo})`,
-          }}
-        >
-          <Img src={staticFile('brand/logo-mark-white.png')} style={{width: 112, height: 112}} />
-          <div style={{fontSize: 84, fontWeight: 800, letterSpacing: '-0.02em'}}>
-            <span style={{color: '#fff'}}>Crewing</span>
-            <span style={{color: BLUE}}>Market</span>
-          </div>
-        </div>
-        <div
-          style={{
-            marginTop: 56,
-            fontSize: 98,
-            fontWeight: 900,
-            color: '#fff',
-            lineHeight: 1.04,
-            letterSpacing: '-0.01em',
-            opacity: head,
-            filter: `blur(${(1 - head) * 10}px)`,
-            transform: `translateY(${(1 - head) * 34}px)`,
-          }}
-        >
-          Vind maritieme
-          <br />
-          professionals
-        </div>
-        <div style={{display: 'flex', gap: 18, marginTop: 52}}>
-          {T.copy.roles.map((r, i) => (
-            <div
-              key={r}
-              style={{
-                padding: '14px 30px',
-                borderRadius: 999,
-                border: '2px solid rgba(255,255,255,0.22)',
-                background: 'rgba(59,116,255,0.16)',
-                color: '#dfe8ff',
-                fontSize: 38,
-                fontWeight: 700,
-                opacity: roles(i),
-                transform: `translateY(${(1 - roles(i)) * 20}px)`,
+      <PhoneBackdrop t={t} src="footage/tug-vanino.mp4" start={2.2} tint="rgba(59,116,255,0.32)" />
+      <AbsoluteFill style={{opacity: 1 - out, transform: `scale(${1 + out * 0.05})`}}>
+        {HERO.map((h) => {
+          const p = ramp(t, [h.delay, h.delay + 22], [0, 1], easeOut);
+          const float = Math.sin((t + h.delay * 7) / 18) * 10;
+          return (
+            <Phone
+              key={h.src}
+              cam={{
+                f,
+                s: h.tx === 0 ? 0.56 : 0.5,
+                fx: 660,
+                fy: 1434,
+                tx: h.tx,
+                ty: h.ty + (1 - p) * 700 + float,
+                rx: 8,
+                ry: h.ry + (1 - p) * h.ry * 0.8 + Math.sin(t / 40) * 3,
+                rz: h.rz,
               }}
+              shadow={0.9}
+              glare={1.4}
+              style={{opacity: Math.min(1, p * 1.6)}}
             >
-              {r}
+              <Shot src={h.src} />
+            </Phone>
+          );
+        })}
+        <div style={{position: 'absolute', left: 0, right: 0, top: 250, textAlign: 'center', fontFamily: FONT}}>
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: 20,
+              opacity: logo,
+              transform: `translateY(${(1 - logo) * 20}px)`,
+            }}
+          >
+            <Img src={staticFile('brand/logo-mark-white.png')} style={{width: 92, height: 92}} />
+            <div style={{fontSize: 68, fontWeight: 800, letterSpacing: '-0.02em'}}>
+              <span style={{color: '#fff'}}>Crewing</span>
+              <span style={{color: BLUE}}>Market</span>
             </div>
-          ))}
+          </div>
+          <WordReveal
+            text="Vind maritieme professionals"
+            p={(i) => ramp(t, [8 + i * 4, 18 + i * 4], [0, 1], easeOut)}
+            style={{marginTop: 40, fontSize: 92, fontWeight: 900, color: '#fff', lineHeight: 1.04, letterSpacing: '-0.02em', padding: '0 70px'}}
+          />
+          <div style={{display: 'flex', gap: 16, marginTop: 40, justifyContent: 'center'}}>
+            {T.copy.roles.map((r, i) => (
+              <div
+                key={r}
+                style={{
+                  padding: '12px 28px',
+                  borderRadius: 999,
+                  border: '2px solid rgba(255,255,255,0.22)',
+                  background: 'rgba(59,116,255,0.16)',
+                  color: '#dfe8ff',
+                  fontSize: 34,
+                  fontWeight: 700,
+                  opacity: roles(i),
+                  transform: `translateY(${(1 - roles(i)) * 18}px)`,
+                }}
+              >
+                {r}
+              </div>
+            ))}
+          </div>
         </div>
       </AbsoluteFill>
     </AbsoluteFill>
@@ -534,6 +592,28 @@ const End: React.FC = () => {
             opacity: bloom,
           }}
         />
+        {/* light sweep across the logo, then across the call to action */}
+        {[E.logo + 18, E.cta + 6].map((at, k) => {
+          const x = ramp(f, [at, at + 22], [-500, 1500], easeInOut);
+          const op = ramp(f, [at, at + 4], [0, 1]) * ramp(f, [at + 18, at + 22], [1, 0]);
+          return (
+            <div
+              key={k}
+              style={{
+                position: 'absolute',
+                top: k === 0 ? 330 : 1080,
+                left: x,
+                width: 180,
+                height: k === 0 ? 440 : 220,
+                transform: 'skewX(-20deg)',
+                background: 'linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.28) 50%, rgba(255,255,255,0) 100%)',
+                mixBlendMode: 'screen',
+                opacity: op,
+                zIndex: 5,
+              }}
+            />
+          );
+        })}
         <div
           style={{
             position: 'absolute',
