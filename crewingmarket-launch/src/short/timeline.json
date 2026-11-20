@@ -3,7 +3,7 @@
   "fps": 30,
   "width": 1080,
   "height": 1920,
-  "durationInFrames": 1050,
+  "durationInFrames": 1110,
   "bpm": 120,
   "audioOut": "audio/soundtrack-short.wav",
   "scenes": {
@@ -35,9 +35,13 @@
       "from": 690,
       "to": 855
     },
-    "end": {
+    "done": {
       "from": 855,
-      "to": 1050
+      "to": 915
+    },
+    "end": {
+      "from": 915,
+      "to": 1110
     }
   },
   "hookWords": [
@@ -93,11 +97,11 @@
     "contactOpen": 794
   },
   "end": {
-    "logo": 855,
-    "q1": 885,
-    "q2": 900,
-    "cta": 922,
-    "live": 945
+    "logo": 915,
+    "q1": 945,
+    "q2": 960,
+    "cta": 982,
+    "live": 1005
   },
   "steps": [
     {
@@ -206,7 +210,7 @@
     "lift": 480,
     "buildFrom": 795,
     "impact": 855,
-    "ctaHit": 922
+    "ctaHit": 982
   },
   "sfx": {
     "whoosh": [
@@ -216,7 +220,10 @@
       476,
       521,
       686,
-      851
+      851,
+      875,
+      895,
+      911
     ],
     "receive": [
       300,
@@ -228,7 +235,8 @@
     ],
     "confirm": [
       592,
-      794
+      794,
+      870
     ],
     "impact": [
       0,

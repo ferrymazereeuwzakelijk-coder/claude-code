@@ -550,7 +550,75 @@ const DirectContact: React.FC = () => {
   );
 };
 
-// ───────────────────────────────────────────────────────── 28.5–35s CTA
+// ───────────────────────────────────────────── 28.5–30.5s "GEREGELD."
+const DONE_SHOTS = [
+  {from: 855, to: 875, clip: {src: 'footage/tug-vanino.mp4', start: 9.0, focusX: 0.5, zoom: 1.05, credit}},
+  {from: 875, to: 895, clip: {src: 'footage/tug-towing.mp4', start: 2.0, focusX: 0.55, credit}},
+  {from: 895, to: 915, clip: {src: 'footage/tanker-storm.mp4', start: 9.0, rate: 0.85, focusX: 0.56, credit}},
+];
+
+const Done: React.FC = () => {
+  const {from, to} = S.done;
+  const f = useCurrentFrame() + from;
+  const p = ramp(f, [from + 2, from + 12], [0, 1], easeOut);
+  const check = ramp(f, [from + 6, from + 18], [0, 1], easeOut);
+  const out = ramp(f, [to - 5, to], [0, 1], easeIn);
+  return (
+    <AbsoluteFill style={{background: '#000', overflow: 'hidden'}}>
+      {DONE_SHOTS.map((sh) => (
+        <Sequence key={sh.from} from={sh.from - from} durationInFrames={sh.to - sh.from} layout="none">
+          <Footage clip={sh.clip} t={f - sh.from} length={sh.to - sh.from} push={0.1} grade="gold" />
+        </Sequence>
+      ))}
+      <AbsoluteFill style={{background: 'radial-gradient(ellipse 80% 55% at 50% 50%, rgba(2,6,13,0.15) 0%, rgba(2,6,13,0.7) 100%)'}} />
+      <AbsoluteFill style={{alignItems: 'center', justifyContent: 'center', fontFamily: FONT, opacity: 1 - out}}>
+        <div
+          style={{
+            width: 190,
+            height: 190,
+            borderRadius: 95,
+            background: GREEN,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            boxShadow: '0 20px 80px rgba(33,192,99,0.6)',
+            transform: `scale(${0.4 + 0.6 * check})`,
+            opacity: check,
+          }}
+        >
+          <svg width={110} height={110} viewBox="0 0 24 24">
+            <path
+              d="M5 12.5 10 17.5 19.5 7"
+              fill="none"
+              stroke="#fff"
+              strokeWidth={3}
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              pathLength={1}
+              strokeDasharray={`${check} 1`}
+            />
+          </svg>
+        </div>
+        <div
+          style={{
+            marginTop: 44,
+            fontSize: 132,
+            fontWeight: 900,
+            color: '#fff',
+            letterSpacing: '-0.02em',
+            textShadow: '0 8px 50px rgba(0,0,0,0.6)',
+            opacity: p,
+            transform: `translateY(${(1 - p) * 30}px)`,
+          }}
+        >
+          Geregeld.
+        </div>
+      </AbsoluteFill>
+    </AbsoluteFill>
+  );
+};
+
+// ───────────────────────────────────────────────────────── 30.5–37s CTA
 const E = T.end;
 const End: React.FC = () => {
   const {from, to} = S.end;
@@ -567,9 +635,9 @@ const End: React.FC = () => {
   return (
     <AbsoluteFill style={{background: '#02060d', overflow: 'hidden'}}>
       {/* maritime backdrop: a vessel underway, pushed into the brand's dark blue */}
-      <AbsoluteFill style={{opacity: 0.5}}>
+      <AbsoluteFill style={{opacity: 0.9}}>
         <Footage
-          clip={{src: 'footage/tanker-storm.mp4', start: 8.6, rate: 0.85, focusX: 0.56, credit}}
+          clip={{src: 'footage/rotterdam-night.mp4', start: 5.0, focusX: 0.55, credit}}
           t={f - from}
           length={to - from}
           push={0.1}
@@ -577,7 +645,7 @@ const End: React.FC = () => {
         />
       </AbsoluteFill>
       <AbsoluteFill
-        style={{background: 'radial-gradient(ellipse 85% 60% at 50% 42%, rgba(15,34,66,0.55) 0%, rgba(2,6,13,0.94) 100%)'}}
+        style={{background: 'linear-gradient(180deg, rgba(2,6,13,0.78) 0%, rgba(2,6,13,0.55) 40%, rgba(2,6,13,0.35) 70%, rgba(2,6,13,0.6) 100%)'}}
       />
       <AbsoluteFill style={{transform: `translate(${sh.x}px, ${sh.y}px) scale(${1 + 0.035 * ramp(f, [from, to], [0, 1], (x) => x)})`, fontFamily: FONT, textAlign: 'center'}}>
         <div
@@ -735,7 +803,10 @@ export const ShortCommercial: React.FC = () => {
       <Sequence name="7 · Direct contact" from={S.contact.from} durationInFrames={len('contact')}>
         <DirectContact />
       </Sequence>
-      <Sequence name="8 · CTA" from={S.end.from} durationInFrames={len('end')}>
+      <Sequence name="8 · Geregeld" from={S.done.from} durationInFrames={len('done')}>
+        <Done />
+      </Sequence>
+      <Sequence name="9 · CTA" from={S.end.from} durationInFrames={len('end')}>
         <End />
       </Sequence>
       <Captions frame={frame} />
