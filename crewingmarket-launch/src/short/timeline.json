@@ -1,47 +1,43 @@
 {
-  "_doc": "35-second cut. Frames @30fps, 120 BPM (1 beat = 15 frames): every scene cut lands on a beat. Read by src/short/*.tsx and by scripts/make_soundtrack.py (python3 scripts/make_soundtrack.py src/short/timeline.json).",
+  "_doc": "35-second calm cut. Frames @30fps, 120 BPM (1 beat = 15 frames): every scene cut lands on a beat. Each step shows one key moment and holds it. Read by src/short/*.tsx and scripts/make_soundtrack.py (python3 scripts/make_soundtrack.py src/short/timeline.json).",
   "fps": 30,
   "width": 1080,
   "height": 1920,
-  "durationInFrames": 1110,
+  "durationInFrames": 1050,
   "bpm": 120,
   "audioOut": "audio/soundtrack-short.wav",
   "scenes": {
     "hook": {
       "from": 0,
-      "to": 90
+      "to": 75
     },
     "solution": {
-      "from": 90,
-      "to": 195
+      "from": 75,
+      "to": 150
     },
     "whatsapp": {
-      "from": 195,
-      "to": 345
+      "from": 150,
+      "to": 375
     },
     "app": {
-      "from": 345,
-      "to": 480
+      "from": 375,
+      "to": 540
     },
     "crew": {
-      "from": 480,
-      "to": 525
+      "from": 540,
+      "to": 585
     },
     "freelancer": {
-      "from": 525,
-      "to": 690
+      "from": 585,
+      "to": 780
     },
     "contact": {
-      "from": 690,
-      "to": 855
-    },
-    "done": {
-      "from": 855,
-      "to": 915
+      "from": 780,
+      "to": 930
     },
     "end": {
-      "from": 915,
-      "to": 1110
+      "from": 930,
+      "to": 1050
     }
   },
   "hookWords": [
@@ -65,42 +61,43 @@
     ],
     "typedMessage": "Ik zoek een matroos voor morgen.",
     "messageTime": "16:29",
-    "crew": "Beschikbare zzp’ers zien je opdracht",
+    "crew": "Beschikbare matrozen zien het direct",
     "ctaQ1": "Personeel nodig?",
     "ctaQ2": "Of beschikbaar voor werk?",
     "url": "crewingmarket.com",
     "live": "NU LIVE"
   },
   "whatsapp": {
-    "typeStart": 210,
-    "typeEnd": 242,
-    "send": 248,
-    "sheetUp": 268,
-    "tapVerstuur": 290,
-    "sheetDown": 294,
-    "online": 300,
-    "out": 330
+    "typeStart": 168,
+    "typeEnd": 216,
+    "send": 222,
+    "sheetUp": 246,
+    "tapVerstuur": 276,
+    "sheetDown": 280,
+    "online": 288,
+    "out": 372
   },
   "app": {
-    "phoneIn": 345,
-    "clipStart": 350
+    "phoneIn": 375,
+    "clipStart": 385,
+    "online": 424
   },
   "freelancer": {
-    "tapInteresse": 588,
-    "reacted": 592
+    "tapInteresse": 656,
+    "reacted": 660
   },
   "contact": {
-    "clipStart": 692,
-    "tapLink": 737,
-    "pageOpen": 740,
-    "tapContact": 793,
-    "contactOpen": 794
+    "clipStart": 784,
+    "tapLink": 5000,
+    "pageOpen": 5000,
+    "tapContact": 5000,
+    "contactOpen": 5000
   },
   "end": {
-    "logo": 915,
-    "q1": 945,
-    "q2": 960,
-    "cta": 982,
+    "logo": 930,
+    "q1": 955,
+    "q2": 968,
+    "cta": 985,
     "live": 1005
   },
   "steps": [
@@ -108,150 +105,110 @@
       "n": 1,
       "group": "ways",
       "route": "whatsapp",
-      "from": 200,
-      "to": 338,
-      "title": "Stuur je aanvraag",
-      "sub": "via WhatsApp",
-      "label": "MANIER 1 · WHATSAPP"
+      "label": "MANIER 1 · WHATSAPP",
+      "from": 158,
+      "to": 368,
+      "title": "Stuur een appje",
+      "sub": "je opdracht staat direct online"
     },
     {
       "n": 2,
       "group": "ways",
       "route": "app",
-      "from": 350,
-      "to": 474,
-      "title": "Of plaats je opdracht",
-      "sub": "direct in de app",
-      "label": "MANIER 2 · DE APP"
+      "label": "MANIER 2 · DE APP",
+      "from": 382,
+      "to": 534,
+      "title": "Of plaats hem in de app",
+      "sub": "in een paar tikken"
     },
     {
       "n": 1,
       "group": "after",
       "route": "freelancer",
-      "from": 530,
-      "to": 684,
-      "title": "Zzp’ers reageren",
-      "sub": "met één tik op ‘Ik heb interesse’",
-      "label": "DE ZZP’ER"
+      "label": "DE MATROOS",
+      "from": 592,
+      "to": 774,
+      "title": "De matroos reageert",
+      "sub": "met één tik op ‘Ik heb interesse’"
     },
     {
       "n": 2,
       "group": "after",
       "route": "company",
-      "from": 694,
-      "to": 757,
-      "title": "Je krijgt direct een appje",
-      "sub": "zodra iemand reageert",
-      "label": "JIJ ALS BEDRIJF"
-    },
-    {
-      "n": 3,
-      "group": "after",
-      "route": "company",
-      "from": 757,
-      "to": 845,
-      "title": "Neem direct contact op",
-      "sub": "bellen of WhatsApp, met één tik",
-      "label": "JIJ ALS BEDRIJF"
+      "label": "JIJ ALS BEDRIJF",
+      "from": 788,
+      "to": 924,
+      "title": "Jij krijgt een berichtje",
+      "sub": "en neemt direct contact op"
     }
   ],
   "taps": [
     {
-      "frame": 248,
+      "frame": 222,
       "x": 1211,
       "y": 1756,
       "phone": "company"
     },
     {
-      "frame": 290,
+      "frame": 276,
       "x": 659,
       "y": 2565,
       "phone": "company"
     },
     {
-      "frame": 374,
+      "frame": 415,
       "x": 660,
       "y": 1516,
       "phone": "app"
     },
     {
-      "frame": 394,
-      "x": 660,
-      "y": 879,
-      "phone": "app"
-    },
-    {
-      "frame": 411,
-      "x": 660,
-      "y": 2475,
-      "phone": "app"
-    },
-    {
-      "frame": 588,
+      "frame": 656,
       "x": 659,
       "y": 1642,
       "phone": "freelancer"
-    },
-    {
-      "frame": 737,
-      "x": 680,
-      "y": 2370,
-      "phone": "contact"
-    },
-    {
-      "frame": 793,
-      "x": 324,
-      "y": 1599,
-      "phone": "contact"
     }
   ],
   "music": {
-    "grooveFrom": 90,
-    "lift": 480,
-    "buildFrom": 795,
-    "impact": 855,
-    "ctaHit": 982
+    "grooveFrom": 75,
+    "lift": 540,
+    "buildFrom": 870,
+    "impact": 930,
+    "ctaHit": 985
   },
   "sfx": {
     "whoosh": [
-      86,
-      190,
-      341,
-      476,
-      521,
-      686,
-      851,
-      875,
-      895,
-      911
+      71,
+      146,
+      371,
+      536,
+      581,
+      776,
+      926
     ],
     "receive": [
-      300,
-      414,
-      696
+      288,
+      424,
+      792
     ],
     "send": [
-      248
+      222
     ],
     "confirm": [
-      592,
-      794,
-      870
+      660
     ],
     "impact": [
       0,
-      855
+      930
     ],
     "step": [
-      200,
-      350,
-      530,
-      694,
-      757
+      158,
+      382,
+      592,
+      788
     ],
     "keys": [
-      210,
-      242
+      168,
+      216
     ]
   }
 }

@@ -149,7 +149,7 @@ const Captions: React.FC<{frame: number}> = ({frame}) => {
 const HOOK_SHOTS = [
   {from: 0, to: 20, push: 0.1, clip: {src: 'footage/helm-throttle.mp4', start: 0.45, rate: 0.85, focusX: 0.38, zoom: 1.12, credit}},
   {from: 20, to: 50, push: 0.08, clip: {src: 'footage/deck-crew.mp4', start: 0.3, focusX: 0.88, credit}},
-  {from: 50, to: 90, push: 0.12, clip: {src: 'footage/tanker-storm.mp4', start: 2.6, rate: 0.9, focusX: 0.66, credit}},
+  {from: 50, to: 75, push: 0.12, clip: {src: 'footage/tanker-storm.mp4', start: 2.6, rate: 0.9, focusX: 0.66, credit}},
 ];
 
 const Hook: React.FC = () => {
@@ -311,15 +311,15 @@ const Solution: React.FC = () => {
 // ─────────────────────────────────────────── 6.5–11.5s WAY 1: WHATSAPP
 const W = T.whatsapp;
 const WA_CAM: CamKey[] = [
-  {f: 195, s: 0.42, fx: 660, fy: 1434, rx: 26, ry: -36, rz: -7, ty: 560},
-  {f: 210, s: 1.28, fy: 1460, rx: 0, ry: 0, rz: 0, ty: 250},
-  {f: 252, s: 1.28, fy: 1400},
-  {f: 270, s: 1.08, fy: 1434},
-  {f: 284, s: 1.24, fy: 1820},
-  {f: 298, s: 1.08, fy: 1434},
-  {f: 310, s: 1.42, fx: 560, fy: 1960},
-  {f: 331, s: 1.48, fx: 560, fy: 1970},
-  {f: 345, s: 1.2, tx: -1700, rz: -10, ry: 34},
+  {f: 150, s: 0.42, fx: 660, fy: 1434, rx: 26, ry: -36, rz: -7, ty: 560},
+  {f: 166, s: 1.28, fy: 1460, rx: 0, ry: 0, rz: 0, ty: 250},
+  {f: 240, s: 1.28, fy: 1400},
+  {f: 254, s: 1.08, fy: 1434},
+  {f: 270, s: 1.22, fy: 1800},
+  {f: 286, s: 1.08, fy: 1434},
+  {f: 302, s: 1.4, fx: 560, fy: 1960},
+  {f: 370, s: 1.46, fx: 560, fy: 1970},
+  {f: 375, s: 1.2, tx: -1700, rz: -10, ry: 34},
 ];
 
 const WhatsAppScreen: React.FC<{f: number}> = ({f}) => {
@@ -382,20 +382,18 @@ const WhatsAppWay: React.FC = () => {
 // ──────────────────────────────────────── 11.5–16s WAY 2: THE PLATFORM
 const A = T.app;
 const APP_CAM: CamKey[] = [
-  {f: 345, s: 0.5, fx: 660, fy: 1434, rx: -8, ry: 38, rz: 7, tx: 1600, ty: 250},
-  {f: 360, s: 1.2, fy: 1480, rx: 0, ry: 0, rz: 0, tx: 0},
-  {f: 386, s: 1.2, fy: 1300},
-  {f: 404, s: 1.1, fy: 1700},
-  {f: 418, s: 1.08, fy: 1434},
-  {f: 434, s: 1.3, fy: 1560},
-  {f: 470, s: 1.34, fy: 1580},
-  {f: 480, s: 1.2, tx: -1700, rz: -10, ry: 34},
+  {f: 375, s: 0.5, fx: 660, fy: 1434, rx: -8, ry: 38, rz: 7, tx: 1600, ty: 250},
+  {f: 390, s: 1.2, fy: 1480, rx: 0, ry: 0, rz: 0, tx: 0},
+  {f: 420, s: 1.2, fy: 1480},
+  {f: 436, s: 1.28, fy: 1560},
+  {f: 534, s: 1.34, fy: 1580},
+  {f: 540, s: 1.2, tx: -1700, rz: -10, ry: 34},
 ];
 
 const PlatformWay: React.FC = () => {
   const f = useCurrentFrame() + S.app.from;
   const video = (
-    <OffthreadVideo src={staticFile('footage/app-short.mp4')} muted style={{width: 1320, height: 2868, display: 'block'}} />
+    <OffthreadVideo src={staticFile('footage/app-calm.mp4')} muted style={{width: 1320, height: 2868, display: 'block'}} />
   );
   return (
     <AbsoluteFill style={{background: '#02060d', overflow: 'hidden'}}>
@@ -409,7 +407,7 @@ const PlatformWay: React.FC = () => {
               {video}
             </Sequence>
           )}
-          <Highlight frame={f} at={A.clipStart + 74} x={44} y={1680} w={1232} h={530} color={BLUE} radius={40} />
+          <Highlight frame={f} at={A.online + 10} x={44} y={1680} w={1232} h={530} color={BLUE} radius={40} />
         </div>
         {T.taps
           .filter((t) => t.phone === 'app')
@@ -457,12 +455,12 @@ const Crew: React.FC = () => {
 // ──────────────────────────────────────────── 17.5–23s FREELANCER REACTS
 const FR = T.freelancer;
 const FR_CAM: CamKey[] = [
-  {f: 525, s: 0.55, fx: 660, fy: 1434, rx: -8, ry: 38, rz: 7, tx: 1600, ty: 250},
-  {f: 540, s: 1.28, fy: 1350, rx: 0, ry: 0, rz: 0, tx: 0},
-  {f: 578, s: 1.28, fy: 1450},
-  {f: 600, s: 1.28, fy: 900},
-  {f: 680, s: 1.36, fy: 880},
-  {f: 690, s: 1.2, tx: -1700, rz: -10, ry: 34},
+  {f: 585, s: 0.55, fx: 660, fy: 1434, rx: -8, ry: 38, rz: 7, tx: 1600, ty: 250},
+  {f: 600, s: 1.25, fy: 1380, rx: 0, ry: 0, rz: 0, tx: 0},
+  {f: 642, s: 1.28, fy: 1460},
+  {f: 668, s: 1.28, fy: 900},
+  {f: 774, s: 1.34, fy: 880},
+  {f: 780, s: 1.2, tx: -1700, rz: -10, ry: 34},
 ];
 
 const FreelancerReacts: React.FC = () => {
@@ -504,13 +502,9 @@ const FreelancerReacts: React.FC = () => {
 // ───────────────────────────────────────────── 23–28.5s DIRECT CONTACT
 const C = T.contact;
 const C_CAM: CamKey[] = [
-  {f: 690, s: 0.55, fx: 660, fy: 1434, rx: -6, ry: -38, rz: -6, tx: 1700, ty: 250},
-  {f: 702, s: 1.3, fy: 2250, rx: 0, ry: 0, rz: 0, tx: 0},
-  {f: 736, s: 1.3, fy: 2250},
-  {f: 748, s: 1.3, fy: 1300},
-  {f: 788, s: 1.3, fy: 1330},
-  {f: 800, s: 1.32, fy: 1180},
-  {f: 850, s: 1.38, fy: 1180},
+  {f: 780, s: 0.55, fx: 660, fy: 1434, rx: -6, ry: -38, rz: -6, tx: 1700, ty: 250},
+  {f: 795, s: 1.3, fy: 2250, rx: 0, ry: 0, rz: 0, tx: 0},
+  {f: 930, s: 1.38, fy: 2260},
 ];
 
 const DirectContact: React.FC = () => {
@@ -518,7 +512,7 @@ const DirectContact: React.FC = () => {
   const f = useCurrentFrame() + from;
   const out = ramp(f, [to - 5, to], [0, 1], easeIn);
   const video = (
-    <OffthreadVideo src={staticFile('footage/contact-short.mp4')} muted style={{width: 1320, height: 2868, display: 'block'}} />
+    <OffthreadVideo src={staticFile('footage/contact-calm.mp4')} muted style={{width: 1320, height: 2868, display: 'block'}} />
   );
   return (
     <AbsoluteFill style={{background: '#02060d', overflow: 'hidden'}}>
@@ -545,74 +539,6 @@ const DirectContact: React.FC = () => {
               <Tap key={t.frame} frame={f} at={t.frame} x={t.x} y={t.y} dark={t.frame === C.tapLink} />
             ))}
         </Phone>
-      </AbsoluteFill>
-    </AbsoluteFill>
-  );
-};
-
-// ───────────────────────────────────────────── 28.5–30.5s "GEREGELD."
-const DONE_SHOTS = [
-  {from: 855, to: 875, clip: {src: 'footage/tug-vanino.mp4', start: 9.0, focusX: 0.5, zoom: 1.05, credit}},
-  {from: 875, to: 895, clip: {src: 'footage/tug-towing.mp4', start: 2.0, focusX: 0.55, credit}},
-  {from: 895, to: 915, clip: {src: 'footage/tanker-storm.mp4', start: 9.0, rate: 0.85, focusX: 0.56, credit}},
-];
-
-const Done: React.FC = () => {
-  const {from, to} = S.done;
-  const f = useCurrentFrame() + from;
-  const p = ramp(f, [from + 2, from + 12], [0, 1], easeOut);
-  const check = ramp(f, [from + 6, from + 18], [0, 1], easeOut);
-  const out = ramp(f, [to - 5, to], [0, 1], easeIn);
-  return (
-    <AbsoluteFill style={{background: '#000', overflow: 'hidden'}}>
-      {DONE_SHOTS.map((sh) => (
-        <Sequence key={sh.from} from={sh.from - from} durationInFrames={sh.to - sh.from} layout="none">
-          <Footage clip={sh.clip} t={f - sh.from} length={sh.to - sh.from} push={0.1} grade="gold" />
-        </Sequence>
-      ))}
-      <AbsoluteFill style={{background: 'radial-gradient(ellipse 80% 55% at 50% 50%, rgba(2,6,13,0.15) 0%, rgba(2,6,13,0.7) 100%)'}} />
-      <AbsoluteFill style={{alignItems: 'center', justifyContent: 'center', fontFamily: FONT, opacity: 1 - out}}>
-        <div
-          style={{
-            width: 190,
-            height: 190,
-            borderRadius: 95,
-            background: GREEN,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            boxShadow: '0 20px 80px rgba(33,192,99,0.6)',
-            transform: `scale(${0.4 + 0.6 * check})`,
-            opacity: check,
-          }}
-        >
-          <svg width={110} height={110} viewBox="0 0 24 24">
-            <path
-              d="M5 12.5 10 17.5 19.5 7"
-              fill="none"
-              stroke="#fff"
-              strokeWidth={3}
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              pathLength={1}
-              strokeDasharray={`${check} 1`}
-            />
-          </svg>
-        </div>
-        <div
-          style={{
-            marginTop: 44,
-            fontSize: 132,
-            fontWeight: 900,
-            color: '#fff',
-            letterSpacing: '-0.02em',
-            textShadow: '0 8px 50px rgba(0,0,0,0.6)',
-            opacity: p,
-            transform: `translateY(${(1 - p) * 30}px)`,
-          }}
-        >
-          Geregeld.
-        </div>
       </AbsoluteFill>
     </AbsoluteFill>
   );
@@ -802,9 +728,6 @@ export const ShortCommercial: React.FC = () => {
       </Sequence>
       <Sequence name="7 · Direct contact" from={S.contact.from} durationInFrames={len('contact')}>
         <DirectContact />
-      </Sequence>
-      <Sequence name="8 · Geregeld" from={S.done.from} durationInFrames={len('done')}>
-        <Done />
       </Sequence>
       <Sequence name="9 · CTA" from={S.end.from} durationInFrames={len('end')}>
         <End />
