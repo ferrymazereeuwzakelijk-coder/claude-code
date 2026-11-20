@@ -107,7 +107,7 @@
       "route": "whatsapp",
       "label": "MANIER 1 · WHATSAPP",
       "from": 158,
-      "to": 368,
+      "to": 362,
       "title": "Stuur een appje",
       "sub": "je opdracht staat direct online"
     },
@@ -117,7 +117,7 @@
       "route": "app",
       "label": "MANIER 2 · DE APP",
       "from": 382,
-      "to": 534,
+      "to": 528,
       "title": "Of plaats hem in de app",
       "sub": "in een paar tikken"
     },
@@ -127,7 +127,7 @@
       "route": "freelancer",
       "label": "DE MATROOS",
       "from": 592,
-      "to": 774,
+      "to": 768,
       "title": "De matroos reageert",
       "sub": "met één tik op ‘Ik heb interesse’"
     },
@@ -137,7 +137,7 @@
       "route": "company",
       "label": "JIJ ALS BEDRIJF",
       "from": 788,
-      "to": 924,
+      "to": 918,
       "title": "Jij krijgt een berichtje",
       "sub": "en neemt direct contact op"
     }
