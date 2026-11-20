@@ -23,7 +23,7 @@ const credit = 'see CREDITS.md';
 
 const ROUTES: Routes = {
   whatsapp: {label: 'MANIER 1 · WHATSAPP', color: GREEN, ink: '#06210f'},
-  app: {label: 'MANIER 2 · HET PLATFORM', color: BLUE, ink: '#fff'},
+  app: {label: 'MANIER 2 · DE APP', color: BLUE, ink: '#fff'},
   freelancer: {label: 'DE ZZP’ER', color: ORANGE, ink: '#2a1200'},
   company: {label: 'JIJ ALS BEDRIJF', color: GREEN, ink: '#06210f'},
 };
